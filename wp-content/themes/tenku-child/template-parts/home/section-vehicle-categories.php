@@ -23,14 +23,12 @@ if ( ! have_rows( 'categories' ) ) {
 				$title = get_sub_field( 'title' );
 				$link  = get_sub_field( 'link' );
 
-				$img_id  = function_exists( 'vip_transits_acf_attachment_id' ) ? vip_transits_acf_attachment_id( $image ) : 0;
-				$img_url = function_exists( 'vip_transits_acf_image_url' ) ? vip_transits_acf_image_url( $image, 'medium_large' ) : '';
-
-				if ( ! $title && ! $img_id && ! $img_url ) {
+				if ( ! $title && ! ( is_array( $image ) && ! empty( $image['url'] ) ) ) {
 					continue;
 				}
 
-				$img_alt = function_exists( 'vip_transits_acf_image_alt' ) ? vip_transits_acf_image_alt( $image, $title ) : $title;
+				$img_url = is_array( $image ) && ! empty( $image['url'] ) ? $image['url'] : '';
+				$img_alt = is_array( $image ) && ! empty( $image['alt'] ) ? $image['alt'] : $title;
 				$href    = is_array( $link ) && ! empty( $link['url'] ) ? $link['url'] : '';
 				$target  = is_array( $link ) && ! empty( $link['target'] ) ? $link['target'] : '';
 				?>
@@ -41,20 +39,15 @@ if ( ! have_rows( 'categories' ) ) {
 						<div class="vip-categories__card">
 					<?php endif; ?>
 
-						<?php if ( $img_id || $img_url ) : ?>
+						<?php if ( $img_url ) : ?>
 							<figure class="vip-categories__media">
-								<?php
-								if ( function_exists( 'vip_transits_the_acf_image' ) ) {
-									vip_transits_the_acf_image(
-										$image,
-										'medium_large',
-										array(
-											'class' => 'vip-categories__img',
-											'alt'   => $img_alt,
-										)
-									);
-								}
-								?>
+								<img
+									class="vip-categories__img"
+									src="<?php echo esc_url( $img_url ); ?>"
+									alt="<?php echo esc_attr( $img_alt ); ?>"
+									loading="lazy"
+									decoding="async"
+								/>
 							</figure>
 						<?php endif; ?>
 

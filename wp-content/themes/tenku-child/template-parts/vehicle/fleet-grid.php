@@ -2,7 +2,7 @@
 /**
  * Fleet grid shell (toolbar + cards + load more).
  *
- * Expects $args: query (WP_Query), per_page, show_load_more, show_filters.
+ * Args via get_template_part( ..., array( query, per_page, show_load_more, show_filters ) ).
  *
  * @package Tenku_Child
  */
@@ -11,10 +11,24 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-$query           = $args['query'] ?? null;
-$per_page        = isset( $args['per_page'] ) ? (int) $args['per_page'] : 9;
-$show_load_more  = ! empty( $args['show_load_more'] );
-$show_filters    = ! empty( $args['show_filters'] );
+// get_template_part( ..., $args ) uses extract() in load_template(); do not read $args['key'] only.
+$tpl_args = get_query_var( 'args' );
+if ( ! is_array( $tpl_args ) ) {
+	$tpl_args = array();
+}
+
+$query = ( isset( $query ) && $query instanceof WP_Query )
+	? $query
+	: ( $tpl_args['query'] ?? null );
+$per_page = isset( $per_page )
+	? (int) $per_page
+	: ( isset( $tpl_args['per_page'] ) ? (int) $tpl_args['per_page'] : 9 );
+$show_load_more = isset( $show_load_more )
+	? (bool) $show_load_more
+	: ! empty( $tpl_args['show_load_more'] );
+$show_filters = isset( $show_filters )
+	? (bool) $show_filters
+	: ! empty( $tpl_args['show_filters'] );
 
 if ( ! $query instanceof WP_Query ) {
 	return;

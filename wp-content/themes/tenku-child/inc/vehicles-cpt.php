@@ -258,18 +258,14 @@ function vip_transits_get_vehicle_card_data( $post_id = 0 ) {
 		$seats = array();
 	}
 
-	$price     = (int) get_field( 'daily_price', $post_id );
-	$thumb_url = get_the_post_thumbnail_url( $post_id, 'vip_fleet_card' ) ?: get_the_post_thumbnail_url( $post_id, 'large' );
-	if ( $thumb_url && function_exists( 'vip_transits_normalize_media_url' ) ) {
-		$thumb_url = vip_transits_normalize_media_url( $thumb_url );
-	}
+	$price = (int) get_field( 'daily_price', $post_id );
 
 	return array(
 		'id'           => $post_id,
 		'title'        => get_the_title( $post_id ),
 		'permalink'    => get_permalink( $post_id ),
 		'excerpt'      => vip_transits_vehicle_card_excerpt( $post_id ),
-		'thumbnail'    => $thumb_url ?: '',
+		'thumbnail'    => get_the_post_thumbnail_url( $post_id, 'vip_fleet_card' ) ?: get_the_post_thumbnail_url( $post_id, 'large' ),
 		'color_name'   => (string) get_field( 'color_name', $post_id ),
 		'color_hex'    => (string) get_field( 'color_hex', $post_id ),
 		'engine_type'  => (string) get_field( 'engine_type', $post_id ),

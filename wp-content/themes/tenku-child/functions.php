@@ -38,11 +38,6 @@ function tenku_child_enqueue_styles() {
 }
 add_action( 'wp_enqueue_scripts', 'tenku_child_enqueue_styles' );
 
-$vip_acf_media = get_stylesheet_directory() . '/inc/acf-media.php';
-if ( file_exists( $vip_acf_media ) ) {
-	require_once $vip_acf_media;
-}
-
 $vip_home_acf = get_stylesheet_directory() . '/inc/homepage-acf.php';
 if ( file_exists( $vip_home_acf ) ) {
 	require_once $vip_home_acf;

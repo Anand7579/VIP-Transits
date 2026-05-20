@@ -17,9 +17,28 @@ if ( ! have_rows( 'faq_items' ) ) {
 	return;
 }
 
-$img_id  = function_exists( 'vip_transits_acf_attachment_id' ) ? vip_transits_acf_attachment_id( $image ) : 0;
-$img_url = function_exists( 'vip_transits_acf_image_url' ) ? vip_transits_acf_image_url( $image, 'large' ) : '';
-$img_alt = function_exists( 'vip_transits_acf_image_alt' ) ? vip_transits_acf_image_alt( $image, __( 'Luxury car', 'tenku-child' ) ) : __( 'Luxury car', 'tenku-child' );
+$img_id  = 0;
+$img_url = '';
+$img_alt = __( 'Luxury car', 'tenku-child' );
+
+if ( is_array( $image ) ) {
+	if ( ! empty( $image['ID'] ) ) {
+		$img_id = (int) $image['ID'];
+	}
+	if ( ! empty( $image['url'] ) ) {
+		$img_url = (string) $image['url'];
+	} elseif ( $img_id ) {
+		$img_url = (string) wp_get_attachment_image_url( $img_id, 'large' );
+	}
+	if ( ! empty( $image['alt'] ) ) {
+		$img_alt = (string) $image['alt'];
+	} elseif ( $img_id ) {
+		$stored_alt = get_post_meta( $img_id, '_wp_attachment_image_alt', true );
+		if ( is_string( $stored_alt ) && $stored_alt !== '' ) {
+			$img_alt = $stored_alt;
+		}
+	}
+}
 ?>
 <section class="vip-faq">
 	<div class="vip-faq__container vip-content-container">
@@ -88,14 +107,21 @@ $img_alt = function_exists( 'vip_transits_acf_image_alt' ) ? vip_transits_acf_im
 				<?php if ( $img_id || $img_url ) : ?>
 					<figure class="vip-faq__figure">
 						<?php
-						if ( function_exists( 'vip_transits_the_acf_image' ) ) {
-							vip_transits_the_acf_image(
-								$image,
+						if ( $img_id ) {
+							echo wp_get_attachment_image(
+								$img_id,
 								'large',
+								false,
 								array(
 									'class' => 'vip-faq__car',
 									'alt'   => $img_alt,
 								)
+							);
+						} elseif ( $img_url ) {
+							printf(
+								'<img class="vip-faq__car" src="%1$s" alt="%2$s" loading="lazy" decoding="async" />',
+								esc_url( $img_url ),
+								esc_attr( $img_alt )
 							);
 						}
 						?>

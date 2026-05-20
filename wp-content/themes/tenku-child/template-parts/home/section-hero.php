@@ -27,8 +27,13 @@ if ( ! $heading_highlight && $heading && preg_match( '/^(.+?),\s*(via\b.+)$/iu',
 $search_ph     = get_sub_field( 'search_placeholder' ) ?: __( 'Search', 'tenku-child' );
 $search_url    = get_sub_field( 'search_action_url' );
 
-$img_url   = function_exists( 'vip_transits_acf_image_url' ) ? vip_transits_acf_image_url( $bg_image, 'full' ) : '';
-$video_url = function_exists( 'vip_transits_acf_file_url' ) ? vip_transits_acf_file_url( $bg_video ) : '';
+$img_url   = is_array( $bg_image ) && ! empty( $bg_image['url'] ) ? $bg_image['url'] : '';
+$video_url = '';
+if ( is_array( $bg_video ) && ! empty( $bg_video['url'] ) ) {
+	$video_url = $bg_video['url'];
+} elseif ( is_string( $bg_video ) && $bg_video ) {
+	$video_url = $bg_video;
+}
 
 $use_video     = ( 'video' === $bg_type && $video_url );
 $use_image     = ( 'image' === $bg_type && $img_url ) || ( ! $use_video && $img_url );
@@ -117,18 +122,14 @@ $hero_classes  = 'vip-hero' . ( $use_video ? ' vip-hero--video' : ' vip-hero--im
 						++$prop_index;
 						?>
 						<li class="<?php echo esc_attr( $prop_classes ); ?>">
-							<?php
-							$prop_icon_url = function_exists( 'vip_transits_acf_image_url' ) ? vip_transits_acf_image_url( $prop_icon, 'thumbnail' ) : '';
-							if ( $prop_icon_url ) :
-								?>
+							<?php if ( is_array( $prop_icon ) && ! empty( $prop_icon['url'] ) ) : ?>
 								<img
 									class="vip-hero__prop-icon"
-									src="<?php echo esc_url( $prop_icon_url ); ?>"
+									src="<?php echo esc_url( $prop_icon['url'] ); ?>"
 									alt=""
 									width="24"
 									height="24"
 									loading="lazy"
-									decoding="async"
 								/>
 							<?php endif; ?>
 							<span class="vip-hero__prop-text"><?php echo esc_html( $prop_text ); ?></span>

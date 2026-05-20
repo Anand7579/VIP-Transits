@@ -23,7 +23,7 @@ function vip_transits_fleet_block_assets() {
 }
 
 /**
- * Register vehicle ACF blocks.
+ * Register vehicle ACF blocks (PHP only — block.json removed to avoid duplicate registration).
  */
 function vip_transits_register_vehicle_blocks() {
 	if ( ! function_exists( 'acf_register_block_type' ) ) {
