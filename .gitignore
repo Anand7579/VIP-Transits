@@ -12,14 +12,12 @@ wp-content/debug.log
 wp-content/ai1wm-backups/
 *.log
 
-# Local SQLite database (Studio regenerates; do not commit)
+# Local SQLite database (Studio)
 wp-content/database/
 
-# Migration / temp archives
+# Migration archives
 *.wpress
 *.sql
 *.sql.gz
 
-# Dependencies (if added later)
 node_modules/
-vendor/
