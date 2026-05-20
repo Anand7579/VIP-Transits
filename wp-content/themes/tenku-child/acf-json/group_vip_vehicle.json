@@ -1,0 +1,105 @@
+{
+    "key": "group_vip_vehicle",
+    "title": "Vehicle details",
+    "fields": [
+        {
+            "key": "field_vipveh_color_name",
+            "label": "Color name",
+            "name": "color_name",
+            "type": "text",
+            "default_value": "Black"
+        },
+        {
+            "key": "field_vipveh_color_hex",
+            "label": "Color swatch",
+            "name": "color_hex",
+            "type": "color_picker",
+            "default_value": "#000000"
+        },
+        {
+            "key": "field_vipveh_engine",
+            "label": "Engine type",
+            "name": "engine_type",
+            "type": "text",
+            "default_value": "V8"
+        },
+        {
+            "key": "field_vipveh_accel",
+            "label": "0–100 km\/h",
+            "name": "acceleration_0_100",
+            "type": "text",
+            "placeholder": "3.2 sec"
+        },
+        {
+            "key": "field_vipveh_doors",
+            "label": "Doors",
+            "name": "doors",
+            "type": "text",
+            "default_value": "02"
+        },
+        {
+            "key": "field_vipveh_seats",
+            "label": "Number of seats",
+            "name": "vehicle_seat",
+            "type": "taxonomy",
+            "taxonomy": "vehicle_seat",
+            "field_type": "select",
+            "allow_null": 0,
+            "add_term": 0,
+            "save_terms": 1,
+            "load_terms": 1,
+            "return_format": "object",
+            "multiple": 0,
+            "instructions": "Choose a seat option. Used on the card and in fleet filters. Manage options under Vehicles → Seats."
+        },
+        {
+            "key": "field_vipveh_price",
+            "label": "Daily price (AED)",
+            "name": "daily_price",
+            "type": "number",
+            "min": 0,
+            "step": 1,
+            "default_value": 2000
+        },
+        {
+            "key": "field_vipveh_whatsapp",
+            "label": "WhatsApp URL",
+            "name": "whatsapp_url",
+            "type": "url",
+            "placeholder": "https:\/\/wa.me\/..."
+        },
+        {
+            "key": "field_vipveh_phone",
+            "label": "Phone number",
+            "name": "phone_number",
+            "type": "text",
+            "placeholder": "+971..."
+        },
+        {
+            "key": "field_vipveh_delivery",
+            "label": "Hotel \/ home delivery",
+            "name": "delivery_hotel_home",
+            "type": "true_false",
+            "ui": 1,
+            "default_value": 1
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "post_type",
+                "operator": "==",
+                "value": "vip_vehicle"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "active": true,
+    "description": "Specs and booking links for fleet vehicles.",
+    "show_in_rest": 1,
+    "modified": 1779274592
+}

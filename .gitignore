@@ -1,0 +1,25 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+.cursor/
+
+# WordPress generated
+wp-content/cache/
+wp-content/upgrade/
+wp-content/debug.log
+wp-content/ai1wm-backups/
+*.log
+
+# Local SQLite database (Studio regenerates; do not commit)
+wp-content/database/
+
+# Migration / temp archives
+*.wpress
+*.sql
+*.sql.gz
+
+# Dependencies (if added later)
+node_modules/
+vendor/

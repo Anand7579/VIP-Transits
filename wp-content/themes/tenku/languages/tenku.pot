@@ -1,0 +1,265 @@
+# Copyright (C) 2024 Automattic
+# This file is distributed under the GNU General Public License v2 or later.
+msgid ""
+msgstr ""
+"Project-Id-Version: Tenku 1.0.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/theme/tenku\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2024-11-21T02:45:54+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.11.0\n"
+
+#. Theme Name of the theme
+#: style.css
+msgid "Tenku"
+msgstr ""
+
+#. Theme URI of the theme
+#: style.css
+msgid "https://wordpress.com/theme/tenku/"
+msgstr ""
+
+#. Description of the theme
+#: style.css
+msgid "Tenku is a classic \"magazine\" theme with a rich, dense homepage perfect for pro-bloggers."
+msgstr ""
+
+#. Author of the theme
+#: style.css
+msgid "Automattic"
+msgstr ""
+
+#. Author URI of the theme
+#: style.css
+msgid "https://automattic.com/"
+msgstr ""
+
+#: patterns/404.php
+msgctxt "Pattern title"
+msgid "A 404 page"
+msgstr ""
+
+#: patterns/404.php:9
+msgid "Oops! That page can’t be found."
+msgstr ""
+
+#: patterns/404.php:13
+msgid "It looks like nothing was found at this location. Maybe try a search?"
+msgstr ""
+
+#: patterns/category-links.php
+msgctxt "Pattern title"
+msgid "Category Links"
+msgstr ""
+
+#: patterns/category-links.php:13
+msgid "Archives"
+msgstr ""
+
+#: patterns/category-links.php:21
+msgid "Health"
+msgstr ""
+
+#: patterns/category-links.php:25
+msgid "Fashion"
+msgstr ""
+
+#: patterns/category-links.php:29
+msgid "Food"
+msgstr ""
+
+#: patterns/category-links.php:33
+msgid "Shopping"
+msgstr ""
+
+#: patterns/category-links.php:37
+msgid "Events"
+msgstr ""
+
+#: patterns/category-links.php:41
+msgid "Fiction"
+msgstr ""
+
+#: patterns/category-links.php:45
+msgid "Travel"
+msgstr ""
+
+#: patterns/category-links.php:49
+msgid "Japan"
+msgstr ""
+
+#: patterns/category-links.php:53
+msgid "Education"
+msgstr ""
+
+#: patterns/featured-posts.php
+msgctxt "Pattern title"
+msgid "Featured Posts"
+msgstr ""
+
+#: patterns/featured-posts.php:13
+msgid "Trending"
+msgstr ""
+
+#: patterns/footer.php
+msgctxt "Pattern title"
+msgid "Default footer"
+msgstr ""
+
+#: patterns/footer.php:15
+msgid "Tenku celebrates the very best in independent journalism. Through the online content we publish, we share our opinions and thoughts on the various problems that the world is facing right now."
+msgstr ""
+
+#: patterns/footer.php:19
+msgid "Subscribe to our newsletters. We’ll keep you in the loop."
+msgstr ""
+
+#. Translators: WordPress link.
+#: patterns/footer.php:45
+msgid "https://wordpress.org"
+msgstr ""
+
+#: patterns/footer.php:47
+msgid "Designed with %1$s"
+msgstr ""
+
+#: patterns/header.php
+msgctxt "Pattern title"
+msgid "Default header"
+msgstr ""
+
+#: patterns/latest-posts.php
+msgctxt "Pattern title"
+msgid "Latest Posts"
+msgstr ""
+
+#: patterns/latest-posts.php:13
+msgid "Latest"
+msgstr ""
+
+#: patterns/no-results-content.php
+msgctxt "Pattern title"
+msgid "No Results Content"
+msgstr ""
+
+#: patterns/no-results-content.php:9
+msgctxt "Message explaining that there are no results returned from a search"
+msgid "Sorry, but nothing matched your search terms. Please try again with some different keywords."
+msgstr ""
+
+#: patterns/sidebar.php
+msgctxt "Pattern title"
+msgid "Sidebar"
+msgstr ""
+
+#: patterns/sidebar.php:35
+msgid "Recent Posts"
+msgstr ""
+
+#: patterns/sidebar.php:69
+msgid "Categories"
+msgstr ""
+
+#: theme.json
+msgctxt "Color name"
+msgid "Base"
+msgstr ""
+
+#: theme.json
+msgctxt "Color name"
+msgid "Contrast"
+msgstr ""
+
+#: theme.json
+msgctxt "Color name"
+msgid "Primary"
+msgstr ""
+
+#: theme.json
+msgctxt "Color name"
+msgid "Secondary"
+msgstr ""
+
+#: theme.json
+msgctxt "Color name"
+msgid "Tertiary"
+msgstr ""
+
+#: theme.json
+msgctxt "Space size name"
+msgid "1"
+msgstr ""
+
+#: theme.json
+msgctxt "Space size name"
+msgid "2"
+msgstr ""
+
+#: theme.json
+msgctxt "Space size name"
+msgid "3"
+msgstr ""
+
+#: theme.json
+msgctxt "Space size name"
+msgid "4"
+msgstr ""
+
+#: theme.json
+msgctxt "Space size name"
+msgid "5"
+msgstr ""
+
+#: theme.json
+msgctxt "Space size name"
+msgid "6"
+msgstr ""
+
+#: theme.json
+msgctxt "Font family name"
+msgid "System Font"
+msgstr ""
+
+#: theme.json
+msgctxt "Font size name"
+msgid "Extra Small"
+msgstr ""
+
+#: theme.json
+msgctxt "Font size name"
+msgid "Small"
+msgstr ""
+
+#: theme.json
+msgctxt "Font size name"
+msgid "Medium"
+msgstr ""
+
+#: theme.json
+msgctxt "Font size name"
+msgid "Large"
+msgstr ""
+
+#: theme.json
+msgctxt "Font size name"
+msgid "Extra Large"
+msgstr ""
+
+#: theme.json
+msgctxt "Font size name"
+msgid "Double Extra Large"
+msgstr ""
+
+#: theme.json
+msgctxt "Font size name"
+msgid "Triple Extra Large"
+msgstr ""
+
+#: theme.json
+msgctxt "Font size name"
+msgid "Huge"
+msgstr ""

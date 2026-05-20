@@ -1,0 +1,375 @@
+/*
+Theme Name: Tenku Child
+Theme URI: https://wordpress.com/theme/tenku/
+Template: tenku
+Author: Automattic
+Author URI: https://automattic.com/
+Description: Tenku is a classic "magazine" theme with a rich, dense homepage perfect for pro-bloggers.
+Tags: blog,two-columns,wide-blocks,block-patterns,custom-background,custom-colors,custom-logo,custom-menu,editor-style,featured-images,full-site-editing,template-editing,rtl-language-support,threaded-comments,translation-ready
+Version: 1.0.0.1779084288
+Updated: 2026-05-18 11:34:48
+
+*/
+
+/**
+ * Shared content width (header + hero + sections).
+ */
+:root {
+	--vip-content-max: 1440px;
+	--vip-content-pad-x: clamp(1.25rem, 4vw, 3.5rem);
+	--vip-nav-font: "Newsreader", "Times New Roman", Georgia, serif;
+}
+
+.vip-content-container {
+	width: 100%;
+	max-width: var(--vip-content-max);
+	margin-inline: auto;
+	padding-inline: var(--vip-content-pad-x);
+	box-sizing: border-box;
+}
+
+/**
+ * Site header (block pattern: tenku-child/header)
+ * Editable in Appearance → Editor → Template Parts → Header
+ */
+
+.vip-site-header {
+	--vip-header-font: var(--vip-nav-font);
+	position: relative;
+	z-index: 100;
+	width: 100%;
+	background: #0a0c0f;
+	color: #fff;
+	font-family: var(--vip-header-font);
+	padding-top: 1.25rem;
+	padding-bottom: 1.25rem;
+}
+
+/* Override WP constrained / alignwide so container matches hero */
+.vip-site-header.is-layout-constrained > :where(:not(.alignleft):not(.alignright):not(.alignfull)) {
+	max-width: none;
+}
+
+.vip-site-header > .alignwide,
+.vip-site-header > .wp-block-group.alignwide {
+	max-width: none;
+	width: 100%;
+	margin-inline: 0;
+}
+
+/* Customized header in Site Editor (old alignwide markup): align with hero */
+.vip-site-header:not(:has(.vip-content-container)) > .alignwide,
+.vip-site-header:not(:has(.vip-content-container)) > .wp-block-group.alignwide {
+	max-width: var(--vip-content-max);
+	margin-inline: auto !important;
+	padding-inline: var(--vip-content-pad-x);
+	box-sizing: border-box;
+}
+
+.vip-site-header__inner {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 1rem;
+}
+
+.vip-site-header .wp-block-site-logo img {
+	border-radius: 50%;
+}
+
+.vip-site-header__brand {
+	align-items: center;
+	text-align: center;
+	gap: 0.35rem;
+}
+
+.vip-site-header__tagline {
+	margin: 0;
+	opacity: 0.95;
+}
+
+.vip-site-header__tagline a {
+	color: inherit;
+	text-decoration: none;
+}
+
+.vip-site-header__end {
+	gap: clamp(1rem, 2.5vw, 2rem);
+	align-items: center;
+}
+
+/* Figma menu type: Newsreader Medium (500), 14/14, 8% tracking, centered */
+.vip-site-header__nav,
+.vip-site-footer__nav {
+	font-family: var(--vip-nav-font);
+	font-weight: 500;
+	font-style: normal;
+	font-size: 14px;
+	line-height: 14px;
+	letter-spacing: 0.08em;
+}
+
+.vip-site-header__nav .wp-block-navigation-item__content,
+.vip-site-footer__nav .wp-block-navigation-item__content {
+	color: #fff;
+	font-family: var(--vip-nav-font);
+	font-weight: 500;
+	font-style: normal;
+	font-size: 14px;
+	line-height: 14px;
+	letter-spacing: 0.08em;
+	text-align: center;
+	text-decoration: none;
+}
+
+.vip-site-header__nav .wp-block-navigation-item__content:hover,
+.vip-site-footer__nav .wp-block-navigation-item__content:hover {
+	opacity: 0.75;
+	color: #fff;
+}
+
+/* Figma: “Home” is italic; targets first menu item in header + footer */
+.vip-site-header__nav .wp-block-navigation-item:first-child .wp-block-navigation-item__content,
+.vip-site-footer__nav .wp-block-navigation-item:first-child .wp-block-navigation-item__content {
+	font-style: italic !important;
+}
+
+.vip-site-header__social {
+	margin: 0;
+}
+
+/* Front page: header overlays hero (transparent) */
+.home .vip-site-header {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	background: transparent;
+	padding-top: max(1.5rem, env(safe-area-inset-top, 0px));
+	padding-left: 0;
+	padding-right: 0;
+}
+
+.home .vip-home-main {
+	position: relative;
+	margin-top: 0 !important;
+}
+
+@media (max-width: 768px) {
+	.vip-site-header__end {
+		width: 100%;
+		justify-content: center;
+	}
+
+	.vip-site-header__nav {
+		width: 100%;
+	}
+
+	.vip-site-header__nav .wp-block-navigation__container {
+		justify-content: center;
+	}
+}
+
+/**
+ * Site footer (block pattern: tenku-child/footer) — Figma layout
+ */
+.vip-site-footer {
+	--vip-footer-font: var(--vip-nav-font);
+	background: #1a1a1a;
+	color: #fff;
+	font-family: var(--vip-footer-font);
+	padding: clamp(3rem, 6vw, 4.5rem) 0 clamp(2rem, 4vw, 3rem);
+}
+
+.vip-site-footer a {
+	color: #fff;
+	text-decoration: none;
+}
+
+.vip-site-footer a:hover {
+	opacity: 0.75;
+}
+
+/* Outer shell: full width with side padding from theme container */
+.vip-site-footer__container.vip-content-container {
+	display: block;
+	width: 100%;
+	max-width: none;
+	padding-inline: var(--vip-content-pad-x);
+}
+
+/* 70% centered block (logo + right column) */
+.vip-site-footer__inner {
+	width: 70%;
+	margin: 0 auto;
+}
+
+/* Customized footer without __inner wrapper (Site Editor) */
+.vip-site-footer__container:not(:has(.vip-site-footer__inner)) > .vip-site-footer__main,
+.vip-site-footer__container:not(:has(.vip-site-footer__inner)) > .wp-block-group.vip-site-footer__main {
+	width: 70%;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.vip-site-footer__container:not(:has(.vip-site-footer__inner)) > .vip-site-footer__legal {
+	width: 70%;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.vip-site-footer__main {
+	display: grid;
+	grid-template-columns: 15% 75%;
+	column-gap: 40px;
+	align-items: center;
+	width: 100%;
+	margin: 0;
+}
+
+.vip-site-footer__brand {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+}
+
+.vip-site-footer__logo,
+.vip-site-footer__brand .wp-block-site-logo {
+	margin: 0;
+	line-height: 0;
+}
+
+.vip-site-footer__logo img,
+.vip-site-footer__brand .wp-block-site-logo img {
+	display: block;
+	width: 140px;
+	max-width: 140px;
+	height: 140px;
+	object-fit: contain;
+}
+
+.vip-site-footer__content {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	justify-content: center;
+	gap: clamp(1.25rem, 2.5vw, 1.75rem);
+	width: 100%;
+	min-width: 0;
+	margin-top: 0;
+	text-align: left;
+}
+
+.vip-site-footer__content.wp-block-group {
+	margin-top: 0 !important;
+}
+
+.vip-site-footer__desc,
+.vip-site-footer__content > .wp-block-paragraph {
+	margin: 0 !important;
+	padding: 0;
+	max-width: none;
+	font-family: inherit;
+	font-weight: 400;
+	font-size: 20px;
+	line-height: 26px;
+	letter-spacing: -0.01em;
+	color: #fff;
+	text-align: left;
+}
+
+.vip-site-footer__nav-row {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: flex-start;
+	gap: clamp(1.5rem, 3vw, 2.5rem);
+	margin: 0;
+	padding: 0;
+	width: 100%;
+}
+
+.vip-site-footer__nav-row.wp-block-group {
+	margin: 0;
+}
+
+.vip-site-footer__nav {
+	margin: 0;
+}
+
+.vip-site-footer__nav .wp-block-navigation__container {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: flex-start;
+	gap: clamp(1.5rem, 3vw, 2.5rem);
+}
+
+.vip-site-footer__social {
+	margin: 0;
+}
+
+.vip-site-footer__social .wp-block-social-link {
+	margin: 0;
+}
+
+.vip-site-footer__legal,
+.vip-site-footer__content .vip-site-footer__legal,
+.vip-site-footer__content > .wp-block-paragraph.vip-site-footer__legal,
+.vip-site-footer__inner > .wp-block-paragraph.vip-site-footer__legal {
+	margin: clamp(1rem, 2vw, 1.5rem) 0 0 !important;
+	padding: 0;
+	font-family: inherit;
+	font-weight: 400;
+	font-size: 14px;
+	line-height: 14px;
+	letter-spacing: 0.08em;
+	color: #fff;
+	text-align: left;
+	width: 100%;
+}
+
+.vip-site-footer__legal a {
+	color: inherit;
+}
+
+@media (max-width: 900px) {
+	.vip-site-footer__inner {
+		width: 90%;
+	}
+
+	.vip-site-footer__main {
+		grid-template-columns: 1fr;
+		row-gap: 1.75rem;
+		text-align: center;
+	}
+
+	.vip-site-footer__brand {
+		justify-content: center;
+	}
+
+	.vip-site-footer__content {
+		align-items: center;
+		text-align: center;
+	}
+
+	.vip-site-footer__desc,
+	.vip-site-footer__content > .wp-block-paragraph {
+		text-align: center;
+	}
+
+	.vip-site-footer__nav-row {
+		justify-content: center;
+	}
+
+	.vip-site-footer__nav .wp-block-navigation__container {
+		justify-content: center;
+	}
+
+	.vip-site-footer__legal,
+	.vip-site-footer__content .vip-site-footer__legal {
+		text-align: center;
+	}
+}

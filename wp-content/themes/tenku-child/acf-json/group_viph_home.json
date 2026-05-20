@@ -1,0 +1,451 @@
+{
+    "key": "group_viph_home",
+    "title": "VIP Homepage",
+    "fields": [
+        {
+            "key": "field_viph_sections",
+            "label": "Sections",
+            "name": "sections",
+            "aria-label": "",
+            "type": "flexible_content",
+            "instructions": "Add and reorder homepage sections. Content appears on the site front page.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "layouts": {
+                "layout_viph_hero": {
+                    "key": "layout_viph_hero",
+                    "name": "hero",
+                    "label": "Hero banner",
+                    "display": "block",
+                    "sub_fields": [
+                        {
+                            "key": "field_viph_hero_bg_type",
+                            "label": "Background type",
+                            "name": "bg_type",
+                            "type": "select",
+                            "choices": {
+                                "video": "Video",
+                                "image": "Image"
+                            },
+                            "default_value": "video",
+                            "return_format": "value",
+                            "parent": "field_viph_sections"
+                        },
+                        {
+                            "key": "field_viph_hero_bg_video",
+                            "label": "Background video (MP4)",
+                            "name": "background_video",
+                            "type": "file",
+                            "return_format": "array",
+                            "mime_types": "mp4,webm",
+                            "parent": "field_viph_sections",
+                            "conditional_logic": [
+                                [
+                                    {
+                                        "field": "field_viph_hero_bg_type",
+                                        "operator": "==",
+                                        "value": "video"
+                                    }
+                                ]
+                            ]
+                        },
+                        {
+                            "key": "field_viph_hero_bg_image",
+                            "label": "Background image",
+                            "name": "background_image",
+                            "type": "image",
+                            "return_format": "array",
+                            "preview_size": "medium",
+                            "instructions": "Full background when type is Image. When type is Video, used as poster\/fallback.",
+                            "parent": "field_viph_sections"
+                        },
+                        {
+                            "key": "field_viph_hero_eyebrow_text",
+                            "label": "Eyebrow text",
+                            "name": "eyebrow_text",
+                            "type": "text",
+                            "default_value": "LUXURY CAR RENTAL,",
+                            "parent": "field_viph_sections"
+                        },
+                        {
+                            "key": "field_viph_hero_eyebrow_badge",
+                            "label": "Eyebrow badge",
+                            "name": "eyebrow_badge",
+                            "type": "text",
+                            "default_value": "DUBAI",
+                            "parent": "field_viph_sections"
+                        },
+                        {
+                            "key": "field_viph_hero_heading",
+                            "label": "Headline (line 1)",
+                            "name": "heading",
+                            "type": "text",
+                            "default_value": "Any Car, Any Occasion,",
+                            "parent": "field_viph_sections"
+                        },
+                        {
+                            "key": "field_viph_hero_heading_highlight",
+                            "label": "Headline highlight",
+                            "name": "heading_highlight",
+                            "type": "text",
+                            "default_value": "via WhatsApp",
+                            "instructions": "Rendered larger on its own line (e.g. via WhatsApp).",
+                            "parent": "field_viph_sections"
+                        },
+                        {
+                            "key": "field_viph_hero_search_ph",
+                            "label": "Search placeholder",
+                            "name": "search_placeholder",
+                            "type": "text",
+                            "default_value": "Search",
+                            "parent": "field_viph_sections"
+                        },
+                        {
+                            "key": "field_viph_hero_search_url",
+                            "label": "Search form URL (optional)",
+                            "name": "search_action_url",
+                            "type": "url",
+                            "instructions": "Leave empty to use site search.",
+                            "parent": "field_viph_sections"
+                        },
+                        {
+                            "key": "field_viph_hero_props",
+                            "label": "Value propositions",
+                            "name": "value_props",
+                            "type": "repeater",
+                            "layout": "table",
+                            "button_label": "Add item",
+                            "parent": "field_viph_sections",
+                            "sub_fields": [
+                                {
+                                    "key": "field_viph_hero_prop_icon",
+                                    "label": "Icon",
+                                    "name": "icon",
+                                    "type": "image",
+                                    "return_format": "array",
+                                    "preview_size": "thumbnail",
+                                    "parent": "field_viph_hero_props"
+                                },
+                                {
+                                    "key": "field_viph_hero_prop_text",
+                                    "label": "Text",
+                                    "name": "text",
+                                    "type": "text",
+                                    "parent": "field_viph_hero_props"
+                                }
+                            ]
+                        }
+                    ],
+                    "min": "",
+                    "max": ""
+                },
+                "layout_viph_booking": {
+                    "key": "layout_viph_booking",
+                    "name": "booking_strip",
+                    "label": "Booking strip",
+                    "display": "block",
+                    "sub_fields": [
+                        {
+                            "key": "field_viph_book_title",
+                            "label": "Title",
+                            "name": "title",
+                            "type": "text",
+                            "parent": "field_viph_sections"
+                        },
+                        {
+                            "key": "field_viph_book_note",
+                            "label": "Short note",
+                            "name": "note",
+                            "type": "textarea",
+                            "rows": 2,
+                            "parent": "field_viph_sections"
+                        }
+                    ],
+                    "min": "",
+                    "max": ""
+                },
+                "layout_viph_categories": {
+                    "key": "layout_viph_categories",
+                    "name": "vehicle_categories",
+                    "label": "Vehicle categories",
+                    "display": "block",
+                    "sub_fields": [
+                        {
+                            "key": "field_viph_cat_items",
+                            "label": "Categories",
+                            "name": "categories",
+                            "type": "repeater",
+                            "layout": "block",
+                            "button_label": "Add category",
+                            "min": 1,
+                            "max": 8,
+                            "parent": "field_viph_sections",
+                            "sub_fields": [
+                                {
+                                    "key": "field_viph_cat_image",
+                                    "label": "Image",
+                                    "name": "image",
+                                    "type": "image",
+                                    "return_format": "array",
+                                    "preview_size": "medium",
+                                    "parent": "field_viph_cat_items"
+                                },
+                                {
+                                    "key": "field_viph_cat_title",
+                                    "label": "Title",
+                                    "name": "title",
+                                    "type": "text",
+                                    "instructions": "e.g. SPORTS, CONVERTIBLE",
+                                    "parent": "field_viph_cat_items"
+                                },
+                                {
+                                    "key": "field_viph_cat_link",
+                                    "label": "Link (optional)",
+                                    "name": "link",
+                                    "type": "link",
+                                    "return_format": "array",
+                                    "parent": "field_viph_cat_items"
+                                }
+                            ]
+                        }
+                    ],
+                    "min": "",
+                    "max": ""
+                },
+                "layout_viph_faq": {
+                    "key": "layout_viph_faq",
+                    "name": "faq",
+                    "label": "FAQ",
+                    "display": "block",
+                    "sub_fields": [
+                        {
+                            "key": "field_viph_faq_heading",
+                            "label": "Heading",
+                            "name": "heading",
+                            "type": "text",
+                            "default_value": "Frequently Asked Questions",
+                            "parent": "field_viph_sections"
+                        },
+                        {
+                            "key": "field_viph_faq_intro",
+                            "label": "Introduction",
+                            "name": "intro",
+                            "type": "textarea",
+                            "rows": 2,
+                            "default_value": "Everything you need to know about renting a luxury car in Dubai with VIP Transits.",
+                            "parent": "field_viph_sections"
+                        },
+                        {
+                            "key": "field_viph_faq_image",
+                            "label": "Side image (car)",
+                            "name": "side_image",
+                            "type": "image",
+                            "return_format": "array",
+                            "preview_size": "medium",
+                            "instructions": "Cut-out vehicle image shown on the right (e.g. G-Class).",
+                            "parent": "field_viph_sections"
+                        },
+                        {
+                            "key": "field_viph_faq_items",
+                            "label": "Questions",
+                            "name": "faq_items",
+                            "type": "repeater",
+                            "layout": "block",
+                            "button_label": "Add question",
+                            "min": 1,
+                            "parent": "field_viph_sections",
+                            "sub_fields": [
+                                {
+                                    "key": "field_viph_faq_question",
+                                    "label": "Question",
+                                    "name": "question",
+                                    "type": "text",
+                                    "parent": "field_viph_faq_items"
+                                },
+                                {
+                                    "key": "field_viph_faq_answer",
+                                    "label": "Answer",
+                                    "name": "answer",
+                                    "type": "wysiwyg",
+                                    "tabs": "visual",
+                                    "toolbar": "basic",
+                                    "media_upload": 0,
+                                    "parent": "field_viph_faq_items"
+                                }
+                            ]
+                        }
+                    ],
+                    "min": "",
+                    "max": ""
+                },
+                "layout_viph_vehicles": {
+                    "key": "layout_viph_vehicles",
+                    "name": "vehicle_grid",
+                    "label": "Vehicle fleet",
+                    "display": "block",
+                    "sub_fields": [
+                        {
+                            "key": "field_viph_vg_title",
+                            "label": "Section title",
+                            "name": "section_title",
+                            "type": "text",
+                            "default_value": "Our Luxury Car Fleet in Dubai",
+                            "parent": "field_viph_sections"
+                        },
+                        {
+                            "key": "field_viph_vg_subtitle",
+                            "label": "Subtitle",
+                            "name": "section_subtitle",
+                            "type": "text",
+                            "default_value": "Every brand. Every model. Available on demand.",
+                            "parent": "field_viph_sections"
+                        },
+                        {
+                            "key": "field_viph_vg_per_page",
+                            "label": "Vehicles per page",
+                            "name": "posts_per_page",
+                            "type": "number",
+                            "default_value": 9,
+                            "min": 3,
+                            "max": 24,
+                            "parent": "field_viph_sections"
+                        },
+                        {
+                            "key": "field_viph_vg_filters",
+                            "label": "Show sidebar filters",
+                            "name": "show_filters",
+                            "type": "true_false",
+                            "ui": 1,
+                            "default_value": 1,
+                            "parent": "field_viph_sections"
+                        },
+                        {
+                            "key": "field_viph_vg_load_more",
+                            "label": "Show load more button",
+                            "name": "show_load_more",
+                            "type": "true_false",
+                            "ui": 1,
+                            "default_value": 1,
+                            "parent": "field_viph_sections"
+                        }
+                    ],
+                    "min": "",
+                    "max": ""
+                },
+                "layout_viph_features": {
+                    "key": "layout_viph_features",
+                    "name": "feature_columns",
+                    "label": "Feature columns",
+                    "display": "block",
+                    "sub_fields": [
+                        {
+                            "key": "field_viph_feat_title",
+                            "label": "Section title",
+                            "name": "section_title",
+                            "type": "text",
+                            "parent": "field_viph_sections"
+                        },
+                        {
+                            "key": "field_viph_feat_cols",
+                            "label": "Columns",
+                            "name": "columns",
+                            "type": "repeater",
+                            "layout": "table",
+                            "max": 4,
+                            "button_label": "Add column",
+                            "parent": "field_viph_sections",
+                            "sub_fields": [
+                                {
+                                    "key": "field_viph_feat_icon",
+                                    "label": "Icon \/ emoji",
+                                    "name": "icon",
+                                    "type": "text",
+                                    "parent": "field_viph_feat_cols"
+                                },
+                                {
+                                    "key": "field_viph_feat_h",
+                                    "label": "Title",
+                                    "name": "title",
+                                    "type": "text",
+                                    "parent": "field_viph_feat_cols"
+                                },
+                                {
+                                    "key": "field_viph_feat_body",
+                                    "label": "Text",
+                                    "name": "text",
+                                    "type": "textarea",
+                                    "rows": 3,
+                                    "parent": "field_viph_feat_cols"
+                                }
+                            ]
+                        }
+                    ],
+                    "min": "",
+                    "max": ""
+                },
+                "layout_viph_cta": {
+                    "key": "layout_viph_cta",
+                    "name": "cta_banner",
+                    "label": "CTA banner",
+                    "display": "block",
+                    "sub_fields": [
+                        {
+                            "key": "field_viph_cta_heading",
+                            "label": "Heading",
+                            "name": "heading",
+                            "type": "text",
+                            "default_value": "Can't see your car?",
+                            "parent": "field_viph_sections"
+                        },
+                        {
+                            "key": "field_viph_cta_text",
+                            "label": "Text",
+                            "name": "text",
+                            "type": "textarea",
+                            "rows": 3,
+                            "default_value": "Message us anyway - we source any luxury car in Dubai on demand. If it exists in Dubai, we can get it.",
+                            "parent": "field_viph_sections"
+                        },
+                        {
+                            "key": "field_viph_cta_btn",
+                            "label": "WhatsApp button",
+                            "name": "button",
+                            "type": "link",
+                            "instructions": "Link to your WhatsApp chat. Label is shown in caps on the grey segment (e.g. WhatsApp to book).",
+                            "parent": "field_viph_sections"
+                        }
+                    ],
+                    "min": "",
+                    "max": ""
+                }
+            },
+            "min": "",
+            "max": "",
+            "button_label": "Add section"
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "page_type",
+                "operator": "==",
+                "value": "front_page"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": true,
+    "description": "Homepage flexible sections for VIP Transits (car rental).",
+    "show_in_rest": 1,
+    "modified": 1779274592
+}

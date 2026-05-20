@@ -1,0 +1,207 @@
+/**
+ * VIP homepage (ACF block: vip-home). Tune spacing/typography to Figma tokens.
+ */
+
+.vip-home {
+	--vip-max: min(1200px, 100% - 2rem);
+	--vip-radius: 12px;
+	--vip-dark: #0f1419;
+	--vip-muted: #5c6670;
+	--vip-accent: #e91f00;
+	color: var(--vip-dark);
+}
+
+.vip-hero {
+	position: relative;
+	min-height: clamp(320px, 55vh, 560px);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: clamp(2rem, 5vw, 4rem) 1rem;
+	background: #1a1f26 center / cover no-repeat;
+	background-image: var(--vip-hero-bg, none);
+	color: #fff;
+}
+
+.vip-hero::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	background: linear-gradient(120deg, rgba(15, 20, 25, 0.85), rgba(15, 20, 25, 0.35));
+	pointer-events: none;
+}
+
+.vip-hero__inner {
+	position: relative;
+	z-index: 1;
+	max-width: var(--vip-max);
+	width: 100%;
+	text-align: center;
+}
+
+.vip-hero__kicker {
+	margin: 0 0 0.5rem;
+	font-size: 0.75rem;
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+	opacity: 0.9;
+}
+
+.vip-hero__heading {
+	margin: 0 0 1rem;
+	font-size: clamp(2rem, 4vw, 3rem);
+	line-height: 1.1;
+	font-weight: 600;
+}
+
+.vip-hero__sub {
+	margin: 0 auto 1.5rem;
+	max-width: 36rem;
+	font-size: clamp(1rem, 2vw, 1.125rem);
+	line-height: 1.5;
+	opacity: 0.92;
+}
+
+.vip-hero__btn {
+	display: inline-block;
+	padding: 0.85rem 1.75rem;
+	background: var(--vip-accent);
+	color: #fff;
+	text-decoration: none;
+	font-weight: 700;
+	font-size: 0.8rem;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	border-radius: 4px;
+}
+
+.vip-hero__btn:hover,
+.vip-hero__btn:focus-visible {
+	filter: brightness(1.08);
+	color: #fff;
+}
+
+.vip-booking {
+	background: #f4f6f8;
+	padding: clamp(1.5rem, 3vw, 2.5rem) 1rem;
+	border-bottom: 1px solid #e2e6ea;
+}
+
+.vip-booking__inner {
+	max-width: var(--vip-max);
+	margin: 0 auto;
+}
+
+.vip-booking__title {
+	margin: 0 0 0.5rem;
+	font-size: 1.25rem;
+}
+
+.vip-booking__note {
+	margin: 0;
+	color: var(--vip-muted);
+	font-size: 0.95rem;
+}
+
+.vip-vehicles,
+.vip-features {
+	padding: clamp(2.5rem, 5vw, 4rem) 1rem;
+}
+
+.vip-vehicles__inner,
+.vip-features__inner {
+	max-width: var(--vip-max);
+	margin: 0 auto;
+}
+
+.vip-vehicles__title,
+.vip-features__title {
+	margin: 0 0 1.5rem;
+	font-size: clamp(1.35rem, 2.5vw, 1.75rem);
+}
+
+.vip-vehicles__grid {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+	gap: 1.5rem;
+}
+
+.vip-vehicles__card {
+	background: #fff;
+	border: 1px solid #e8ecf0;
+	border-radius: var(--vip-radius);
+	padding: 1rem;
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+}
+
+.vip-vehicles__img {
+	width: 100%;
+	height: auto;
+	border-radius: 8px;
+	aspect-ratio: 16 / 10;
+	object-fit: cover;
+}
+
+.vip-vehicles__name {
+	margin: 0;
+	font-size: 1.05rem;
+}
+
+.vip-vehicles__price {
+	margin: 0;
+	color: var(--vip-muted);
+	font-size: 0.9rem;
+}
+
+.vip-vehicles__link {
+	margin-top: auto;
+	font-size: 0.85rem;
+	font-weight: 600;
+	color: var(--vip-accent);
+	text-decoration: none;
+}
+
+.vip-vehicles__link:hover {
+	text-decoration: underline;
+}
+
+.vip-features__grid {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+	gap: 1.5rem;
+}
+
+.vip-features__col {
+	padding: 1rem;
+	border-radius: var(--vip-radius);
+	background: #fafbfc;
+	border: 1px solid #eef1f4;
+}
+
+.vip-features__icon {
+	display: block;
+	font-size: 1.5rem;
+	margin-bottom: 0.5rem;
+}
+
+.vip-features__h {
+	margin: 0 0 0.35rem;
+	font-size: 1rem;
+}
+
+.vip-features__text {
+	margin: 0;
+	color: var(--vip-muted);
+	font-size: 0.9rem;
+	line-height: 1.5;
+}
+
+/* CTA banner styles live in blocks/vip-home/style.css */

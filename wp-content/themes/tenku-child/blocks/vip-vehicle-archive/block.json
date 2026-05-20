@@ -1,0 +1,20 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "acf/vip-vehicle-archive",
+	"title": "Vehicle fleet archive",
+	"description": "Fleet grid with filters for the vehicle archive.",
+	"category": "layout",
+	"icon": "grid-view",
+	"keywords": [ "fleet", "vehicles", "archive" ],
+	"acf": {
+		"mode": "preview",
+		"renderTemplate": "render.php",
+		"blockVersion": 1
+	},
+	"supports": {
+		"align": [ "wide", "full" ],
+		"anchor": true,
+		"mode": false
+	}
+}

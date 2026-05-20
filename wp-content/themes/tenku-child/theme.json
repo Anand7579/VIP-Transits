@@ -1,0 +1,29 @@
+{
+	"$schema": "https://schemas.wp.org/wp/6.7/theme.json",
+	"version": 3,
+	"settings": {
+		"layout": {
+			"contentSize": "1440px",
+			"wideSize": "1440px"
+		}
+	},
+	"templateParts": [
+		{
+			"area": "header",
+			"name": "header",
+			"title": "Header"
+		},
+		{
+			"area": "footer",
+			"name": "footer",
+			"title": "Footer"
+		}
+	],
+	"customTemplates": [
+		{
+			"name": "single-vip_vehicle",
+			"title": "Single vehicle",
+			"postTypes": [ "vip_vehicle" ]
+		}
+	]
+}

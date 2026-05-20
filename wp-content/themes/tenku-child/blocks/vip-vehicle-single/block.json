@@ -1,0 +1,20 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "acf/vip-vehicle-single",
+	"title": "Vehicle detail",
+	"description": "Single vehicle layout for the fleet CPT.",
+	"category": "layout",
+	"icon": "car",
+	"keywords": [ "vehicle", "fleet", "vip" ],
+	"acf": {
+		"mode": "preview",
+		"renderTemplate": "render.php",
+		"blockVersion": 1
+	},
+	"supports": {
+		"align": [ "wide", "full" ],
+		"anchor": true,
+		"mode": false
+	}
+}
