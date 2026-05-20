@@ -21,3 +21,15 @@ wp-content/database/
 *.sql.gz
 
 node_modules/
+
+# LiteSpeed cache markers (local)
+wp-content/litespeed/
+
+# Plugin Composer / bundled vendor trees (reinstalled with plugins; noisy in git)
+wp-content/plugins/**/vendor/
+
+# Core JS vendor bundle (often untracked after WP updates)
+wp-includes/js/dist/vendor/
+
+# Accidental SSH/local artifacts
+*known_hosts
