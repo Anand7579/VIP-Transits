@@ -128,6 +128,40 @@ function vip_transits_render_settings_page() {
 			submit_button();
 			?>
 		</form>
+
+		<?php if ( function_exists( 'vip_transits_import_acf_json_field_groups' ) ) : ?>
+			<hr />
+			<h2><?php esc_html_e( 'ACF field groups', 'tenku-child' ); ?></h2>
+			<p>
+				<?php
+				esc_html_e(
+					'If Custom Fields → Sync does nothing, import field groups from the theme JSON files here (tenku-child/acf-json). Use this after deploying theme updates.',
+					'tenku-child'
+				);
+				?>
+			</p>
+			<p>
+				<strong><?php esc_html_e( 'Active theme:', 'tenku-child' ); ?></strong>
+				<?php echo esc_html( wp_get_theme()->get( 'Name' ) ); ?>
+				<br />
+				<strong><?php esc_html_e( 'JSON path:', 'tenku-child' ); ?></strong>
+				<code><?php echo esc_html( vip_transits_acf_json_dir() ); ?></code>
+			</p>
+			<form method="post">
+				<?php wp_nonce_field( 'vip_acf_sync_json' ); ?>
+				<input type="hidden" name="vip_acf_sync_json" value="1" />
+				<?php submit_button( __( 'Import ACF JSON from theme', 'tenku-child' ), 'secondary', 'submit', false ); ?>
+			</form>
+			<p class="description">
+				<?php
+				printf(
+					/* translators: 1: field groups admin URL */
+					esc_html__( 'You can also use Custom Fields → Field Groups when “Sync available” appears: %s', 'tenku-child' ),
+					'<a href="' . esc_url( admin_url( 'edit.php?post_type=acf-field-group' ) ) . '">' . esc_html__( 'open field groups', 'tenku-child' ) . '</a>'
+				);
+				?>
+			</p>
+		<?php endif; ?>
 	</div>
 	<?php
 }

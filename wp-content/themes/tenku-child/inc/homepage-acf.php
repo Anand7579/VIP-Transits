@@ -29,27 +29,179 @@ function vip_transits_home_page_id() {
 }
 
 /**
- * Load ACF JSON from the child theme.
+ * Child theme folder for ACF local JSON (requires tenku-child active).
  *
+ * @return string Absolute path with trailing slash.
+ */
+function vip_transits_acf_json_dir() {
+	return trailingslashit( get_stylesheet_directory() ) . 'acf-json';
+}
+
+/**
+ * Register load/save paths early (ACF 5 + 6).
+ */
+function vip_transits_acf_json_setup() {
+	if ( ! function_exists( 'acf_update_setting' ) ) {
+		return;
+	}
+
+	$dir = vip_transits_acf_json_dir();
+	acf_update_setting( 'save_json', $dir );
+	acf_append_setting( 'load_json', $dir );
+}
+add_action( 'acf/init', 'vip_transits_acf_json_setup', 1 );
+
+/**
  * @param array $paths Load paths.
  * @return array
  */
 function vip_transits_acf_json_load_paths( $paths ) {
-	$paths[] = get_stylesheet_directory() . '/acf-json';
-	return $paths;
+	$paths[] = vip_transits_acf_json_dir();
+	return array_values( array_unique( array_filter( (array) $paths ) ) );
 }
 add_filter( 'acf/settings/load_json', 'vip_transits_acf_json_load_paths' );
+add_filter( 'acf/json/load_paths', 'vip_transits_acf_json_load_paths' );
 
 /**
- * Save synced field groups to the child theme.
- *
- * @param string $path Save path.
+ * @param string $path Save path (legacy filter).
  * @return string
  */
 function vip_transits_acf_json_save_path( $path ) {
-	return get_stylesheet_directory() . '/acf-json';
+	return vip_transits_acf_json_dir();
 }
 add_filter( 'acf/settings/save_json', 'vip_transits_acf_json_save_path' );
+
+/**
+ * @param array $paths Save paths (ACF 6+).
+ * @param array $post  Field group array.
+ * @return array
+ */
+function vip_transits_acf_json_save_paths( $paths, $post = array() ) {
+	unset( $post );
+	$paths[] = vip_transits_acf_json_dir();
+	return array_values( array_unique( array_filter( (array) $paths ) ) );
+}
+add_filter( 'acf/json/save_paths', 'vip_transits_acf_json_save_paths', 10, 2 );
+
+/**
+ * Import all field-group JSON files from the child theme into the database.
+ *
+ * @return array{ok:bool,message:string,titles:string[]}
+ */
+function vip_transits_import_acf_json_field_groups() {
+	if ( ! function_exists( 'acf_import_field_group' ) ) {
+		return array(
+			'ok'      => false,
+			'message' => __( 'ACF Pro is not active.', 'tenku-child' ),
+			'titles'  => array(),
+		);
+	}
+
+	$dir = vip_transits_acf_json_dir();
+	if ( ! is_dir( $dir ) || ! is_readable( $dir ) ) {
+		return array(
+			'ok'      => false,
+			'message' => __( 'acf-json folder is missing or not readable in the child theme.', 'tenku-child' ),
+			'titles'  => array(),
+		);
+	}
+
+	// Prevent JSON files being overwritten while importing.
+	acf_update_setting( 'json', false );
+
+	$titles = array();
+	$files  = glob( $dir . '/*.json' );
+	if ( ! $files ) {
+		acf_update_setting( 'json', true );
+		return array(
+			'ok'      => false,
+			'message' => __( 'No JSON field group files found.', 'tenku-child' ),
+			'titles'  => array(),
+		);
+	}
+
+	foreach ( $files as $file ) {
+		$json = json_decode( (string) file_get_contents( $file ), true );
+		if ( ! is_array( $json ) || empty( $json['key'] ) || empty( $json['fields'] ) ) {
+			continue;
+		}
+
+		$existing = function_exists( 'acf_get_field_group' ) ? acf_get_field_group( $json['key'] ) : null;
+		if ( is_array( $existing ) && ! empty( $existing['ID'] ) ) {
+			$json['ID'] = (int) $existing['ID'];
+		}
+
+		$result = acf_import_field_group( $json );
+		if ( is_array( $result ) && ! empty( $result['title'] ) ) {
+			$titles[] = (string) $result['title'];
+		}
+	}
+
+	acf_update_setting( 'json', true );
+
+	if ( function_exists( 'acf_reset_local' ) ) {
+		acf_reset_local();
+	}
+
+	if ( empty( $titles ) ) {
+		return array(
+			'ok'      => false,
+			'message' => __( 'Import failed — check JSON files in acf-json.', 'tenku-child' ),
+			'titles'  => array(),
+		);
+	}
+
+	return array(
+		'ok'      => true,
+		'message' => sprintf(
+			/* translators: %s: comma-separated field group titles */
+			__( 'Imported: %s', 'tenku-child' ),
+			implode( ', ', $titles )
+		),
+		'titles'  => $titles,
+	);
+}
+
+/**
+ * Handle one-click ACF import from Settings → VIP Transits.
+ */
+function vip_transits_handle_acf_json_sync_request() {
+	if ( ! is_admin() || ! current_user_can( 'manage_options' ) ) {
+		return;
+	}
+
+	if ( empty( $_POST['vip_acf_sync_json'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
+		return;
+	}
+
+	check_admin_referer( 'vip_acf_sync_json' );
+
+	$result = vip_transits_import_acf_json_field_groups();
+	set_transient( 'vip_acf_sync_notice', $result, 60 );
+
+	wp_safe_redirect( admin_url( 'options-general.php?page=vip-transits-settings&acf_synced=1' ) );
+	exit;
+}
+add_action( 'admin_init', 'vip_transits_handle_acf_json_sync_request' );
+
+/**
+ * Show result after manual ACF JSON import.
+ */
+function vip_transits_acf_sync_admin_notice() {
+	if ( ! current_user_can( 'manage_options' ) || empty( $_GET['acf_synced'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		return;
+	}
+
+	$result = get_transient( 'vip_acf_sync_notice' );
+	if ( ! is_array( $result ) ) {
+		return;
+	}
+
+	delete_transient( 'vip_acf_sync_notice' );
+	$class = ! empty( $result['ok'] ) ? 'notice-success' : 'notice-error';
+	echo '<div class="notice ' . esc_attr( $class ) . ' is-dismissible"><p>' . esc_html( (string) $result['message'] ) . '</p></div>';
+}
+add_action( 'admin_notices', 'vip_transits_acf_sync_admin_notice' );
 
 /**
  * Register the VIP home ACF block (PHP only — no block.json).
