@@ -43,6 +43,8 @@ if ( ! $home_id ) {
 				get_template_part( 'template-parts/home/section', 'hero' );
 			} elseif ( 'vehicle_categories' === $layout ) {
 				get_template_part( 'template-parts/home/section', 'vehicle-categories' );
+			} elseif ( 'rent_by_occasion' === $layout ) {
+				get_template_part( 'template-parts/home/section', 'rent-by-occasion' );
 			} elseif ( 'faq' === $layout ) {
 				get_template_part( 'template-parts/home/section', 'faq' );
 			} elseif ( 'booking_strip' === $layout ) {

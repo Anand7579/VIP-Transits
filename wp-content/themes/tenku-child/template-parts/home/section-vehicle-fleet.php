@@ -33,9 +33,7 @@ $query = new WP_Query( vip_transits_vehicle_query_args( array( 'posts_per_page' 
 		</header>
 
 		<?php
-		get_template_part(
-			'template-parts/vehicle/fleet',
-			'grid',
+		vip_transits_render_fleet_grid(
 			array(
 				'query'          => $query,
 				'per_page'       => $per_page,

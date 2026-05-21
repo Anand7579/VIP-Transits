@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 $data = vip_transits_get_vehicle_card_data();
-$wa   = $data['whatsapp'] ? $data['whatsapp'] : 'https://wa.me/';
+$wa   = function_exists( 'vip_transits_vehicle_whatsapp_url' ) ? vip_transits_vehicle_whatsapp_url( $data['id'] ) : '';
 $tel  = $data['phone'] ? 'tel:' . preg_replace( '/[^\d+]/', '', $data['phone'] ) : '';
 ?>
 <main class="vip-vehicle-single">
@@ -59,6 +59,7 @@ $tel  = $data['phone'] ? 'tel:' . preg_replace( '/[^\d+]/', '', $data['phone'] )
 					</p>
 				<?php endif; ?>
 
+				<?php if ( $wa ) : ?>
 				<div class="vip-fleet-card__actions vip-vehicle-single__actions">
 					<a class="vip-fleet-card__book" href="<?php echo esc_url( $wa ); ?>" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Book now', 'tenku-child' ); ?></a>
 					<a class="vip-fleet-card__icon vip-fleet-card__icon--wa" href="<?php echo esc_url( $wa ); ?>" target="_blank" rel="noopener noreferrer" aria-label="<?php esc_attr_e( 'WhatsApp', 'tenku-child' ); ?>">
@@ -70,6 +71,7 @@ $tel  = $data['phone'] ? 'tel:' . preg_replace( '/[^\d+]/', '', $data['phone'] )
 						</a>
 					<?php endif; ?>
 				</div>
+				<?php endif; ?>
 
 				<p class="vip-vehicle-single__back">
 					<a href="<?php echo esc_url( get_post_type_archive_link( 'vip_vehicle' ) ); ?>">← <?php esc_html_e( 'Back to fleet', 'tenku-child' ); ?></a>

@@ -222,6 +222,16 @@ function vip_transits_vehicle_rewrite_flush() {
 add_action( 'init', 'vip_transits_vehicle_rewrite_flush', 20 );
 
 /**
+ * Render fleet grid template (WP core does not pass get_template_part $args into templates).
+ *
+ * @param array $args Keys: query (WP_Query), per_page, show_load_more, show_filters.
+ */
+function vip_transits_render_fleet_grid( array $args ) {
+	set_query_var( 'vip_fleet_grid', $args );
+	get_template_part( 'template-parts/vehicle/fleet', 'grid' );
+}
+
+/**
  * Build vehicle query args.
  *
  * @param array $args Overrides.
@@ -273,7 +283,6 @@ function vip_transits_get_vehicle_card_data( $post_id = 0 ) {
 		'doors'        => (string) get_field( 'doors', $post_id ),
 		'seats'        => vip_transits_vehicle_seats_label( $post_id ),
 		'daily_price'  => $price,
-		'whatsapp'     => (string) get_field( 'whatsapp_url', $post_id ),
 		'phone'        => (string) get_field( 'phone_number', $post_id ),
 		'delivery'     => (bool) get_field( 'delivery_hotel_home', $post_id ),
 		'brands'       => $brands,

@@ -29,35 +29,6 @@ function vip_transits_home_page_id() {
 }
 
 /**
- * Build a WhatsApp URL with optional prefilled message (Rent by Occasion cards).
- *
- * @param string $base_url WhatsApp link base (wa.me/…).
- * @param string $title    Card title.
- * @param string $desc     Card description.
- * @return string Escaped URL or empty string.
- */
-function vip_transits_occasions_whatsapp_href( $base_url, $title, $desc = '' ) {
-	$base_url = trim( (string) $base_url );
-	if ( $base_url === '' ) {
-		return '';
-	}
-
-	$message = trim( (string) $title );
-	$desc    = trim( (string) $desc );
-	if ( $desc !== '' ) {
-		$message = $message !== '' ? $message . ' — ' . $desc : $desc;
-	}
-
-	if ( $message === '' ) {
-		return esc_url( $base_url );
-	}
-
-	$sep = str_contains( $base_url, '?' ) ? '&' : '?';
-
-	return esc_url( $base_url . $sep . 'text=' . rawurlencode( $message ) );
-}
-
-/**
  * Load ACF JSON from the child theme.
  *
  * @param array $paths Load paths.

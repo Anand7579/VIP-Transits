@@ -99,11 +99,6 @@ if ( is_array( $image ) ) {
 			</div>
 
 			<aside class="vip-faq__visual"<?php echo ( $img_id || $img_url ) ? '' : ' aria-hidden="true"'; ?>>
-				<div class="vip-faq__bars" aria-hidden="true">
-					<span></span>
-					<span></span>
-					<span></span>
-				</div>
 				<?php if ( $img_id || $img_url ) : ?>
 					<figure class="vip-faq__figure">
 						<?php

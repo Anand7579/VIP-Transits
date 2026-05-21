@@ -120,7 +120,7 @@
 				return false;
 			}
 
-			if (minR && maxR) {
+			if (minR && maxR && price > 0) {
 				var min = parseInt(minR.value, 10);
 				var max = parseInt(maxR.value, 10);
 				if (price < min || price > max) {

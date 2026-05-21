@@ -1,7 +1,6 @@
 <?php
 /**
- * Rent by occasion: featured card + 2×2 grid (Figma).
- * Phase 2: swap data source to CPT query; keep markup/classes for CSS.
+ * Rent by occasion: featured image + 2×2 grid (Figma mosaic layout).
  *
  * @package Tenku_Child
  */
@@ -10,116 +9,100 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-$heading   = get_sub_field( 'heading' );
-$intro     = get_sub_field( 'intro' );
-$wa_base   = get_sub_field( 'whatsapp_base_url' );
-$wa_base   = is_string( $wa_base ) ? trim( $wa_base ) : '';
-$wa_base   = (string) apply_filters( 'vip_transits_occasions_whatsapp_base_url', $wa_base );
-$featured  = get_sub_field( 'featured_card' );
-$has_cards = have_rows( 'occasion_cards' );
+$heading  = get_sub_field( 'heading' );
+$intro    = get_sub_field( 'intro' );
+$featured = get_sub_field( 'featured_card' );
+$cards    = array();
+
+if ( have_rows( 'occasion_cards' ) ) {
+	while ( have_rows( 'occasion_cards' ) ) {
+		the_row();
+		$cards[] = array(
+			'image'        => get_sub_field( 'image' ),
+			'title'        => get_sub_field( 'title' ),
+			'description'  => get_sub_field( 'description' ),
+			'button_label' => get_sub_field( 'button_label' ),
+			'link'         => get_sub_field( 'link' ),
+		);
+	}
+}
 
 $has_featured = is_array( $featured ) && ( ! empty( $featured['image'] ) || ! empty( $featured['title'] ) );
+$has_cards    = ! empty( $cards );
 
 if ( ! $heading && ! $intro && ! $has_featured && ! $has_cards ) {
 	return;
 }
 
 /**
- * Render one occasion card (featured or grid).
- *
- * @param array  $card   ACF image, title, description, link keys.
- * @param string $class  Extra BEM modifier class.
- * @param string $wa_base WhatsApp base URL for prefilled messages (optional).
+ * @param array|null $image ACF image.
+ * @param string     $title Alt text fallback.
  */
-$vip_render_occasion_card = static function ( array $card, $class = '', $wa_base = '' ) {
-	$image = isset( $card['image'] ) ? $card['image'] : null;
-	$title = isset( $card['title'] ) ? (string) $card['title'] : '';
-	$desc  = isset( $card['description'] ) ? (string) $card['description'] : '';
-	$link  = isset( $card['link'] ) && is_array( $card['link'] ) ? $card['link'] : array();
-
-	if ( ! $title && ! $desc && ! ( is_array( $image ) && ! empty( $image['url'] ) ) ) {
+$vip_occasions_render_media = static function ( $image, $title = '' ) {
+	if ( ! is_array( $image ) || ( empty( $image['ID'] ) && empty( $image['url'] ) ) ) {
 		return;
 	}
 
-	$url    = isset( $link['url'] ) ? (string) $link['url'] : '';
-	$target = ! empty( $link['target'] ) ? (string) $link['target'] : '';
-	$label  = isset( $link['title'] ) && $link['title'] !== '' ? (string) $link['title'] : __( 'Learn more', 'tenku-child' );
-
-	$btn_href   = '';
-	$btn_target = '';
-	$btn_rel    = '';
-
-	if ( $wa_base !== '' && function_exists( 'vip_transits_occasions_whatsapp_href' ) ) {
-		$btn_href = vip_transits_occasions_whatsapp_href( $wa_base, $title, $desc );
-		if ( $btn_href !== '' ) {
-			$btn_target = '_blank';
-			$btn_rel    = 'noopener noreferrer';
-		}
-	} elseif ( $url !== '' ) {
-		$btn_href = $url;
-		if ( $target ) {
-			$btn_target = $target;
-			$btn_rel    = 'noopener noreferrer';
-		}
+	echo '<div class="vip-occasions-card__media">';
+	if ( ! empty( $image['ID'] ) ) {
+		echo wp_get_attachment_image(
+			(int) $image['ID'],
+			'large',
+			false,
+			array(
+				'class'    => 'vip-occasions-card__img',
+				'loading'  => 'lazy',
+				'decoding' => 'async',
+				'alt'      => ! empty( $image['alt'] ) ? (string) $image['alt'] : $title,
+			)
+		);
+	} else {
+		printf(
+			'<img class="vip-occasions-card__img" src="%1$s" alt="%2$s" loading="lazy" decoding="async" />',
+			esc_url( $image['url'] ),
+			esc_attr( ! empty( $image['alt'] ) ? (string) $image['alt'] : $title )
+		);
 	}
-
-	if ( $wa_base !== '' && ( ! isset( $link['title'] ) || $link['title'] === '' ) ) {
-		$label = __( 'WhatsApp us', 'tenku-child' );
-	}
-
-	?>
-	<article class="vip-occasions-card<?php echo $class ? ' ' . esc_attr( $class ) : ''; ?>">
-		<?php if ( is_array( $image ) && ! empty( $image['ID'] ) ) : ?>
-			<div class="vip-occasions-card__media">
-				<?php
-				echo wp_get_attachment_image(
-					(int) $image['ID'],
-					'large',
-					false,
-					array(
-						'class'    => 'vip-occasions-card__img',
-						'loading'  => 'lazy',
-						'decoding' => 'async',
-						'alt'      => ! empty( $image['alt'] ) ? (string) $image['alt'] : $title,
-					)
-				);
-				?>
-			</div>
-		<?php elseif ( is_array( $image ) && ! empty( $image['url'] ) ) : ?>
-			<div class="vip-occasions-card__media">
-				<img
-					class="vip-occasions-card__img"
-					src="<?php echo esc_url( $image['url'] ); ?>"
-					alt="<?php echo esc_attr( ! empty( $image['alt'] ) ? (string) $image['alt'] : $title ); ?>"
-					loading="lazy"
-					decoding="async"
-				/>
-			</div>
-		<?php endif; ?>
-
-		<?php if ( $title ) : ?>
-			<h3 class="vip-occasions-card__title"><?php echo esc_html( $title ); ?></h3>
-		<?php endif; ?>
-
-		<?php if ( $desc ) : ?>
-			<p class="vip-occasions-card__text"><?php echo esc_html( $desc ); ?></p>
-		<?php endif; ?>
-
-		<?php if ( $btn_href ) : ?>
-			<a
-				class="vip-occasions-card__btn"
-				href="<?php echo esc_url( $btn_href ); ?>"
-				<?php echo $btn_target ? ' target="' . esc_attr( $btn_target ) . '"' : ''; ?>
-				<?php echo $btn_rel ? ' rel="' . esc_attr( $btn_rel ) . '"' : ''; ?>
-			>
-				<span class="vip-occasions-card__btn-label"><?php echo esc_html( $label ); ?></span>
-				<span class="vip-occasions-card__btn-arrow" aria-hidden="true">→</span>
-			</a>
-		<?php endif; ?>
-	</article>
-	<?php
+	echo '</div>';
 };
 
+/**
+ * @param array $card Card or featured row data.
+ */
+$vip_occasions_render_body = static function ( array $card ) {
+	$title = isset( $card['title'] ) ? (string) $card['title'] : '';
+	$desc  = isset( $card['description'] ) ? (string) $card['description'] : '';
+
+	if ( ! $title && ! $desc ) {
+		return;
+	}
+
+	$label = function_exists( 'vip_transits_occasion_button_label' )
+		? vip_transits_occasion_button_label( $card, __( 'WhatsApp us', 'tenku-child' ) )
+		: __( 'WhatsApp us', 'tenku-child' );
+
+	$btn_href = function_exists( 'vip_transits_whatsapp_href' )
+		? vip_transits_whatsapp_href( vip_transits_occasion_whatsapp_message( $title, $desc ) )
+		: '';
+
+	echo '<div class="vip-occasions-card__body">';
+	if ( $title ) {
+		echo '<h3 class="vip-occasions-card__title">' . esc_html( $title ) . '</h3>';
+	}
+	if ( $desc ) {
+		echo '<p class="vip-occasions-card__text">' . esc_html( $desc ) . '</p>';
+	}
+	if ( $btn_href ) {
+		printf(
+			'<a class="vip-occasions-card__btn" href="%1$s" target="_blank" rel="noopener noreferrer"><span class="vip-occasions-card__btn-label">%2$s</span><span class="vip-occasions-card__btn-arrow" aria-hidden="true">→</span></a>',
+			esc_url( $btn_href ),
+			esc_html( $label )
+		);
+	}
+	echo '</div>';
+};
+
+$feat_title = is_array( $featured ) && ! empty( $featured['title'] ) ? (string) $featured['title'] : '';
 ?>
 <section class="vip-occasions">
 	<div class="vip-occasions__container vip-content-container">
@@ -135,29 +118,34 @@ $vip_render_occasion_card = static function ( array $card, $class = '', $wa_base
 
 		<div class="vip-occasions__layout<?php echo $has_featured ? '' : ' vip-occasions__layout--no-featured'; ?>">
 			<?php if ( $has_featured ) : ?>
-				<div class="vip-occasions__featured">
-					<?php $vip_render_occasion_card( $featured, 'vip-occasions-card--featured', $wa_base ); ?>
+				<div class="vip-occasions__col vip-occasions__col--left">
+					<div class="vip-occasions__feat-media">
+						<?php
+						$feat_image = isset( $featured['image'] ) ? $featured['image'] : null;
+						$vip_occasions_render_media( $feat_image, $feat_title );
+						?>
+					</div>
+					<div class="vip-occasions__feat-body">
+						<?php $vip_occasions_render_body( $featured ); ?>
+					</div>
 				</div>
 			<?php endif; ?>
 
 			<?php if ( $has_cards ) : ?>
-				<div class="vip-occasions__grid">
-					<?php
-					while ( have_rows( 'occasion_cards' ) ) :
-						the_row();
-						$card = array(
-							'image'       => get_sub_field( 'image' ),
-							'title'       => get_sub_field( 'title' ),
-							'description' => get_sub_field( 'description' ),
-							'link'        => get_sub_field( 'link' ),
-						);
-						$vip_render_occasion_card( $card, '', $wa_base );
-					endwhile;
-					?>
+				<div class="vip-occasions__col vip-occasions__col--right">
+					<div class="vip-occasions__grid" aria-label="<?php esc_attr_e( 'Occasion options', 'tenku-child' ); ?>">
+						<?php foreach ( $cards as $card ) : ?>
+							<?php
+							$title = isset( $card['title'] ) ? (string) $card['title'] : '';
+							?>
+							<article class="vip-occasions__card">
+								<?php $vip_occasions_render_media( isset( $card['image'] ) ? $card['image'] : null, $title ); ?>
+								<?php $vip_occasions_render_body( $card ); ?>
+							</article>
+						<?php endforeach; ?>
+					</div>
 				</div>
 			<?php endif; ?>
 		</div>
 	</div>
 </section>
-<?php
-unset( $vip_render_occasion_card );

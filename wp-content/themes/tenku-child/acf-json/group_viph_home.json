@@ -217,6 +217,123 @@
                     "min": "",
                     "max": ""
                 },
+                "layout_viph_occasions": {
+                    "key": "layout_viph_occasions",
+                    "name": "rent_by_occasion",
+                    "label": "Rent by occasion",
+                    "display": "block",
+                    "sub_fields": [
+                        {
+                            "key": "field_viph_occ_heading",
+                            "label": "Heading",
+                            "name": "heading",
+                            "type": "text",
+                            "default_value": "Rent by Occasion",
+                            "parent": "field_viph_sections"
+                        },
+                        {
+                            "key": "field_viph_occ_intro",
+                            "label": "Introduction",
+                            "name": "intro",
+                            "type": "textarea",
+                            "rows": 2,
+                            "default_value": "Every occasion has its perfect car. We handle the sourcing, delivery, and logistics - you focus on the moment.",
+                            "parent": "field_viph_sections"
+                        },
+                        {
+                            "key": "field_viph_occ_featured",
+                            "label": "Featured card (left column)",
+                            "name": "featured_card",
+                            "type": "group",
+                            "layout": "block",
+                            "parent": "field_viph_sections",
+                            "sub_fields": [
+                                {
+                                    "key": "field_viph_occ_feat_image",
+                                    "label": "Image",
+                                    "name": "image",
+                                    "type": "image",
+                                    "return_format": "array",
+                                    "preview_size": "medium",
+                                    "parent": "field_viph_occ_featured"
+                                },
+                                {
+                                    "key": "field_viph_occ_feat_title",
+                                    "label": "Title",
+                                    "name": "title",
+                                    "type": "text",
+                                    "default_value": "Wedding Car Rental Dubai",
+                                    "parent": "field_viph_occ_featured"
+                                },
+                                {
+                                    "key": "field_viph_occ_feat_desc",
+                                    "label": "Description",
+                                    "name": "description",
+                                    "type": "textarea",
+                                    "rows": 3,
+                                    "default_value": "Arrive in a white Rolls Royce Phantom or Bentley Continental GT. We handle decoration, timing, and delivery - you focus on the day.",
+                                    "parent": "field_viph_occ_featured"
+                                },
+                                {
+                                    "key": "field_viph_occ_feat_btn_label",
+                                    "label": "Button label",
+                                    "name": "button_label",
+                                    "type": "text",
+                                    "instructions": "Opens WhatsApp with this card's title and description (number is set under Settings → VIP Transits).",
+                                    "default_value": "PLAN YOUR WEDDING CAR",
+                                    "parent": "field_viph_occ_featured"
+                                }
+                            ]
+                        },
+                        {
+                            "key": "field_viph_occ_cards",
+                            "label": "Grid cards (2×2)",
+                            "name": "occasion_cards",
+                            "type": "repeater",
+                            "layout": "block",
+                            "min": 0,
+                            "max": 4,
+                            "button_label": "Add occasion card",
+                            "parent": "field_viph_sections",
+                            "sub_fields": [
+                                {
+                                    "key": "field_viph_occ_card_image",
+                                    "label": "Image",
+                                    "name": "image",
+                                    "type": "image",
+                                    "return_format": "array",
+                                    "preview_size": "medium",
+                                    "parent": "field_viph_occ_cards"
+                                },
+                                {
+                                    "key": "field_viph_occ_card_title",
+                                    "label": "Title",
+                                    "name": "title",
+                                    "type": "text",
+                                    "parent": "field_viph_occ_cards"
+                                },
+                                {
+                                    "key": "field_viph_occ_card_desc",
+                                    "label": "Description",
+                                    "name": "description",
+                                    "type": "textarea",
+                                    "rows": 3,
+                                    "parent": "field_viph_occ_cards"
+                                },
+                                {
+                                    "key": "field_viph_occ_card_btn_label",
+                                    "label": "Button label",
+                                    "name": "button_label",
+                                    "type": "text",
+                                    "instructions": "Opens WhatsApp with this card's title and description.",
+                                    "parent": "field_viph_occ_cards"
+                                }
+                            ]
+                        }
+                    ],
+                    "min": "",
+                    "max": ""
+                },
                 "layout_viph_faq": {
                     "key": "layout_viph_faq",
                     "name": "faq",
@@ -412,11 +529,12 @@
                             "parent": "field_viph_sections"
                         },
                         {
-                            "key": "field_viph_cta_btn",
-                            "label": "WhatsApp button",
-                            "name": "button",
-                            "type": "link",
-                            "instructions": "Link to your WhatsApp chat. Label is shown in caps on the grey segment (e.g. WhatsApp to book).",
+                            "key": "field_viph_cta_btn_label",
+                            "label": "WhatsApp button label",
+                            "name": "button_label",
+                            "type": "text",
+                            "default_value": "WhatsApp to book",
+                            "instructions": "Opens WhatsApp with the heading and text above (number is set under Settings → VIP Transits).",
                             "parent": "field_viph_sections"
                         }
                     ],
@@ -447,5 +565,5 @@
     "active": true,
     "description": "Homepage flexible sections for VIP Transits (car rental).",
     "show_in_rest": 1,
-    "modified": 1779274592
+    "modified": 1779400001
 }

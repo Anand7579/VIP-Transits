@@ -29,14 +29,12 @@ endif;
 add_action( 'wp_enqueue_scripts', 'child_theme_configurator_css', 10 );
 
 // END ENQUEUE PARENT ACTION
+// Parent + child styles are enqueued above (chld_thm_cfg_*). Do not enqueue parent style.css again.
 
-function tenku_child_enqueue_styles() {
-    wp_enqueue_style(
-        'tenku-parent-style',
-        get_template_directory_uri() . '/style.css'
-    );
+$vip_whatsapp = get_stylesheet_directory() . '/inc/whatsapp-settings.php';
+if ( file_exists( $vip_whatsapp ) ) {
+	require_once $vip_whatsapp;
 }
-add_action( 'wp_enqueue_scripts', 'tenku_child_enqueue_styles' );
 
 $vip_home_acf = get_stylesheet_directory() . '/inc/homepage-acf.php';
 if ( file_exists( $vip_home_acf ) ) {
