@@ -81,8 +81,8 @@ $vip_occasions_render_body = static function ( array $card ) {
 		? vip_transits_occasion_button_label( $card, __( 'WhatsApp us', 'tenku-child' ) )
 		: __( 'WhatsApp us', 'tenku-child' );
 
-	$btn_href = function_exists( 'vip_transits_whatsapp_href' )
-		? vip_transits_whatsapp_href( vip_transits_occasion_whatsapp_message( $title, $desc ) )
+	$btn_href_attr = function_exists( 'vip_transits_whatsapp_href_attr' )
+		? vip_transits_whatsapp_href_attr( vip_transits_occasion_whatsapp_message( $title, $desc ) )
 		: '';
 
 	echo '<div class="vip-occasions-card__body">';
@@ -92,10 +92,10 @@ $vip_occasions_render_body = static function ( array $card ) {
 	if ( $desc ) {
 		echo '<p class="vip-occasions-card__text">' . esc_html( $desc ) . '</p>';
 	}
-	if ( $btn_href ) {
+	if ( $btn_href_attr ) {
 		printf(
 			'<a class="vip-occasions-card__btn" href="%1$s" target="_blank" rel="noopener noreferrer"><span class="vip-occasions-card__btn-label">%2$s</span><span class="vip-occasions-card__btn-arrow" aria-hidden="true">→</span></a>',
-			esc_url( $btn_href ),
+			$btn_href_attr, // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			esc_html( $label )
 		);
 	}

@@ -21,8 +21,8 @@ if ( ! $btn_label && function_exists( 'get_sub_field' ) ) {
 }
 $btn_label = $btn_label ? (string) $btn_label : __( 'WhatsApp to book', 'tenku-child' );
 
-$btn_url = function_exists( 'vip_transits_whatsapp_href' )
-	? vip_transits_whatsapp_href( vip_transits_cta_whatsapp_message( $heading, $text ) )
+$btn_href_attr = function_exists( 'vip_transits_whatsapp_href_attr' )
+	? vip_transits_whatsapp_href_attr( vip_transits_cta_whatsapp_message( $heading, $text ) )
 	: '';
 ?>
 <section class="vip-cta" aria-labelledby="vip-cta-heading">
@@ -37,8 +37,8 @@ $btn_url = function_exists( 'vip_transits_whatsapp_href' )
 				<?php endif; ?>
 			</div>
 
-			<?php if ( $btn_url ) : ?>
-				<a class="vip-cta__wa" href="<?php echo esc_url( $btn_url ); ?>" target="_blank" rel="noopener noreferrer">
+			<?php if ( $btn_href_attr ) : ?>
+				<a class="vip-cta__wa" href="<?php echo $btn_href_attr; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>" target="_blank" rel="noopener noreferrer">
 					<span class="vip-cta__wa-label"><?php echo esc_html( strtoupper( $btn_label ) ); ?></span>
 					<span class="vip-cta__wa-icon" aria-hidden="true">
 						<svg width="26" height="26" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

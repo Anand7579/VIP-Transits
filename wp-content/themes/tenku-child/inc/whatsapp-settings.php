@@ -200,26 +200,69 @@ function vip_transits_whatsapp_base_url() {
 }
 
 /**
- * Full WhatsApp URL with optional prefilled message.
+ * Full WhatsApp click-to-chat URL (official wa.me format).
  *
- * @param string $message Plain-text message (newlines allowed).
- * @return string Escaped URL or empty string.
+ * @see https://faq.whatsapp.com/general/chats/how-to-use-click-to-chat
+ * Multiline messages must use URL-encoded line breaks (%0A). Never pass this
+ * through esc_url() — WordPress clean_url strips %0A from query strings.
+ *
+ * @param string $message Plain-text message (use "\n" between lines).
+ * @return string Raw URL or empty string.
  */
 function vip_transits_whatsapp_href( $message = '' ) {
-	$base = vip_transits_whatsapp_base_url();
-	if ( $base === '' ) {
+	$number = vip_transits_get_whatsapp_number();
+	if ( $number === '' ) {
 		return '';
 	}
 
 	$message = trim( (string) $message );
 	if ( $message === '' ) {
-		return esc_url( $base );
+		return 'https://wa.me/' . $number;
 	}
 
-	$sep = str_contains( $base, '?' ) ? '&' : '?';
-
-	return esc_url( $base . $sep . 'text=' . rawurlencode( $message ) );
+	// Official format: https://wa.me/<number>?text=<urlencoded message>
+	// rawurlencode turns newlines into %0A (required for line breaks in WhatsApp).
+	return 'https://wa.me/' . $number . '?text=' . rawurlencode( $message );
 }
+
+/**
+ * WhatsApp URL safe for HTML href (preserves %0A; do not use esc_url).
+ *
+ * @param string $message Plain-text message.
+ * @return string
+ */
+function vip_transits_whatsapp_href_attr( $message = '' ) {
+	$url = vip_transits_whatsapp_href( $message );
+	if ( $url === '' ) {
+		return '';
+	}
+
+	return esc_attr( $url );
+}
+
+/**
+ * Keep wa.me / api.whatsapp.com line breaks if another layer runs esc_url().
+ *
+ * @param string $good_url     Filtered URL.
+ * @param string $original_url Original URL before clean_url.
+ * @return string
+ */
+function vip_transits_preserve_whatsapp_url_newlines( $good_url, $original_url ) {
+	$check = (string) $original_url;
+	if ( $check === '' ) {
+		$check = (string) $good_url;
+	}
+
+	if (
+		str_contains( $check, 'wa.me' ) ||
+		str_contains( $check, 'api.whatsapp.com' )
+	) {
+		return $check;
+	}
+
+	return $good_url;
+}
+add_filter( 'clean_url', 'vip_transits_preserve_whatsapp_url_newlines', 10, 2 );
 
 /**
  * Back-compat wrapper (Rent by Occasion).
@@ -314,6 +357,7 @@ function vip_transits_vehicle_whatsapp_message( array $data ) {
 	}
 
 	if ( ! empty( $data['permalink'] ) ) {
+		$lines[] = '';
 		$lines[] = $data['permalink'];
 	}
 
@@ -333,6 +377,21 @@ function vip_transits_vehicle_whatsapp_url( $post_id = 0 ) {
 	}
 
 	return vip_transits_whatsapp_href( vip_transits_vehicle_whatsapp_message( vip_transits_get_vehicle_card_data( $post_id ) ) );
+}
+
+/**
+ * Vehicle WhatsApp href attribute (use in templates instead of esc_url).
+ *
+ * @param int $post_id Post ID.
+ * @return string
+ */
+function vip_transits_vehicle_whatsapp_href_attr( $post_id = 0 ) {
+	$post_id = $post_id ? (int) $post_id : (int) get_the_ID();
+	if ( ! $post_id ) {
+		return '';
+	}
+
+	return vip_transits_whatsapp_href_attr( vip_transits_vehicle_whatsapp_message( vip_transits_get_vehicle_card_data( $post_id ) ) );
 }
 
 /**
