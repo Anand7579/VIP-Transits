@@ -200,13 +200,26 @@ function vip_transits_whatsapp_base_url() {
 }
 
 /**
- * Full WhatsApp click-to-chat URL (official wa.me format).
+ * Encode message lines for wa.me ?text= (literal %0A between lines).
  *
  * @see https://faq.whatsapp.com/general/chats/how-to-use-click-to-chat
- * Multiline messages must use URL-encoded line breaks (%0A). Never pass this
- * through esc_url() — WordPress clean_url strips %0A from query strings.
+ * @param string[] $lines Non-empty lines; empty strings become blank lines.
+ * @return string Encoded query value (no leading ?).
+ */
+function vip_transits_whatsapp_encode_lines( array $lines ) {
+	$parts = array();
+
+	foreach ( $lines as $line ) {
+		$parts[] = rawurlencode( (string) $line );
+	}
+
+	return implode( '%0A', $parts );
+}
+
+/**
+ * Full WhatsApp click-to-chat URL (official wa.me format).
  *
- * @param string $message Plain-text message (use "\n" between lines).
+ * @param string|string[] $message Plain text, or array of lines (preferred).
  * @return string Raw URL or empty string.
  */
 function vip_transits_whatsapp_href( $message = '' ) {
@@ -215,20 +228,33 @@ function vip_transits_whatsapp_href( $message = '' ) {
 		return '';
 	}
 
+	if ( is_array( $message ) ) {
+		$lines = array_values( $message );
+		if ( empty( $lines ) ) {
+			return 'https://wa.me/' . $number;
+		}
+		$encoded = vip_transits_whatsapp_encode_lines( $lines );
+		return 'https://wa.me/' . $number . '?text=' . $encoded;
+	}
+
 	$message = trim( (string) $message );
 	if ( $message === '' ) {
 		return 'https://wa.me/' . $number;
 	}
 
-	// Official format: https://wa.me/<number>?text=<urlencoded message>
-	// rawurlencode turns newlines into %0A (required for line breaks in WhatsApp).
+	if ( str_contains( $message, "\n" ) || str_contains( $message, "\r" ) ) {
+		$lines = preg_split( '/\r\n|\r|\n/', $message );
+		$encoded = vip_transits_whatsapp_encode_lines( $lines );
+		return 'https://wa.me/' . $number . '?text=' . $encoded;
+	}
+
 	return 'https://wa.me/' . $number . '?text=' . rawurlencode( $message );
 }
 
 /**
- * WhatsApp URL safe for HTML href (preserves %0A; do not use esc_url).
+ * WhatsApp URL safe for HTML href (preserves %0A; never use esc_url).
  *
- * @param string $message Plain-text message.
+ * @param string|string[] $message Plain text or lines array.
  * @return string
  */
 function vip_transits_whatsapp_href_attr( $message = '' ) {
@@ -237,7 +263,7 @@ function vip_transits_whatsapp_href_attr( $message = '' ) {
 		return '';
 	}
 
-	return esc_attr( $url );
+	return htmlspecialchars( $url, ENT_QUOTES, 'UTF-8' );
 }
 
 /**
@@ -285,14 +311,16 @@ function vip_transits_occasions_whatsapp_href( $base_url, $title, $desc = '' ) {
  * @return string
  */
 function vip_transits_occasion_whatsapp_message( $title, $desc = '' ) {
+	$lines = array();
 	$title = trim( (string) $title );
 	$desc  = trim( (string) $desc );
-
-	if ( $title !== '' && $desc !== '' ) {
-		return $title . ' — ' . $desc;
+	if ( $title !== '' ) {
+		$lines[] = $title;
 	}
-
-	return $title !== '' ? $title : $desc;
+	if ( $desc !== '' ) {
+		$lines[] = $desc;
+	}
+	return $lines;
 }
 
 /**
@@ -315,12 +343,12 @@ function vip_transits_occasion_button_label( array $card, $default = '' ) {
 }
 
 /**
- * Prefilled message for a fleet vehicle.
+ * Lines for a fleet vehicle WhatsApp message (one line = one row in chat).
  *
  * @param array $data From vip_transits_get_vehicle_card_data().
- * @return string
+ * @return string[]
  */
-function vip_transits_vehicle_whatsapp_message( array $data ) {
+function vip_transits_vehicle_whatsapp_lines( array $data ) {
 	$lines = array();
 
 	if ( ! empty( $data['title'] ) ) {
@@ -361,7 +389,17 @@ function vip_transits_vehicle_whatsapp_message( array $data ) {
 		$lines[] = $data['permalink'];
 	}
 
-	return implode( "\n", $lines );
+	return $lines;
+}
+
+/**
+ * Prefilled message for a fleet vehicle (plain text with newlines).
+ *
+ * @param array $data From vip_transits_get_vehicle_card_data().
+ * @return string
+ */
+function vip_transits_vehicle_whatsapp_message( array $data ) {
+	return implode( "\n", vip_transits_vehicle_whatsapp_lines( $data ) );
 }
 
 /**
@@ -376,7 +414,7 @@ function vip_transits_vehicle_whatsapp_url( $post_id = 0 ) {
 		return '';
 	}
 
-	return vip_transits_whatsapp_href( vip_transits_vehicle_whatsapp_message( vip_transits_get_vehicle_card_data( $post_id ) ) );
+	return vip_transits_whatsapp_href( vip_transits_vehicle_whatsapp_lines( vip_transits_get_vehicle_card_data( $post_id ) ) );
 }
 
 /**
@@ -391,7 +429,7 @@ function vip_transits_vehicle_whatsapp_href_attr( $post_id = 0 ) {
 		return '';
 	}
 
-	return vip_transits_whatsapp_href_attr( vip_transits_vehicle_whatsapp_message( vip_transits_get_vehicle_card_data( $post_id ) ) );
+	return vip_transits_whatsapp_href_attr( vip_transits_vehicle_whatsapp_lines( vip_transits_get_vehicle_card_data( $post_id ) ) );
 }
 
 /**
@@ -402,6 +440,14 @@ function vip_transits_vehicle_whatsapp_href_attr( $post_id = 0 ) {
  * @return string
  */
 function vip_transits_cta_whatsapp_message( $heading, $text ) {
-	$parts = array_filter( array( trim( (string) $heading ), trim( (string) $text ) ) );
-	return implode( "\n", $parts );
+	$parts = array();
+	$heading = trim( (string) $heading );
+	$text    = trim( (string) $text );
+	if ( $heading !== '' ) {
+		$parts[] = $heading;
+	}
+	if ( $text !== '' ) {
+		$parts[] = $text;
+	}
+	return $parts;
 }

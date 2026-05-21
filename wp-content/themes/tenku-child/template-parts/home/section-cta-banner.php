@@ -22,7 +22,7 @@ if ( ! $btn_label && function_exists( 'get_sub_field' ) ) {
 $btn_label = $btn_label ? (string) $btn_label : __( 'WhatsApp to book', 'tenku-child' );
 
 $btn_href_attr = function_exists( 'vip_transits_whatsapp_href_attr' )
-	? vip_transits_whatsapp_href_attr( vip_transits_cta_whatsapp_message( $heading, $text ) )
+	? vip_transits_whatsapp_href_attr( vip_transits_cta_whatsapp_message( $heading, $text ) ) // Lines array → %0A in URL.
 	: '';
 ?>
 <section class="vip-cta" aria-labelledby="vip-cta-heading">

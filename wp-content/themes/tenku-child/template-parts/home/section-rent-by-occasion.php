@@ -82,7 +82,7 @@ $vip_occasions_render_body = static function ( array $card ) {
 		: __( 'WhatsApp us', 'tenku-child' );
 
 	$btn_href_attr = function_exists( 'vip_transits_whatsapp_href_attr' )
-		? vip_transits_whatsapp_href_attr( vip_transits_occasion_whatsapp_message( $title, $desc ) )
+		? vip_transits_whatsapp_href_attr( vip_transits_occasion_whatsapp_message( $title, $desc ) ) // Lines array.
 		: '';
 
 	echo '<div class="vip-occasions-card__body">';
