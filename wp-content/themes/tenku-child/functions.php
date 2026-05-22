@@ -56,6 +56,11 @@ if ( file_exists( $vip_theme_icons ) ) {
 	require_once $vip_theme_icons;
 }
 
+$vip_scroll_animations = get_stylesheet_directory() . '/inc/scroll-animations.php';
+if ( file_exists( $vip_scroll_animations ) ) {
+	require_once $vip_scroll_animations;
+}
+
 /**
  * WordPress Studio / large Figma PNG uploads: avoid thumbnail generation failures.
  */

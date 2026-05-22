@@ -40,7 +40,7 @@ if ( is_array( $image ) ) {
 	}
 }
 ?>
-<section class="vip-faq">
+<section class="vip-faq" data-vip-section>
 	<div class="vip-faq__container vip-content-container">
 		<header class="vip-faq__header">
 			<?php if ( $heading ) : ?>
@@ -108,8 +108,10 @@ if ( is_array( $image ) ) {
 								'large',
 								false,
 								array(
-									'class' => 'vip-faq__car',
-									'alt'   => $img_alt,
+									'class'    => 'vip-faq__car',
+									'alt'      => $img_alt,
+									'loading'  => 'lazy',
+									'decoding' => 'async',
 								)
 							);
 						} elseif ( $img_url ) {

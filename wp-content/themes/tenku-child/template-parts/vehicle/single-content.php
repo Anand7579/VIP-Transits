@@ -14,7 +14,6 @@ if ( empty( $d['id'] ) ) {
 	return;
 }
 
-$home_url   = home_url( '/' );
 $fleet_url  = get_post_type_archive_link( 'vip_vehicle' );
 $price_fmt  = $d['daily_price'] ? number_format_i18n( (int) $d['daily_price'] ) : '';
 $deposit_fmt = number_format_i18n( (int) $d['security_deposit'] );
@@ -117,18 +116,10 @@ $seo_heading = sprintf(
 );
 ?>
 <article <?php post_class( 'vip-vdetail' ); ?>>
+	<?php get_template_part( 'template-parts/vehicle/single', 'masthead', array( 'd' => $d ) ); ?>
+
 	<div class="vip-vdetail__container vip-content-container">
-		<nav class="vip-vdetail__breadcrumb" aria-label="<?php esc_attr_e( 'Breadcrumb', 'tenku-child' ); ?>">
-			<a href="<?php echo esc_url( $home_url ); ?>"><?php esc_html_e( 'Home', 'tenku-child' ); ?></a>
-			<span class="vip-vdetail__breadcrumb-sep" aria-hidden="true">/</span>
-			<span class="vip-vdetail__breadcrumb-current"><?php esc_html_e( 'CAR DETAILS', 'tenku-child' ); ?></span>
-		</nav>
-
-		<header class="vip-vdetail__page-title">
-			<h1 class="vip-vdetail__h1"><?php echo esc_html( $d['display_title'] ); ?></h1>
-		</header>
-
-		<div class="vip-vdetail__hero">
+		<div class="vip-vdetail__hero" data-vip-section>
 			<div class="vip-vdetail__hero-main">
 				<div class="vip-vdetail__hero-media">
 					<?php if ( $d['hero_image'] ) : ?>
@@ -158,13 +149,6 @@ $seo_heading = sprintf(
 			</div>
 
 			<aside class="vip-vdetail__booking" aria-label="<?php esc_attr_e( 'Booking summary', 'tenku-child' ); ?>">
-				<?php if ( $price_fmt ) : ?>
-					<p class="vip-vdetail__booking-from">
-						<span class="vip-vdetail__booking-from-label"><?php esc_html_e( 'From', 'tenku-child' ); ?></span>
-						<span class="vip-vdetail__booking-from-price"><?php echo esc_html( sprintf( 'AED %s/day', $price_fmt ) ); ?></span>
-					</p>
-				<?php endif; ?>
-
 				<table class="vip-vdetail__booking-table">
 					<tbody>
 						<tr>
@@ -190,33 +174,11 @@ $seo_heading = sprintf(
 					</tbody>
 				</table>
 
-				<?php if ( $d['wa_href_attr'] ) : ?>
-					<div class="vip-vdetail__booking-actions">
-						<a class="vip-vdetail__btn vip-vdetail__btn--primary" href="<?php echo $d['wa_href_attr']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>" target="_blank" rel="noopener noreferrer">
-							<?php esc_html_e( 'Book in a Few Seconds', 'tenku-child' ); ?>
-						</a>
-						<a class="vip-vdetail__btn vip-vdetail__btn--wa" href="<?php echo $d['wa_href_attr']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>" target="_blank" rel="noopener noreferrer">
-							<?php esc_html_e( 'Chat on WhatsApp Now', 'tenku-child' ); ?>
-						</a>
-					</div>
-				<?php endif; ?>
-
-				<p class="vip-vdetail__booking-note">
-					<?php
-					echo esc_html(
-						sprintf(
-							/* translators: %s: deposit amount */
-							__( 'Refundable deposit: AED %s', 'tenku-child' ),
-							$deposit_fmt
-						)
-					);
-					?>
-				</p>
 				<p class="vip-vdetail__booking-response"><?php esc_html_e( 'Response within 15 minutes · No form · Instant confirmation', 'tenku-child' ); ?></p>
 			</aside>
 		</div>
 
-		<section class="vip-vdetail__intro">
+		<section class="vip-vdetail__intro" data-vip-section>
 			<h2 class="vip-vdetail__h2"><?php echo esc_html( $d['short_name'] ); ?></h2>
 			<?php if ( $d['intro'] ) : ?>
 				<p class="vip-vdetail__lead"><?php echo esc_html( $d['intro'] ); ?></p>
@@ -224,7 +186,7 @@ $seo_heading = sprintf(
 		</section>
 
 		<?php if ( ! empty( $d['included'] ) ) : ?>
-			<section class="vip-vdetail__included">
+			<section class="vip-vdetail__included" data-vip-section>
 				<h2 class="vip-vdetail__section-title vip-vdetail__section-title--rule-only"><?php echo esc_html( $included_heading ); ?></h2>
 				<ul class="vip-vdetail__included-list">
 					<?php foreach ( $d['included'] as $item ) : ?>
@@ -241,7 +203,7 @@ $seo_heading = sprintf(
 		<?php endif; ?>
 
 		<?php if ( ! empty( $d['specs'] ) ) : ?>
-			<section class="vip-vdetail__specs">
+			<section class="vip-vdetail__specs" data-vip-section>
 				<h2 class="vip-vdetail__section-title"><?php echo esc_html( $specs_heading ); ?></h2>
 				<table class="vip-vdetail__spec-table">
 					<thead>
@@ -264,7 +226,7 @@ $seo_heading = sprintf(
 
 		<div class="vip-vdetail__mid<?php echo empty( $d['related'] ) ? ' vip-vdetail__mid--no-related' : ''; ?>">
 			<?php if ( ! empty( $d['related'] ) ) : ?>
-				<section class="vip-vdetail__related">
+				<section class="vip-vdetail__related" data-vip-section>
 					<h2 class="vip-vdetail__section-title"><?php echo esc_html( $related_heading ); ?></h2>
 					<ul class="vip-vdetail__related-list">
 						<?php
@@ -302,7 +264,7 @@ $seo_heading = sprintf(
 		</div>
 
 		<?php if ( ! empty( $d['variants'] ) ) : ?>
-			<section class="vip-vdetail__variants">
+			<section class="vip-vdetail__variants" data-vip-section>
 				<h2 class="vip-vdetail__section-title"><?php echo esc_html( $variants_heading ); ?></h2>
 				<ul class="vip-vdetail__variants-grid">
 					<?php foreach ( $d['variants'] as $variant ) : ?>
@@ -324,7 +286,7 @@ $seo_heading = sprintf(
 			</section>
 		<?php endif; ?>
 
-		<section class="vip-vdetail__steps">
+		<section class="vip-vdetail__steps" data-vip-section>
 			<h2 class="vip-vdetail__section-title"><?php echo esc_html( $book_heading ); ?></h2>
 			<ol class="vip-vdetail__steps-list">
 				<?php foreach ( $d['booking_steps'] as $i => $step ) : ?>
@@ -363,7 +325,7 @@ $seo_heading = sprintf(
 		<?php endif; ?>
 
 		<?php if ( ! empty( $d['routes'] ) ) : ?>
-			<section class="vip-vdetail__routes">
+			<section class="vip-vdetail__routes" data-vip-section>
 				<h2 class="vip-vdetail__section-title"><?php echo esc_html( $routes_heading ); ?></h2>
 				<ul class="vip-vdetail__routes-grid">
 					<?php foreach ( $d['routes'] as $route ) : ?>
@@ -379,7 +341,7 @@ $seo_heading = sprintf(
 		<?php endif; ?>
 
 		<?php if ( $d['seo_content'] || get_the_content() ) : ?>
-			<section class="vip-vdetail__seo">
+			<section class="vip-vdetail__seo" data-vip-section>
 				<h2 class="vip-vdetail__section-title"><?php echo esc_html( $seo_heading ); ?></h2>
 				<div class="vip-vdetail__seo-body">
 					<?php
@@ -394,7 +356,7 @@ $seo_heading = sprintf(
 		<?php endif; ?>
 
 		<?php if ( ! empty( $faq_items ) ) : ?>
-			<section class="vip-vdetail__faq vip-vdetail__faq--panel">
+			<section class="vip-vdetail__faq vip-vdetail__faq--panel" data-vip-section>
 				<h2 class="vip-vdetail__faq-title"><?php echo esc_html( $faq_heading ); ?></h2>
 				<div class="vip-vdetail__faq-accordion" data-vip-faq-accordion>
 					<?php

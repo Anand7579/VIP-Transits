@@ -12,13 +12,24 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Fleet block asset URLs.
  *
- * @return array{style:string,script:string,version:string}
+ * @return array{style:string,script:string,version:string,style_version:string,script_version:string}
  */
 function vip_transits_fleet_block_assets() {
+	$theme_dir = get_stylesheet_directory();
+	$theme_ver = wp_get_theme()->get( 'Version' );
+
+	$style_path = $theme_dir . '/assets/css/vehicle-fleet.css';
+	$script_path = $theme_dir . '/assets/js/vehicle-fleet.js';
+
+	$style_ver  = file_exists( $style_path ) ? (string) filemtime( $style_path ) : $theme_ver;
+	$script_ver = file_exists( $script_path ) ? (string) filemtime( $script_path ) : $theme_ver;
+
 	return array(
-		'style'   => get_stylesheet_directory_uri() . '/assets/css/vehicle-fleet.css',
-		'script'  => get_stylesheet_directory_uri() . '/assets/js/vehicle-fleet.js',
-		'version' => wp_get_theme()->get( 'Version' ),
+		'style'        => get_stylesheet_directory_uri() . '/assets/css/vehicle-fleet.css',
+		'script'       => get_stylesheet_directory_uri() . '/assets/js/vehicle-fleet.js',
+		'version'      => $style_ver,
+		'style_version'  => $style_ver,
+		'script_version' => $script_ver,
 	);
 }
 
@@ -91,14 +102,14 @@ function vip_transits_enqueue_fleet_block_assets() {
 			'vip-vehicle-fleet',
 			$assets['style'],
 			array( 'chld_thm_cfg_child', 'chld_thm_cfg_parent' ),
-			$assets['version']
+			$assets['style_version']
 		);
 
 		wp_enqueue_script(
 			'vip-fleet',
 			$assets['script'],
 			array(),
-			$assets['version'],
+			$assets['script_version'],
 			true
 		);
 

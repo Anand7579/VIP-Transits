@@ -1,0 +1,177 @@
+/**
+ * Scroll-triggered section lazy reveal + card / category / FAQ car animations.
+ */
+
+/* Native lazy render for below-fold sections (hero excluded — always visible) */
+[data-vip-section]:not(.vip-hero) {
+	content-visibility: auto;
+	contain-intrinsic-size: auto 420px;
+}
+
+/* Hero banner: media fade + content rises bottom → top */
+.vip-hero__media {
+	opacity: 0;
+	transform: scale(1.04);
+	will-change: transform, opacity;
+}
+
+.vip-hero.is-hero-animated .vip-hero__media {
+	opacity: 1;
+	transform: scale(1);
+	transition:
+		opacity 0.9s ease,
+		transform 1.15s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.vip-hero__eyebrow,
+.vip-hero__title,
+.vip-hero__search {
+	opacity: 0;
+	transform: translate3d(0, 32px, 0);
+	will-change: transform, opacity;
+}
+
+.vip-hero.is-hero-animated .vip-hero__eyebrow {
+	opacity: 1;
+	transform: translate3d(0, 0, 0);
+	transition:
+		transform 0.65s cubic-bezier(0.22, 1, 0.36, 1),
+		opacity 0.5s ease;
+	transition-delay: 0.2s;
+}
+
+.vip-hero.is-hero-animated .vip-hero__title {
+	opacity: 1;
+	transform: translate3d(0, 0, 0);
+	transition:
+		transform 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+		opacity 0.55s ease;
+	transition-delay: 0.35s;
+}
+
+.vip-hero.is-hero-animated .vip-hero__search {
+	opacity: 1;
+	transform: translate3d(0, 0, 0);
+	transition:
+		transform 0.65s cubic-bezier(0.22, 1, 0.36, 1),
+		opacity 0.5s ease;
+	transition-delay: 0.5s;
+}
+
+.vip-hero__prop {
+	opacity: 0;
+	transform: translate3d(0, 24px, 0);
+	will-change: transform, opacity;
+}
+
+.vip-hero.is-hero-animated .vip-hero__prop {
+	opacity: 1;
+	transform: translate3d(0, 0, 0);
+	transition:
+		transform 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+		opacity 0.45s ease;
+	transition-delay: var(--vip-hero-prop-delay, 0.65s);
+}
+
+/* Cards: bottom → top */
+.vip-animate-card {
+	opacity: 0;
+	transform: translate3d(0, 48px, 0);
+	will-change: transform, opacity;
+}
+
+.vip-animate-card.is-card-animated {
+	opacity: 1;
+	transform: translate3d(0, 0, 0);
+	transition:
+		transform 0.65s cubic-bezier(0.22, 1, 0.36, 1),
+		opacity 0.5s ease;
+}
+
+/* Vehicle categories: car right → left, then title from below */
+.vip-categories__item .vip-categories__media {
+	opacity: 0;
+	transform: translate3d(72px, 0, 0);
+	will-change: transform, opacity;
+}
+
+.vip-categories__item.is-cat-animated .vip-categories__media {
+	opacity: 1;
+	transform: translate3d(0, 0, 0);
+	transition:
+		transform 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+		opacity 0.55s ease;
+	transition-delay: var(--vip-cat-delay, 0s);
+}
+
+.vip-categories__item .vip-categories__label {
+	opacity: 0;
+	transform: translate3d(0, 32px, 0);
+	will-change: transform, opacity;
+}
+
+.vip-categories__item.is-cat-animated .vip-categories__label {
+	opacity: 1;
+	transform: translate3d(0, 0, 0);
+	transition:
+		transform 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+		opacity 0.45s ease;
+	transition-delay: calc(var(--vip-cat-delay, 0s) + 0.75s);
+}
+
+/* FAQ: car slides in from right to resting position (left column side) */
+.vip-faq__visual .vip-faq__car {
+	opacity: 0;
+	transform: translate3d(220px, 0, 0);
+	will-change: transform, opacity;
+}
+
+@media (max-width: 900px) {
+	.vip-faq__visual .vip-faq__car {
+		transform: translate3d(120px, 0, 0);
+	}
+}
+
+.vip-faq__visual.is-faq-car-animated .vip-faq__car {
+	opacity: 1;
+	transform: translate3d(0, 0, 0);
+	transition:
+		transform 1s cubic-bezier(0.22, 1, 0.36, 1),
+		opacity 0.65s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	[data-vip-section] {
+		content-visibility: visible;
+		contain-intrinsic-size: none;
+	}
+
+	.vip-hero__media,
+	.vip-hero__eyebrow,
+	.vip-hero__title,
+	.vip-hero__search,
+	.vip-hero__prop,
+	.vip-animate-card,
+	.vip-categories__item .vip-categories__media,
+	.vip-categories__item .vip-categories__label,
+	.vip-faq__visual .vip-faq__car {
+		opacity: 1;
+		transform: none;
+		transition: none;
+		will-change: auto;
+	}
+}
+
+html.vip-motion-reduced .vip-hero__media,
+html.vip-motion-reduced .vip-hero__eyebrow,
+html.vip-motion-reduced .vip-hero__title,
+html.vip-motion-reduced .vip-hero__search,
+html.vip-motion-reduced .vip-hero__prop,
+html.vip-motion-reduced .vip-animate-card,
+html.vip-motion-reduced .vip-categories__item .vip-categories__media,
+html.vip-motion-reduced .vip-categories__item .vip-categories__label,
+html.vip-motion-reduced .vip-faq__visual .vip-faq__car {
+	opacity: 1;
+	transform: none;
+	transition: none;
+}

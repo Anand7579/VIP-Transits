@@ -13,7 +13,7 @@ if ( ! have_rows( 'categories' ) ) {
 	return;
 }
 ?>
-<section class="vip-categories">
+<section class="vip-categories" data-vip-section>
 	<div class="vip-categories__container vip-content-container">
 		<ul class="vip-categories__grid">
 			<?php

@@ -732,7 +732,7 @@
  .vip-occasions__rule {
 	 margin: clamp(1.3rem, 2.5vw, 0rem) 0 0;
 	 border: 0;
-	 border-top: 1px solid var(--vip-occ-ink);
+	 border-top: 3px solid var(--vip-occ-ink);
  }
  
  /* Two columns: featured (left) + 2×2 mosaic (right). No display:contents. */
@@ -901,9 +901,9 @@
  .vip-occasions-card__title {
 	 margin: 1.125rem 0 0.5rem;
 	 font-family: var(--vip-occ-serif);
-	 font-weight: 400;
-	 font-size: clamp(1.125rem, 1.8vw, 1.375rem);
-	 line-height: 1.25;
+	 font-weight: 500;
+	 font-size: 18px;
+	 line-height: 18px;
 	 letter-spacing: -0.015em;
 	 color: var(--vip-occ-ink);
  }
@@ -917,10 +917,10 @@
 	 margin: 0 0 1.25rem;
 	 font-family: var(--vip-occ-serif);
 	 font-weight: 400;
-	 font-size: clamp(0.9375rem, 1.2vw, 1rem);
-	 line-height: 1.55;
+	 font-size: 14px;
+	 line-height: 20px;
 	 letter-spacing: -0.01em;
-	 color: var(--vip-occ-muted);
+	 color: #000000;
  }
  
  @media (min-width: 900px) {
@@ -946,10 +946,10 @@
 	 background: transparent !important;
 	 color: var(--vip-occ-ink) !important;
 	 font-family: var(--vip-occ-sans);
-	 font-size: 0.6875rem;
+	 font-size: 12px;
 	 font-weight: 600;
-	 line-height: 1.2;
-	 letter-spacing: 0.14em;
+	 line-height: 12px;
+	 letter-spacing: -1%;
 	 text-transform: uppercase;
 	 text-decoration: none !important;
 	 box-shadow: none;
@@ -1145,7 +1145,6 @@
 	 font-size: 12px;
 	 font-weight: 600;
 	 font-style: normal;
-	 line-height: 12px;
 	 letter-spacing: -0.01em;
 	 text-align: center;
 	 text-transform: uppercase;
@@ -1385,9 +1384,9 @@
  .vip-cta__heading {
 	 margin: 0 0 0.65rem;
 	 font-family: inherit;
-	 font-weight: 400;
-	 font-size: clamp(1.75rem, 3vw, 2rem);
-	 line-height: 1.2;
+	 font-weight: 500;
+	 font-size: 36px;
+	 line-height: 24px;
 	 letter-spacing: -0.01em;
 	 color: #fff;
  }
@@ -1396,8 +1395,8 @@
 	 margin: 0;
 	 font-family: inherit;
 	 font-weight: 400;
-	 font-size: clamp(0.95rem, 1.5vw, 1rem);
-	 line-height: 1.5;
+	 font-size: 16px;
+	 line-height: 16px;
 	 letter-spacing: -0.01em;
 	 color: #fff;
  }
@@ -1417,13 +1416,13 @@
 	 justify-content: center;
 	 min-height: 52px;
 	 padding: 0 clamp(1.25rem, 2.5vw, 1.75rem);
-	 background: #f2f2f2;
+	 background: #F5F5F5;
 	 color: #000;
 	 font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 	 font-size: 12px;
 	 font-weight: 600;
-	 line-height: 1;
-	 letter-spacing: 0.1em;
+	 line-height: 12px;
+	 letter-spacing: -1%;
 	 text-transform: uppercase;
 	 white-space: nowrap;
  }

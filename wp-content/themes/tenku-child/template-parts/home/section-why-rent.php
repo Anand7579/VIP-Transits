@@ -72,7 +72,7 @@ if ( ! $heading && empty( $cards ) ) {
 	return;
 }
 ?>
-<section class="vip-why-rent" aria-labelledby="vip-why-rent-heading">
+<section class="vip-why-rent" data-vip-section aria-labelledby="vip-why-rent-heading">
 	<div class="vip-why-rent__container vip-content-container">
 		<header class="vip-why-rent__header">
 			<?php if ( $heading ) : ?>

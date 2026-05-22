@@ -77,7 +77,7 @@ if ( ! $heading && empty( $locations ) ) {
 	return;
 }
 ?>
-<section class="vip-delivery" aria-labelledby="vip-delivery-heading">
+<section class="vip-delivery" data-vip-section aria-labelledby="vip-delivery-heading">
 	<div class="vip-delivery__container vip-content-container">
 		<header class="vip-delivery__header">
 			<?php if ( $heading ) : ?>

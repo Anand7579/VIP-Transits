@@ -25,7 +25,7 @@ $btn_href_attr = function_exists( 'vip_transits_whatsapp_href_attr' )
 	? vip_transits_whatsapp_href_attr( vip_transits_cta_whatsapp_message( $heading, $text ) ) // Lines array → %0A in URL.
 	: '';
 ?>
-<section class="vip-cta" aria-labelledby="vip-cta-heading">
+<section class="vip-cta" data-vip-section aria-labelledby="vip-cta-heading">
 	<div class="vip-cta__container vip-content-container">
 		<div class="vip-cta__inner">
 			<div class="vip-cta__copy">

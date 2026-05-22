@@ -41,7 +41,7 @@ $poster        = $img_url ?: '';
 $search_action = $search_url ? $search_url : home_url( '/' );
 $hero_classes  = 'vip-hero' . ( $use_video ? ' vip-hero--video' : ' vip-hero--image' );
 ?>
-<section class="<?php echo esc_attr( $hero_classes ); ?>" data-bg-type="<?php echo esc_attr( $bg_type ); ?>">
+<section class="<?php echo esc_attr( $hero_classes ); ?>" data-vip-section data-bg-type="<?php echo esc_attr( $bg_type ); ?>">
 	<div class="vip-hero__media" aria-hidden="true">
 		<?php if ( $use_video ) : ?>
 			<video

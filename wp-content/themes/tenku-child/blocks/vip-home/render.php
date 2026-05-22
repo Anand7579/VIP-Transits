@@ -51,7 +51,7 @@ if ( ! $home_id ) {
 				$title = get_sub_field( 'title' );
 				$note  = get_sub_field( 'note' );
 				?>
-				<div class="vip-home__booking vip-booking">
+				<div class="vip-home__booking vip-booking" data-vip-section>
 					<div class="vip-booking__inner">
 						<?php if ( $title ) : ?>
 							<h2 class="vip-booking__title"><?php echo esc_html( $title ); ?></h2>
@@ -67,7 +67,7 @@ if ( ! $home_id ) {
 			} elseif ( 'feature_columns' === $layout ) {
 				$section_title = get_sub_field( 'section_title' );
 				?>
-				<div class="vip-home__features vip-features">
+				<div class="vip-home__features vip-features" data-vip-section>
 					<div class="vip-features__inner">
 						<?php if ( $section_title ) : ?>
 							<h2 class="vip-features__title"><?php echo esc_html( $section_title ); ?></h2>

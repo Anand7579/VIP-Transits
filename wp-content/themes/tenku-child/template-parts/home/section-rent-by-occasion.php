@@ -108,7 +108,7 @@ $vip_occasions_render_body = static function ( array $card ) {
 
 $feat_title = is_array( $featured ) && ! empty( $featured['title'] ) ? (string) $featured['title'] : '';
 ?>
-<section class="vip-occasions">
+<section class="vip-occasions" data-vip-section>
 	<div class="vip-occasions__container vip-content-container">
 		<header class="vip-occasions__header">
 			<?php if ( $heading ) : ?>

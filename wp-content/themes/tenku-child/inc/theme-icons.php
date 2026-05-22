@@ -16,21 +16,23 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 function vip_transits_theme_icon_defaults() {
 	return array(
-		'search'       => 'https://viptransits.com/wp-content/uploads/2026/05/Search-icon.png',
-		'arrow-right'  => 'https://viptransits.com/wp-content/uploads/2026/05/right-arrow.svg',
+		'search'            => 'https://viptransits.com/wp-content/uploads/2026/05/Search-icon.png',
+		'arrow-right'       => 'https://viptransits.com/wp-content/uploads/2026/05/right-arrow.svg',
+		'breadcrumb-arrow'  => 'https://viptransits.com/wp-content/uploads/2026/05/breadcrumb-arrow.svg',
 	);
 }
 
 /**
  * Resolve icon URL: bundled file in theme, then filter, then default CDN URL.
  *
- * @param string $slug search|arrow-right
+ * @param string $slug search|arrow-right|breadcrumb-arrow
  * @return string
  */
 function vip_transits_theme_icon_url( $slug ) {
 	$files = array(
-		'search'      => array( 'Search-icon.png' ),
-		'arrow-right' => array( 'right-arrow.svg', 'right-arrow.png' ),
+		'search'            => array( 'Search-icon.png' ),
+		'arrow-right'       => array( 'right-arrow.svg', 'right-arrow.png' ),
+		'breadcrumb-arrow'  => array( 'breadcrumb-arrow.svg' ),
 	);
 
 	$defaults = vip_transits_theme_icon_defaults();
@@ -68,8 +70,14 @@ function vip_transits_theme_icon_img( $slug, $attrs = array() ) {
 		return '';
 	}
 
-	$width  = isset( $attrs['width'] ) ? (int) $attrs['width'] : ( 'search' === $slug ? 22 : 12 );
-	$height = isset( $attrs['height'] ) ? (int) $attrs['height'] : ( 'search' === $slug ? 22 : 12 );
+	$default_sizes = array(
+		'search'           => array( 22, 22 ),
+		'breadcrumb-arrow' => array( 12, 12 ),
+		'arrow-right'      => array( 12, 12 ),
+	);
+	$fallback      = isset( $default_sizes[ $slug ] ) ? $default_sizes[ $slug ] : array( 12, 12 );
+	$width         = isset( $attrs['width'] ) ? (int) $attrs['width'] : $fallback[0];
+	$height        = isset( $attrs['height'] ) ? (int) $attrs['height'] : $fallback[1];
 	$class  = isset( $attrs['class'] ) ? (string) $attrs['class'] : 'vip-theme-icon__img';
 	$alt    = isset( $attrs['alt'] ) ? (string) $attrs['alt'] : '';
 
