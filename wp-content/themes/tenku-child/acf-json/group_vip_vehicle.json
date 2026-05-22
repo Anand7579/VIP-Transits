@@ -137,6 +137,19 @@
             "instructions": "Shown under the car name. Falls back to excerpt or content."
         },
         {
+            "key": "field_vipveh_gallery",
+            "label": "Gallery images",
+            "name": "gallery_images",
+            "type": "gallery",
+            "return_format": "array",
+            "preview_size": "medium",
+            "library": "all",
+            "min": 0,
+            "max": 12,
+            "insert": "append",
+            "instructions": "Detail page gallery (main + thumbnails). Featured image is used first if not listed here."
+        },
+        {
             "key": "field_vipveh_min_age",
             "label": "Minimum age",
             "name": "minimum_age",
@@ -272,5 +285,5 @@
     "active": true,
     "description": "Specs for fleet vehicles. WhatsApp number is set under Settings → VIP Transits.",
     "show_in_rest": 1,
-    "modified": 1779361301
+    "modified": 1779450000
 }

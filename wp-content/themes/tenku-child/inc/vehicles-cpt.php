@@ -84,6 +84,71 @@ add_action( 'init', 'vip_transits_register_vehicle_cpt' );
 function vip_transits_register_fleet_image_size() {
 	add_image_size( 'vip_fleet_card', 333, 170, true );
 	add_image_size( 'vip_vehicle_hero', 960, 540, true );
+	add_image_size( 'vip_vehicle_gallery', 960, 540, false );
+	add_image_size( 'vip_vehicle_gallery_thumb', 280, 160, true );
+}
+
+/**
+ * Gallery images for single vehicle (featured first, then ACF gallery).
+ *
+ * @param int $post_id Post ID.
+ * @return array<int, array{id:int,url:string,thumb:string,alt:string}>
+ */
+function vip_transits_vehicle_gallery_images( $post_id = 0 ) {
+	$post_id = $post_id ? (int) $post_id : get_the_ID();
+	$images  = array();
+	$seen    = array();
+
+	$push = static function ( array &$list, array &$seen_urls, $url, $thumb, $alt, $id = 0 ) {
+		$url = (string) $url;
+		if ( $url === '' || isset( $seen_urls[ $url ] ) ) {
+			return;
+		}
+		$seen_urls[ $url ] = true;
+		$list[]            = array(
+			'id'    => (int) $id,
+			'url'   => $url,
+			'thumb' => $thumb ? (string) $thumb : $url,
+			'alt'   => (string) $alt,
+		);
+	};
+
+	$thumb_id = (int) get_post_thumbnail_id( $post_id );
+	if ( $thumb_id ) {
+		$push(
+			$images,
+			$seen,
+			get_the_post_thumbnail_url( $post_id, 'vip_vehicle_gallery' ) ?: get_the_post_thumbnail_url( $post_id, 'large' ),
+			get_the_post_thumbnail_url( $post_id, 'vip_vehicle_gallery_thumb' ) ?: get_the_post_thumbnail_url( $post_id, 'medium' ),
+			get_post_meta( $thumb_id, '_wp_attachment_image_alt', true ) ?: get_the_title( $post_id ),
+			$thumb_id
+		);
+	}
+
+	if ( function_exists( 'get_field' ) ) {
+		$gallery = get_field( 'gallery_images', $post_id );
+		if ( is_array( $gallery ) ) {
+			foreach ( $gallery as $img ) {
+				if ( ! is_array( $img ) || empty( $img['url'] ) ) {
+					continue;
+				}
+				$id = ! empty( $img['ID'] ) ? (int) $img['ID'] : 0;
+				if ( $id && $id === $thumb_id ) {
+					continue;
+				}
+				$push(
+					$images,
+					$seen,
+					$img['url'],
+					$id ? wp_get_attachment_image_url( $id, 'vip_vehicle_gallery_thumb' ) : $img['url'],
+					! empty( $img['alt'] ) ? (string) $img['alt'] : get_the_title( $post_id ),
+					$id
+				);
+			}
+		}
+	}
+
+	return $images;
 }
 add_action( 'after_setup_theme', 'vip_transits_register_fleet_image_size' );
 
@@ -516,6 +581,7 @@ function vip_transits_get_vehicle_single_data( $post_id = 0 ) {
 			'short_name'       => $short,
 			'brand_name'       => $brand ? $brand->name : '',
 			'hero_image'       => get_the_post_thumbnail_url( $post_id, 'vip_vehicle_hero' ) ?: get_the_post_thumbnail_url( $post_id, 'large' ),
+			'gallery'          => vip_transits_vehicle_gallery_images( $post_id ),
 			'intro'            => $intro,
 			'security_deposit' => $deposit,
 			'weekly_rate'      => $weekly,

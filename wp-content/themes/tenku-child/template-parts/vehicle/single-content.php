@@ -17,10 +17,6 @@ if ( empty( $d['id'] ) ) {
 $fleet_url  = get_post_type_archive_link( 'vip_vehicle' );
 $price_fmt  = $d['daily_price'] ? number_format_i18n( (int) $d['daily_price'] ) : '';
 $deposit_fmt = number_format_i18n( (int) $d['security_deposit'] );
-$delivery_label = ! empty( $d['delivery'] )
-	? __( 'Free - Anywhere Dubai', 'tenku-child' )
-	: __( 'Ask on WhatsApp', 'tenku-child' );
-
 $faq_items = $d['faq'];
 if ( empty( $faq_items ) ) {
 	$faq_items = array(
@@ -119,64 +115,7 @@ $seo_heading = sprintf(
 	<?php get_template_part( 'template-parts/vehicle/single', 'masthead', array( 'd' => $d ) ); ?>
 
 	<div class="vip-vdetail__container vip-content-container">
-		<div class="vip-vdetail__hero" data-vip-section>
-			<div class="vip-vdetail__hero-main">
-				<div class="vip-vdetail__hero-media">
-					<?php if ( $d['hero_image'] ) : ?>
-						<img
-							class="vip-vdetail__hero-img"
-							src="<?php echo esc_url( $d['hero_image'] ); ?>"
-							alt="<?php echo esc_attr( $d['short_name'] ); ?>"
-							width="960"
-							height="540"
-							decoding="async"
-						/>
-					<?php else : ?>
-						<span class="vip-vdetail__hero-placeholder" aria-hidden="true"></span>
-					<?php endif; ?>
-				</div>
-
-				<?php if ( ! empty( $d['stats'] ) ) : ?>
-					<ul class="vip-vdetail__stats">
-						<?php foreach ( $d['stats'] as $stat ) : ?>
-							<li class="vip-vdetail__stat">
-								<span class="vip-vdetail__stat-value"><?php echo esc_html( $stat['value'] ); ?></span>
-								<span class="vip-vdetail__stat-label"><?php echo esc_html( $stat['label'] ); ?></span>
-							</li>
-						<?php endforeach; ?>
-					</ul>
-				<?php endif; ?>
-			</div>
-
-			<aside class="vip-vdetail__booking" aria-label="<?php esc_attr_e( 'Booking summary', 'tenku-child' ); ?>">
-				<table class="vip-vdetail__booking-table">
-					<tbody>
-						<tr>
-							<th scope="row"><?php esc_html_e( 'Daily rate', 'tenku-child' ); ?></th>
-							<td><?php echo $price_fmt ? esc_html( sprintf( 'AED %s', $price_fmt ) ) : '—'; ?></td>
-						</tr>
-						<tr>
-							<th scope="row"><?php esc_html_e( 'Security deposit', 'tenku-child' ); ?></th>
-							<td><?php echo esc_html( sprintf( 'AED %s (refundable)', $deposit_fmt ) ); ?></td>
-						</tr>
-						<tr>
-							<th scope="row"><?php esc_html_e( 'Insurance', 'tenku-child' ); ?></th>
-							<td><?php esc_html_e( 'Included', 'tenku-child' ); ?></td>
-						</tr>
-						<tr>
-							<th scope="row"><?php esc_html_e( 'Delivery', 'tenku-child' ); ?></th>
-							<td><?php echo esc_html( $delivery_label ); ?></td>
-						</tr>
-						<tr>
-							<th scope="row"><?php esc_html_e( 'Weekly rate', 'tenku-child' ); ?></th>
-							<td><?php echo esc_html( $d['weekly_rate'] ); ?></td>
-						</tr>
-					</tbody>
-				</table>
-
-				<p class="vip-vdetail__booking-response"><?php esc_html_e( 'Response within 15 minutes · No form · Instant confirmation', 'tenku-child' ); ?></p>
-			</aside>
-		</div>
+		<?php get_template_part( 'template-parts/vehicle/single', 'hero-panel', array( 'd' => $d ) ); ?>
 
 		<section class="vip-vdetail__intro" data-vip-section>
 			<h2 class="vip-vdetail__h2"><?php echo esc_html( $d['short_name'] ); ?></h2>

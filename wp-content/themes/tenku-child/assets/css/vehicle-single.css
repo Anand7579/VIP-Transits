@@ -22,8 +22,18 @@
 }
 
 .vip-vdetail__container {
+	width: 100%;
 	max-width: var(--vip-content-max, 1440px);
+	margin-inline: auto;
 	padding-top: clamp(1.25rem, 2.5vw, 2rem);
+	box-sizing: border-box;
+}
+
+/* ACF block wrapper must not shrink the detail layout */
+.vip-vehicle-main .wp-block-acf-vip-vehicle-single,
+.vip-vehicle-main .wp-block-acf-vip-vehicle-single > .acf-block-body {
+	width: 100%;
+	max-width: none;
 }
 
 /* Masthead (Figma: black bar — Newsreader typography) */
@@ -322,85 +332,340 @@
 	}
 }
 
-/* Hero: left (image + stats) + right booking panel */
+/* Hero row: 60% gallery + 40% pricing card (Figma) */
 .vip-vdetail__hero {
-	display: grid;
-	grid-template-columns: minmax(0, 1fr) minmax(300px, 360px);
-	gap: clamp(1rem, 2vw, 1.5rem);
-	align-items: stretch;
+	/* Section wrapper only — grid lives on __hero-layout (not here). */
+	display: block;
 	margin-bottom: clamp(2rem, 3.5vw, 3rem);
 }
 
-.vip-vdetail__hero-main {
-	display: flex;
-	flex-direction: column;
-	gap: clamp(1.25rem, 2.5vw, 1.75rem);
-	min-width: 0;
+.vip-vdetail__hero-layout {
+	display: grid;
+	/* 60/40 — do not use minmax(300px, 360px) (fixed sidebar breaks the layout) */
+	grid-template-columns: minmax(0, 7fr) minmax(0, 4fr);
+	column-gap: clamp(1.5rem, 2.5vw, 2.5rem);
+	row-gap: clamp(1.25rem, 2vw, 1.75rem);
+	align-items: start;
+	width: 100%;
 }
 
-.vip-vdetail__hero-media {
+.vip-vdetail__hero-main {
+	grid-column: 1;
+	grid-row: 1;
+	display: flex;
+	flex-direction: column;
+	gap: 0.75rem;
+	min-width: 0;
+	width: 100%;
+}
+
+.vip-vdetail__pricing-card {
+	grid-column: 2;
+	grid-row: 1 / -1;
+	align-self: start;
+	width: 100%;
+	max-width: 100%;
+	min-width: 0;
+	justify-self: stretch;
+}
+
+.vip-vdetail__stats {
+	grid-column: 1;
+	grid-row: 2;
+}
+
+/* Gallery */
+.vip-vdetail__gallery-main {
 	aspect-ratio: 16 / 9;
 	overflow: hidden;
 	background: #ebebeb;
 }
 
-.vip-vdetail__hero-img {
+.vip-vdetail__gallery-main-img {
 	display: block;
 	width: 100%;
 	height: 100%;
 	object-fit: cover;
 }
 
-.vip-vdetail__hero-placeholder {
+.vip-vdetail__gallery-placeholder {
 	display: block;
 	width: 100%;
-	height: 100%;
-	min-height: 200px;
+	aspect-ratio: 16 / 9;
 	background: linear-gradient(135deg, #ececec, #d8d8d8);
 }
 
-.vip-vdetail__booking {
+.vip-vdetail__gallery-thumbs-bar {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	margin-top: 0.75rem;
+}
+
+.vip-vdetail__gallery-nav {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 36px;
+	min-width: 36px;
+	height: 36px;
+	padding: 0;
+	border: 1px solid #d0d0d0;
+	background: #ffffff;
+	color: #0a0c0f;
+	font-size: 1.25rem;
+	line-height: 1;
+	cursor: pointer;
+	flex-shrink: 0;
+}
+
+.vip-vdetail__gallery-nav:disabled {
+	opacity: 0.35;
+	cursor: not-allowed;
+}
+
+.vip-vdetail__gallery-nav[hidden] {
+	display: none;
+}
+
+.vip-vdetail__gallery-thumbs-viewport {
+	flex: 1 1 auto;
+	min-width: 0;
+	overflow: hidden;
+}
+
+.vip-vdetail__gallery-thumbs-track {
+	display: flex;
+	gap: 8px;
+	transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+	will-change: transform;
+}
+
+.vip-vdetail__gallery-thumb {
+	flex: 0 0 calc((100% - 16px) / 3);
+	max-width: calc((100% - 16px) / 3);
+	padding: 0;
+	border: 2px solid transparent;
+	background: transparent;
+	cursor: pointer;
+	overflow: hidden;
+	aspect-ratio: 16 / 10;
+}
+
+.vip-vdetail__gallery-thumb.is-active {
+	border-color: #0a0c0f;
+}
+
+.vip-vdetail__gallery-thumb img {
+	display: block;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+/* Pricing card (Figma) */
+.vip-vdetail__pricing-card {
 	display: flex;
 	flex-direction: column;
-	background: var(--vip-vd-panel);
-	color: var(--vip-vd-panel-text);
-	padding: clamp(1.25rem, 2vw, 1.5rem);
-	min-height: 100%;
+	border: 1px solid #e3e6ea;
+	background: #f9f9f9;
+	font-family: var(--vip-vd-font);
+	box-sizing: border-box;
 }
 
-.vip-vdetail__booking-table {
-	width: 100%;
-	border-collapse: collapse;
-	margin: 0 0 1.25rem;
-	font-family: var(--vip-vd-sans);
-	font-size: 13px;
-	line-height: 1.45;
+.vip-vdetail__pricing-head {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 1rem;
+	padding: 1.125rem 1.25rem;
+	background: #000000;
+	color: #ffffff;
 }
 
-.vip-vdetail__booking-table th,
-.vip-vdetail__booking-table td {
-	padding: 0.55rem 0;
-	border-bottom: 1px solid rgba(255, 255, 255, 0.12);
-	text-align: left;
-	vertical-align: top;
+.vip-vdetail__pricing-head-left {
+	min-width: 0;
 }
 
-.vip-vdetail__booking-table th {
-	font-weight: 400;
-	opacity: 0.72;
-	width: 46%;
-}
-
-.vip-vdetail__booking-table td {
+.vip-vdetail__pricing-from {
+	display: block;
+	margin: 0 0 0.35rem;
+	font-family: var(--vip-vd-font);
 	font-weight: 500;
+	font-size: 16px;
+	line-height: 16px;
 }
 
-.vip-vdetail__booking-response {
-	margin: auto 0 0;
-	font-family: var(--vip-vd-sans);
+.vip-vdetail__pricing-rate {
+	margin: 0;
+	line-height: 1;
+}
+
+.vip-vdetail__pricing-amount {
+	font-family: var(--vip-vd-font);
+	font-weight: 500;
+	font-size: 40px;
+	line-height: 40px;
+}
+
+.vip-vdetail__pricing-unit {
+	font-family: var(--vip-vd-font);
+	font-weight: 500;
+	font-size: 24px;
+	line-height: 24px;
+}
+
+.vip-vdetail__pricing-deposit-hd {
+	margin: 0;
+	flex-shrink: 0;
+	font-family: var(--vip-vd-font);
+	font-weight: 500;
+	font-size: 18px;
+	line-height: 18px;
+	text-align: right;
+	white-space: nowrap;
+}
+
+.vip-vdetail__pricing-deposit-hd span {
+	font-weight: 600;
+}
+
+.vip-vdetail__pricing-body {
+	flex: 1 1 auto;
+	padding: 0;
+	background: #f9f9f9;
+}
+
+.vip-vdetail__pricing-rows {
+	margin: 0;
+	padding: 0;
+}
+
+.vip-vdetail__pricing-row {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 1rem;
+	padding: 0.85rem 1.25rem;
+	border-bottom: 1px solid #e0e0e0;
+	background: #ffffff;
+}
+
+.vip-vdetail__pricing-row:nth-child(even) {
+	background: #f0f0f0;
+}
+
+.vip-vdetail__pricing-row:last-child {
+	border-bottom: 0;
+}
+
+.vip-vdetail__pricing-row dt {
+	margin: 0;
+	font-family: var(--vip-vd-font);
+	font-weight: 500;
+	font-size: 16px;
+	line-height: 20px;
+	color: #616161;
+}
+
+.vip-vdetail__pricing-row dd {
+	margin: 0;
+	font-family: var(--vip-vd-font);
+	font-weight: 500;
+	font-size: 16px;
+	line-height: 20px;
+	color: #000000;
+	text-align: right;
+}
+
+.vip-vdetail__pricing-foot {
+	padding: 1rem 1.25rem 1.125rem;
+	background: #f9f9f9;
+}
+
+.vip-vdetail__pricing-actions {
+	display: flex;
+	align-items: stretch;
+	gap: 6px;
+	margin-bottom: 0.75rem;
+}
+
+.vip-vdetail__pricing-wa {
+	display: inline-flex;
+	flex: 1 1 auto;
+	align-items: center;
+	gap: 10px;
+	min-height: 52px;
+	padding: 0.5rem 1rem;
+	background: var(--vip-vd-wa-bg);
+	color: #ffffff;
+	text-decoration: none;
+	transition: filter 0.2s ease;
+}
+
+.vip-vdetail__pricing-wa:hover,
+.vip-vdetail__pricing-wa:focus-visible {
+	filter: brightness(1.05);
+	color: #ffffff;
+}
+
+.vip-vdetail__pricing-wa-icon {
+	display: inline-flex;
+	flex-shrink: 0;
+	line-height: 0;
+}
+
+.vip-vdetail__pricing-wa-text {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 2px;
+	text-transform: uppercase;
+}
+
+.vip-vdetail__pricing-wa-kicker {
+	font-family: var(--vip-vd-font);
+	font-weight: 500;
 	font-size: 11px;
-	line-height: 1.5;
-	opacity: 0.78;
+	line-height: 12px;
+	letter-spacing: -0.01em;
+}
+
+.vip-vdetail__pricing-wa-label {
+	font-family: var(--vip-vd-font);
+	font-weight: 600;
+	font-size: 14px;
+	line-height: 14px;
+	letter-spacing: -0.01em;
+}
+
+.vip-vdetail__pricing-call {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 52px;
+	min-width: 52px;
+	min-height: 52px;
+	flex-shrink: 0;
+	background: var(--vip-vd-call);
+	color: #ffffff;
+	text-decoration: none;
+}
+
+.vip-vdetail__pricing-call:hover,
+.vip-vdetail__pricing-call:focus-visible {
+	opacity: 0.92;
+	color: #ffffff;
+}
+
+.vip-vdetail__pricing-note {
+	margin: 0;
+	font-family: var(--vip-vd-font);
+	font-weight: 400;
+	font-size: 14px;
+	line-height: 18px;
+	color: #616161;
+	text-align: center;
 }
 
 /* Stats (under hero image, left column) */
@@ -886,8 +1151,29 @@
 }
 
 @media (max-width: 1024px) {
-	.vip-vdetail__hero {
+	.vip-vdetail__hero-layout {
 		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.vip-vdetail__hero-main,
+	.vip-vdetail__pricing-card,
+	.vip-vdetail__stats {
+		grid-column: 1;
+		grid-row: auto;
+	}
+
+	.vip-vdetail__pricing-card {
+		grid-row: auto;
+	}
+
+	.vip-vdetail__pricing-deposit-hd {
+		white-space: normal;
+		text-align: left;
+	}
+
+	.vip-vdetail__pricing-head {
+		flex-direction: column;
+		align-items: flex-start;
 	}
 
 	.vip-vdetail__stats {

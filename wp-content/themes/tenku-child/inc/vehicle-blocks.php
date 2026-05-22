@@ -128,16 +128,29 @@ function vip_transits_enqueue_fleet_block_assets() {
 	}
 
 	if ( $is_single ) {
-		$single_css = $theme_dir . '/assets/css/vehicle-single.css';
-		$faq_js     = $theme_dir . '/blocks/vip-home/faq.js';
-		$single_ver = file_exists( $single_css ) ? (string) filemtime( $single_css ) : $assets['version'];
-		$faq_ver    = file_exists( $faq_js ) ? (string) filemtime( $faq_js ) : $assets['version'];
+		$single_css   = $theme_dir . '/assets/css/vehicle-single.css';
+		$gallery_js   = $theme_dir . '/assets/js/vehicle-single-gallery.js';
+		$faq_js       = $theme_dir . '/blocks/vip-home/faq.js';
+		$single_ver   = file_exists( $single_css ) ? (string) filemtime( $single_css ) : $assets['version'];
+		$gallery_ver  = file_exists( $gallery_js ) ? (string) filemtime( $gallery_js ) : $single_ver;
+		$faq_ver      = file_exists( $faq_js ) ? (string) filemtime( $faq_js ) : $single_ver;
 
 		wp_enqueue_style(
 			'vip-vehicle-single',
 			$theme_uri . '/assets/css/vehicle-single.css',
 			array( 'chld_thm_cfg_child', 'chld_thm_cfg_parent' ),
 			$single_ver
+		);
+
+		wp_enqueue_script(
+			'vip-vehicle-single-gallery',
+			$theme_uri . '/assets/js/vehicle-single-gallery.js',
+			array(),
+			$gallery_ver,
+			array(
+				'in_footer' => true,
+				'strategy'  => 'defer',
+			)
 		);
 
 		wp_enqueue_script(

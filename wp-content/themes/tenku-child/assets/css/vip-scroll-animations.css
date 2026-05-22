@@ -3,7 +3,7 @@
  */
 
 /* Native lazy render for below-fold sections (hero excluded — always visible) */
-[data-vip-section]:not(.vip-hero) {
+[data-vip-section]:not(.vip-hero):not(.vip-vdetail__hero) {
 	content-visibility: auto;
 	contain-intrinsic-size: auto 420px;
 }
