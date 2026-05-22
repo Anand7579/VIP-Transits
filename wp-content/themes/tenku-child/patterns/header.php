@@ -26,6 +26,16 @@
 			<div class="wp-block-group vip-site-header__end">
 				<!-- wp:navigation {"className":"vip-site-header__nav","fontSize":"medium","layout":{"type":"flex","justifyContent":"right"}} /-->
 
+				<!-- wp:html -->
+				<a class="vip-site-header__search-link" href="<?php echo esc_url( home_url( '/?s=' ) ); ?>" aria-label="<?php esc_attr_e( 'Search', 'tenku-child' ); ?>">
+					<?php
+					if ( function_exists( 'vip_transits_theme_icon_img' ) ) {
+						echo vip_transits_theme_icon_img( 'search', array( 'class' => 'vip-site-header__search-icon' ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+					}
+					?>
+				</a>
+				<!-- /wp:html -->
+
 				<!-- wp:social-links {"iconColor":"base","iconColorValue":"#ffffff","size":"has-small-icon-size","className":"is-style-logos-only vip-site-header__social","layout":{"type":"flex","justifyContent":"right"}} -->
 				<ul class="wp-block-social-links has-small-icon-size has-icon-color is-style-logos-only vip-site-header__social">
 					<!-- wp:social-link {"url":"#","service":"instagram"} /-->

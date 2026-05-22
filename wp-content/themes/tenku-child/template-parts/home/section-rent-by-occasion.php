@@ -93,10 +93,14 @@ $vip_occasions_render_body = static function ( array $card ) {
 		echo '<p class="vip-occasions-card__text">' . esc_html( $desc ) . '</p>';
 	}
 	if ( $btn_href_attr ) {
+		$arrow = function_exists( 'vip_transits_theme_icon_arrow_html' )
+			? vip_transits_theme_icon_arrow_html( 'vip-occasions-card__btn-arrow' )
+			: '<span class="vip-occasions-card__btn-arrow" aria-hidden="true">→</span>';
 		printf(
-			'<a class="vip-occasions-card__btn" href="%1$s" target="_blank" rel="noopener noreferrer"><span class="vip-occasions-card__btn-label">%2$s</span><span class="vip-occasions-card__btn-arrow" aria-hidden="true">→</span></a>',
+			'<a class="vip-occasions-card__btn" href="%1$s" target="_blank" rel="noopener noreferrer"><span class="vip-occasions-card__btn-label">%2$s</span>%3$s</a>',
 			$btn_href_attr, // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-			esc_html( $label )
+			esc_html( $label ),
+			$arrow // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		);
 	}
 	echo '</div>';

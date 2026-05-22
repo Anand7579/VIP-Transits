@@ -629,7 +629,6 @@
 	min-height: 42px;
 	padding: 0 0.5rem;
 	border: 1px solid var(--vip-fleet-text);
-	background: #fff;
 	color: var(--vip-fleet-text);
 	font-family: var(--vip-fleet-serif);
 	font-size: 12px;
@@ -639,10 +638,6 @@
 	text-align: center;
 	text-transform: uppercase;
 	text-decoration: none;
-}
-
-.vip-fleet-card__book:hover {
-	background: #f7f7f7;
 }
 
 .vip-fleet-card__icon {

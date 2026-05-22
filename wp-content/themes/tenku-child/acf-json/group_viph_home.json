@@ -505,6 +505,133 @@
                     "min": "",
                     "max": ""
                 },
+                "layout_viph_why_rent": {
+                    "key": "layout_viph_why_rent",
+                    "name": "why_rent",
+                    "label": "Why rent with VIP Transits",
+                    "display": "block",
+                    "sub_fields": [
+                        {
+                            "key": "field_viph_why_heading",
+                            "label": "Heading",
+                            "name": "heading",
+                            "type": "text",
+                            "default_value": "Why Rent With VIP Transits",
+                            "parent": "field_viph_sections"
+                        },
+                        {
+                            "key": "field_viph_why_cards",
+                            "label": "Feature cards",
+                            "name": "cards",
+                            "type": "repeater",
+                            "layout": "block",
+                            "min": 0,
+                            "max": 4,
+                            "button_label": "Add card",
+                            "parent": "field_viph_sections",
+                            "sub_fields": [
+                                {
+                                    "key": "field_viph_why_image",
+                                    "label": "Image",
+                                    "name": "image",
+                                    "type": "image",
+                                    "return_format": "array",
+                                    "preview_size": "medium",
+                                    "parent": "field_viph_why_cards"
+                                },
+                                {
+                                    "key": "field_viph_why_title",
+                                    "label": "Title",
+                                    "name": "title",
+                                    "type": "text",
+                                    "parent": "field_viph_why_cards"
+                                },
+                                {
+                                    "key": "field_viph_why_desc",
+                                    "label": "Description",
+                                    "name": "description",
+                                    "type": "textarea",
+                                    "rows": 4,
+                                    "parent": "field_viph_why_cards"
+                                },
+                                {
+                                    "key": "field_viph_why_btn",
+                                    "label": "Button label",
+                                    "name": "button_label",
+                                    "type": "text",
+                                    "instructions": "Opens WhatsApp with this card's title and description (number is set under Settings → VIP Transits).",
+                                    "parent": "field_viph_why_cards"
+                                }
+                            ]
+                        }
+                    ],
+                    "min": "",
+                    "max": ""
+                },
+                "layout_viph_delivery": {
+                    "key": "layout_viph_delivery",
+                    "name": "delivery_locations",
+                    "label": "Delivery locations",
+                    "display": "block",
+                    "sub_fields": [
+                        {
+                            "key": "field_viph_del_heading",
+                            "label": "Heading",
+                            "name": "heading",
+                            "type": "text",
+                            "default_value": "Delivery Locations Across Dubai",
+                            "parent": "field_viph_sections"
+                        },
+                        {
+                            "key": "field_viph_del_intro",
+                            "label": "Introduction",
+                            "name": "intro",
+                            "type": "textarea",
+                            "rows": 2,
+                            "default_value": "We deliver to every corner of Dubai - free, on time, and to your exact address.",
+                            "parent": "field_viph_sections"
+                        },
+                        {
+                            "key": "field_viph_del_locations",
+                            "label": "Locations",
+                            "name": "locations",
+                            "type": "repeater",
+                            "layout": "block",
+                            "min": 0,
+                            "max": 6,
+                            "button_label": "Add location",
+                            "parent": "field_viph_sections",
+                            "sub_fields": [
+                                {
+                                    "key": "field_viph_del_image",
+                                    "label": "Image",
+                                    "name": "image",
+                                    "type": "image",
+                                    "return_format": "array",
+                                    "preview_size": "medium",
+                                    "parent": "field_viph_del_locations"
+                                },
+                                {
+                                    "key": "field_viph_del_title",
+                                    "label": "Location name",
+                                    "name": "title",
+                                    "type": "text",
+                                    "parent": "field_viph_del_locations"
+                                },
+                                {
+                                    "key": "field_viph_del_desc",
+                                    "label": "Description",
+                                    "name": "description",
+                                    "type": "textarea",
+                                    "rows": 2,
+                                    "parent": "field_viph_del_locations"
+                                }
+                            ]
+                        }
+                    ],
+                    "min": "",
+                    "max": ""
+                },
                 "layout_viph_cta": {
                     "key": "layout_viph_cta",
                     "name": "cta_banner",
@@ -565,5 +692,5 @@
     "active": true,
     "description": "Homepage flexible sections for VIP Transits (car rental).",
     "show_in_rest": 1,
-    "modified": 1779343031
+    "modified": 1779361301
 }

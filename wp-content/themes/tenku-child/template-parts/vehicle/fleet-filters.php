@@ -85,7 +85,7 @@ $price_max = 5000;
 		<label class="vip-fleet__toggle">
 			<span class="vip-fleet__toggle-text"><?php esc_html_e( 'Deliver To Hotel / Home', 'tenku-child' ); ?></span>
 			<span class="vip-fleet__toggle-control">
-				<input type="checkbox" data-vip-fleet-filter="delivery" class="vip-fleet__toggle-input" />
+				<input type="checkbox" data-vip-fleet-filter="delivery" class="vip-fleet__toggle-input" value="1" />
 				<span class="vip-fleet__toggle-switch" aria-hidden="true"></span>
 			</span>
 		</label>

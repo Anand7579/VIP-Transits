@@ -116,8 +116,15 @@
 				}
 			}
 
-			if (delivery && delivery.checked && !hasDelivery) {
-				return false;
+			/* Delivery toggle: ON = hotel/home delivery only; OFF = vehicles without that option. */
+			if (delivery) {
+				if (delivery.checked) {
+					if (!hasDelivery) {
+						return false;
+					}
+				} else if (hasDelivery) {
+					return false;
+				}
 			}
 
 			if (minR && maxR && price > 0) {
@@ -139,9 +146,12 @@
 			var visible = 0;
 			cards().forEach(function (card) {
 				var show = cardMatches(card);
-				card.hidden = !show;
 				if (show) {
+					card.hidden = false;
+					card.removeAttribute('hidden');
 					visible++;
+				} else {
+					card.hidden = true;
 				}
 			});
 			updateCount(visible);

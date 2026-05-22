@@ -213,6 +213,10 @@ function vip_transits_register_home_block() {
 
 	$block_dir = get_stylesheet_directory() . '/blocks/vip-home';
 
+	$style_path = $block_dir . '/style.css';
+	$style_uri  = get_stylesheet_directory_uri() . '/blocks/vip-home/style.css';
+	$style_ver  = file_exists( $style_path ) ? (string) filemtime( $style_path ) : wp_get_theme()->get( 'Version' );
+
 	acf_register_block_type(
 		array(
 			'name'            => 'vip-home',
@@ -222,6 +226,7 @@ function vip_transits_register_home_block() {
 			'icon'            => 'admin-site',
 			'keywords'        => array( 'home', 'vip', 'acf' ),
 			'render_template' => $block_dir . '/render.php',
+			'enqueue_style'   => $style_uri . '?ver=' . rawurlencode( $style_ver ),
 			'mode'            => 'preview',
 			'supports'        => array(
 				'align'  => array( 'wide', 'full' ),
@@ -233,29 +238,52 @@ function vip_transits_register_home_block() {
 add_action( 'acf/init', 'vip_transits_register_home_block', 5 );
 
 /**
- * Homepage section CSS on the front page (wp_enqueue_scripts — not enqueue_assets,
- * which runs too late after wp_head when the block renders).
+ * Whether VIP home block CSS/JS should load on this request.
+ *
+ * @return bool
+ */
+function vip_transits_should_enqueue_vip_home_assets() {
+	if ( is_admin() ) {
+		return false;
+	}
+
+	if ( is_front_page() ) {
+		return true;
+	}
+
+	$post_id = get_queried_object_id();
+	if ( $post_id && is_singular() && function_exists( 'has_block' ) && has_block( 'acf/vip-home', $post_id ) ) {
+		return true;
+	}
+
+	return false;
+}
+
+/**
+ * Homepage section CSS (wp_enqueue_scripts — not enqueue_assets, which runs too late).
  */
 function vip_transits_enqueue_vip_home_assets() {
-	if ( is_admin() || ! is_front_page() ) {
+	if ( ! vip_transits_should_enqueue_vip_home_assets() ) {
 		return;
 	}
 
-	$version = wp_get_theme()->get( 'Version' );
-	$uri     = get_stylesheet_directory_uri() . '/blocks/vip-home';
+	$dir  = get_stylesheet_directory() . '/blocks/vip-home';
+	$uri  = get_stylesheet_directory_uri() . '/blocks/vip-home';
+	$path = $dir . '/style.css';
+	$ver  = file_exists( $path ) ? (string) filemtime( $path ) : wp_get_theme()->get( 'Version' );
 
 	wp_enqueue_style(
 		'vip-home-block',
 		$uri . '/style.css',
-		array(),
-		$version
+		array( 'chld_thm_cfg_child' ),
+		$ver
 	);
 
 	wp_enqueue_script(
 		'vip-home-faq',
 		$uri . '/faq.js',
 		array(),
-		$version,
+		$ver,
 		array(
 			'in_footer' => true,
 			'strategy'  => 'defer',
@@ -263,6 +291,24 @@ function vip_transits_enqueue_vip_home_assets() {
 	);
 }
 add_action( 'wp_enqueue_scripts', 'vip_transits_enqueue_vip_home_assets', 20 );
+
+/**
+ * VIP home styles in the block/site editor so sections match the front end.
+ */
+function vip_transits_enqueue_vip_home_editor_assets() {
+	$path = get_stylesheet_directory() . '/blocks/vip-home/style.css';
+	if ( ! file_exists( $path ) ) {
+		return;
+	}
+
+	wp_enqueue_style(
+		'vip-home-block-editor',
+		get_stylesheet_directory_uri() . '/blocks/vip-home/style.css',
+		array(),
+		(string) filemtime( $path )
+	);
+}
+add_action( 'enqueue_block_editor_assets', 'vip_transits_enqueue_vip_home_editor_assets' );
 
 /**
  * Show homepage fields when editing the static front page OR the page with slug "home".

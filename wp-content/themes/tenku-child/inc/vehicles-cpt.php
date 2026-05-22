@@ -83,6 +83,7 @@ add_action( 'init', 'vip_transits_register_vehicle_cpt' );
  */
 function vip_transits_register_fleet_image_size() {
 	add_image_size( 'vip_fleet_card', 333, 170, true );
+	add_image_size( 'vip_vehicle_hero', 960, 540, true );
 }
 add_action( 'after_setup_theme', 'vip_transits_register_fleet_image_size' );
 
@@ -284,9 +285,272 @@ function vip_transits_get_vehicle_card_data( $post_id = 0 ) {
 		'seats'        => vip_transits_vehicle_seats_label( $post_id ),
 		'daily_price'  => $price,
 		'phone'        => (string) get_field( 'phone_number', $post_id ),
-		'delivery'     => (bool) get_field( 'delivery_hotel_home', $post_id ),
+		'delivery'     => (bool) get_field( 'delivery_hotel_home', $post_id, false ),
 		'brands'       => $brands,
 		'seat_terms'   => $seats,
+	);
+}
+
+/**
+ * Short display name (strip trailing "Rental Dubai" etc.).
+ *
+ * @param string $title Post title.
+ * @return string
+ */
+function vip_transits_vehicle_short_name( $title ) {
+	$title = trim( (string) $title );
+	$title = preg_replace( '/\s+rental\s+dubai\s*$/i', '', $title );
+	return $title ? $title : __( 'Vehicle', 'tenku-child' );
+}
+
+/**
+ * Primary brand term for a vehicle.
+ *
+ * @param int $post_id Post ID.
+ * @return WP_Term|null
+ */
+function vip_transits_vehicle_primary_brand( $post_id ) {
+	$terms = wp_get_post_terms( $post_id, 'vehicle_brand' );
+	if ( is_wp_error( $terms ) || empty( $terms ) ) {
+		return null;
+	}
+	return $terms[0];
+}
+
+/**
+ * Repeater rows from ACF as a simple list.
+ *
+ * @param string $field   Field name.
+ * @param int    $post_id Post ID.
+ * @return array<int, array<string, string>>
+ */
+function vip_transits_vehicle_acf_rows( $field, $post_id, $sub_keys = array() ) {
+	$rows = array();
+	if ( ! function_exists( 'have_rows' ) || ! have_rows( $field, $post_id ) ) {
+		return $rows;
+	}
+	while ( have_rows( $field, $post_id ) ) {
+		the_row();
+		if ( $sub_keys ) {
+			$row = array();
+			foreach ( $sub_keys as $key ) {
+				$val = get_sub_field( $key );
+				$row[ $key ] = is_string( $val ) ? $val : ( is_scalar( $val ) ? (string) $val : '' );
+			}
+			$rows[] = $row;
+			continue;
+		}
+		$raw = function_exists( 'get_row' ) ? get_row( true ) : array();
+		$rows[] = is_array( $raw ) ? $raw : array();
+	}
+	return $rows;
+}
+
+/**
+ * Related vehicles (same brand).
+ *
+ * @param int $post_id Post ID.
+ * @param int $limit   Max posts.
+ * @return WP_Post[]
+ */
+function vip_transits_vehicle_related_posts( $post_id, $limit = 2 ) {
+	$brand = vip_transits_vehicle_primary_brand( $post_id );
+	if ( ! $brand ) {
+		return array();
+	}
+	$query = new WP_Query(
+		array(
+			'post_type'      => 'vip_vehicle',
+			'post_status'    => 'publish',
+			'posts_per_page' => $limit,
+			'post__not_in'   => array( (int) $post_id ),
+			'tax_query'      => array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
+				array(
+					'taxonomy' => 'vehicle_brand',
+					'field'    => 'term_id',
+					'terms'    => array( (int) $brand->term_id ),
+				),
+			),
+		)
+	);
+	return $query->posts;
+}
+
+/**
+ * Full single-vehicle page data (Figma car detail).
+ *
+ * @param int $post_id Post ID.
+ * @return array
+ */
+function vip_transits_get_vehicle_single_data( $post_id = 0 ) {
+	$post_id = $post_id ? (int) $post_id : get_the_ID();
+	$card    = vip_transits_get_vehicle_card_data( $post_id );
+	$brand   = vip_transits_vehicle_primary_brand( $post_id );
+	$short   = vip_transits_vehicle_short_name( $card['title'] );
+
+	$deposit = (int) get_field( 'security_deposit', $post_id );
+	if ( $deposit <= 0 ) {
+		$deposit = 5000;
+	}
+
+	$intro = (string) get_field( 'intro_lead', $post_id );
+	if ( $intro === '' ) {
+		$intro = $card['excerpt'];
+	}
+
+	$engine_label = $card['engine_type'];
+	if ( $engine_label && stripos( $engine_label, 'v' ) === 0 ) {
+		$engine_label = strtoupper( $engine_label );
+	}
+
+	$stats = array();
+	if ( $card['acceleration'] ) {
+		$stats[] = array(
+			'value' => $card['acceleration'],
+			'label' => __( '0–100 km/h', 'tenku-child' ),
+		);
+	}
+	if ( (string) get_field( 'power_hp', $post_id ) ) {
+		$stats[] = array(
+			'value' => (string) get_field( 'power_hp', $post_id ),
+			'label' => __( 'Power', 'tenku-child' ),
+		);
+	}
+	if ( (string) get_field( 'top_speed', $post_id ) ) {
+		$stats[] = array(
+			'value' => (string) get_field( 'top_speed', $post_id ),
+			'label' => __( 'Top Speed', 'tenku-child' ),
+		);
+	}
+	if ( $engine_label ) {
+		$stats[] = array(
+			'value' => $engine_label,
+			'label' => __( 'Engine Config', 'tenku-child' ),
+		);
+	}
+
+	$specs = array();
+	$spec_map = array(
+		__( 'Engine', 'tenku-child' )       => $card['engine_type'],
+		__( 'Power', 'tenku-child' )        => (string) get_field( 'power_hp', $post_id ),
+		__( 'Torque', 'tenku-child' )       => (string) get_field( 'torque', $post_id ),
+		__( '0–100 km/h', 'tenku-child' )   => $card['acceleration'],
+		__( 'Top Speed', 'tenku-child' )     => (string) get_field( 'top_speed', $post_id ),
+		__( 'Transmission', 'tenku-child' ) => (string) get_field( 'transmission', $post_id ),
+		__( 'Drive', 'tenku-child' )         => (string) get_field( 'drive_type', $post_id ),
+		__( 'Doors', 'tenku-child' )         => $card['doors'],
+		__( 'Seats', 'tenku-child' )         => $card['seats'],
+	);
+	foreach ( $spec_map as $label => $value ) {
+		$value = trim( (string) $value );
+		if ( $value !== '' ) {
+			$specs[] = array(
+				'label' => $label,
+				'value' => $value,
+			);
+		}
+	}
+
+	$included = vip_transits_vehicle_acf_rows( 'included_items', $post_id, array( 'title', 'description' ) );
+	if ( empty( $included ) ) {
+		$included = array(
+			array(
+				'title'       => __( 'Full comprehensive insurance', 'tenku-child' ),
+				'description' => '',
+			),
+			array(
+				'title'       => __( 'Free delivery to any Dubai address', 'tenku-child' ),
+				'description' => '',
+			),
+		);
+	}
+
+	$variants = vip_transits_vehicle_acf_rows( 'vehicle_variants', $post_id, array( 'name', 'note' ) );
+	$routes   = vip_transits_vehicle_acf_rows( 'driving_routes', $post_id, array( 'title', 'description' ) );
+	$faq      = vip_transits_vehicle_acf_rows( 'vehicle_faq', $post_id, array( 'question', 'answer' ) );
+
+	if ( empty( $routes ) ) {
+		$routes = array(
+			array(
+				'title'       => __( 'Sheikh Zayed Road', 'tenku-child' ),
+				'description' => __( '10-lane highway, perfect for acceleration runs', 'tenku-child' ),
+			),
+			array(
+				'title'       => __( 'Palm Jumeirah', 'tenku-child' ),
+				'description' => __( 'The crescent road with sea views on both sides', 'tenku-child' ),
+			),
+			array(
+				'title'       => __( 'Dubai Marina Walk', 'tenku-child' ),
+				'description' => __( 'Low-speed cruising at its most glamorous', 'tenku-child' ),
+			),
+		);
+	}
+
+	$weekly = (string) get_field( 'weekly_rate_label', $post_id );
+	if ( $weekly === '' ) {
+		$weekly = __( 'Ask on WhatsApp', 'tenku-child' );
+	}
+
+	$display_title = $card['title'];
+	if ( stripos( $display_title, 'rental' ) === false ) {
+		$display_title = sprintf(
+			/* translators: %s: vehicle name */
+			__( '%s Rental Dubai', 'tenku-child' ),
+			$short
+		);
+	}
+
+	$wa_href_attr = function_exists( 'vip_transits_vehicle_whatsapp_href_attr' )
+		? vip_transits_vehicle_whatsapp_href_attr( $post_id )
+		: '';
+
+	$phone = $card['phone'];
+	if ( $phone === '' && function_exists( 'vip_transits_get_whatsapp_number' ) ) {
+		$phone = vip_transits_get_whatsapp_number();
+	}
+
+	return array_merge(
+		$card,
+		array(
+			'display_title'    => $display_title,
+			'short_name'       => $short,
+			'brand_name'       => $brand ? $brand->name : '',
+			'hero_image'       => get_the_post_thumbnail_url( $post_id, 'vip_vehicle_hero' ) ?: get_the_post_thumbnail_url( $post_id, 'large' ),
+			'intro'            => $intro,
+			'security_deposit' => $deposit,
+			'weekly_rate'      => $weekly,
+			'minimum_age'      => (string) get_field( 'minimum_age', $post_id ) ?: '25',
+			'stats'            => $stats,
+			'specs'            => $specs,
+			'included'         => $included,
+			'variants'         => $variants,
+			'routes'           => $routes,
+			'faq'              => $faq,
+			'seo_content'      => (string) get_field( 'seo_content', $post_id ),
+			'transmission'     => (string) get_field( 'transmission', $post_id ),
+			'wa_href_attr'     => $wa_href_attr,
+			'phone_display'    => $phone,
+			'tel_href'         => $phone ? 'tel:' . preg_replace( '/[^\d+]/', '', $phone ) : '',
+			'related'          => vip_transits_vehicle_related_posts( $post_id, 2 ),
+			'booking_steps'    => array(
+				array(
+					'title' => __( 'Check availability', 'tenku-child' ),
+					'text'  => sprintf(
+						/* translators: %s: vehicle short name */
+						__( 'WhatsApp us with your preferred %s variant, rental dates, and Dubai delivery address.', 'tenku-child' ),
+						$short
+					),
+				),
+				array(
+					'title' => __( 'Confirm and arrange', 'tenku-child' ),
+					'text'  => __( 'We confirm availability within 15 minutes and provide you with pricing, deposit details, and delivery time.', 'tenku-child' ),
+				),
+				array(
+					'title' => __( 'We deliver to you', 'tenku-child' ),
+					'text'  => __( 'Your car arrives at your chosen address. Security deposit is held, keys handed over. Drive away.', 'tenku-child' ),
+				),
+			),
+		)
 	);
 }
 

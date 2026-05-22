@@ -74,7 +74,185 @@
             "name": "delivery_hotel_home",
             "type": "true_false",
             "ui": 1,
-            "default_value": 1
+            "default_value": 0
+        },
+        {
+            "key": "field_vipveh_deposit",
+            "label": "Security deposit (AED)",
+            "name": "security_deposit",
+            "type": "number",
+            "min": 0,
+            "step": 1,
+            "default_value": 5000
+        },
+        {
+            "key": "field_vipveh_weekly",
+            "label": "Weekly rate label",
+            "name": "weekly_rate_label",
+            "type": "text",
+            "instructions": "e.g. Ask via WhatsApp or AED 9,500",
+            "default_value": "Ask via WhatsApp"
+        },
+        {
+            "key": "field_vipveh_power",
+            "label": "Power",
+            "name": "power_hp",
+            "type": "text",
+            "placeholder": "610 hp"
+        },
+        {
+            "key": "field_vipveh_top_speed",
+            "label": "Top speed",
+            "name": "top_speed",
+            "type": "text",
+            "placeholder": "325 km\/h"
+        },
+        {
+            "key": "field_vipveh_torque",
+            "label": "Torque",
+            "name": "torque",
+            "type": "text",
+            "placeholder": "560 Nm"
+        },
+        {
+            "key": "field_vipveh_transmission",
+            "label": "Transmission",
+            "name": "transmission",
+            "type": "text",
+            "placeholder": "7-speed DCT"
+        },
+        {
+            "key": "field_vipveh_drive",
+            "label": "Drive",
+            "name": "drive_type",
+            "type": "text",
+            "placeholder": "AWD"
+        },
+        {
+            "key": "field_vipveh_intro",
+            "label": "Intro (detail page)",
+            "name": "intro_lead",
+            "type": "textarea",
+            "rows": 3,
+            "instructions": "Shown under the car name. Falls back to excerpt or content."
+        },
+        {
+            "key": "field_vipveh_min_age",
+            "label": "Minimum age",
+            "name": "minimum_age",
+            "type": "text",
+            "default_value": "25"
+        },
+        {
+            "key": "field_vipveh_included",
+            "label": "What's included",
+            "name": "included_items",
+            "type": "repeater",
+            "layout": "block",
+            "button_label": "Add item",
+            "sub_fields": [
+                {
+                    "key": "field_vipveh_inc_title",
+                    "label": "Title",
+                    "name": "title",
+                    "type": "text",
+                    "parent": "field_vipveh_included"
+                },
+                {
+                    "key": "field_vipveh_inc_text",
+                    "label": "Description",
+                    "name": "description",
+                    "type": "textarea",
+                    "rows": 2,
+                    "parent": "field_vipveh_included"
+                }
+            ]
+        },
+        {
+            "key": "field_vipveh_variants",
+            "label": "Variants",
+            "name": "vehicle_variants",
+            "type": "repeater",
+            "layout": "table",
+            "button_label": "Add variant",
+            "sub_fields": [
+                {
+                    "key": "field_vipveh_var_name",
+                    "label": "Name",
+                    "name": "name",
+                    "type": "text",
+                    "parent": "field_vipveh_variants"
+                },
+                {
+                    "key": "field_vipveh_var_note",
+                    "label": "Note",
+                    "name": "note",
+                    "type": "text",
+                    "parent": "field_vipveh_variants"
+                }
+            ]
+        },
+        {
+            "key": "field_vipveh_routes",
+            "label": "Best routes",
+            "name": "driving_routes",
+            "type": "repeater",
+            "layout": "block",
+            "button_label": "Add route",
+            "sub_fields": [
+                {
+                    "key": "field_vipveh_route_title",
+                    "label": "Title",
+                    "name": "title",
+                    "type": "text",
+                    "parent": "field_vipveh_routes"
+                },
+                {
+                    "key": "field_vipveh_route_desc",
+                    "label": "Description",
+                    "name": "description",
+                    "type": "textarea",
+                    "rows": 2,
+                    "parent": "field_vipveh_routes"
+                }
+            ]
+        },
+        {
+            "key": "field_vipveh_faq",
+            "label": "FAQ (detail page)",
+            "name": "vehicle_faq",
+            "type": "repeater",
+            "layout": "block",
+            "button_label": "Add question",
+            "sub_fields": [
+                {
+                    "key": "field_vipveh_faq_q",
+                    "label": "Question",
+                    "name": "question",
+                    "type": "text",
+                    "parent": "field_vipveh_faq"
+                },
+                {
+                    "key": "field_vipveh_faq_a",
+                    "label": "Answer",
+                    "name": "answer",
+                    "type": "wysiwyg",
+                    "tabs": "visual",
+                    "toolbar": "basic",
+                    "media_upload": 0,
+                    "parent": "field_vipveh_faq"
+                }
+            ]
+        },
+        {
+            "key": "field_vipveh_seo",
+            "label": "SEO content block",
+            "name": "seo_content",
+            "type": "wysiwyg",
+            "tabs": "visual",
+            "toolbar": "basic",
+            "media_upload": 0,
+            "instructions": "Long-form paragraph(s) below routes."
         }
     ],
     "location": [
@@ -94,5 +272,5 @@
     "active": true,
     "description": "Specs for fleet vehicles. WhatsApp number is set under Settings → VIP Transits.",
     "show_in_rest": 1,
-    "modified": 1779343031
+    "modified": 1779361301
 }

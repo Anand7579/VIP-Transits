@@ -6,7 +6,7 @@ Author: Automattic
 Author URI: https://automattic.com/
 Description: Tenku is a classic "magazine" theme with a rich, dense homepage perfect for pro-bloggers.
 Tags: blog,two-columns,wide-blocks,block-patterns,custom-background,custom-colors,custom-logo,custom-menu,editor-style,featured-images,full-site-editing,template-editing,rtl-language-support,threaded-comments,translation-ready
-Version: 1.0.0.1779084288
+Version: 1.1.5.1779084288
 Updated: 2026-05-18 11:34:48
 
 */
@@ -14,7 +14,7 @@ Updated: 2026-05-18 11:34:48
 /**
  * Shared content width (header + hero + sections).
  */
-:root {
+ :root {
 	--vip-content-max: 1440px;
 	--vip-content-pad-x: clamp(1.25rem, 4vw, 3.5rem);
 	--vip-nav-font: "Newsreader", "Times New Roman", Georgia, serif;
@@ -135,6 +135,29 @@ Updated: 2026-05-18 11:34:48
 	font-style: italic !important;
 }
 
+.vip-site-header__search-link {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	line-height: 0;
+	text-decoration: none;
+	opacity: 1;
+	transition: opacity 0.2s ease;
+}
+
+.vip-site-header__search-link:hover,
+.vip-site-header__search-link:focus-visible {
+	opacity: 0.75;
+}
+
+.vip-site-header__search-icon,
+.vip-site-header__search-link .vip-theme-icon__img {
+	width: 22px;
+	height: 22px;
+	object-fit: contain;
+	display: block;
+}
+
 .vip-site-header__social {
 	margin: 0;
 }
@@ -156,6 +179,21 @@ Updated: 2026-05-18 11:34:48
 	margin-top: 0 !important;
 }
 
+/* Fleet + vehicle pages: solid header (not hero overlay). */
+.single-vip_vehicle .vip-site-header,
+.post-type-archive-vip_vehicle .vip-site-header {
+	position: relative;
+	background: #0a0c0f;
+	padding-top: 1.25rem;
+}
+
+.vip-vehicle-main {
+	position: relative;
+	margin-top: 0 !important;
+	padding-top: 0;
+	background: #ffffff;
+}
+
 @media (max-width: 768px) {
 	.vip-site-header__end {
 		width: 100%;
@@ -174,6 +212,14 @@ Updated: 2026-05-18 11:34:48
 /**
  * Site footer (block pattern: tenku-child/footer) — Figma layout
  */
+
+/* FSE block gap: :where(.wp-site-blocks) > * + * adds margin-block-start before footer. */
+.wp-site-blocks > footer.wp-block-template-part,
+.wp-site-blocks > footer.wp-block-template-part:has(.vip-site-footer),
+.wp-site-blocks > .wp-block-template-part:has(.vip-site-footer) {
+	margin-block-start: 0;
+}
+
 .vip-site-footer {
 	--vip-footer-font: var(--vip-nav-font);
 	background: #1a1a1a;
@@ -201,14 +247,14 @@ Updated: 2026-05-18 11:34:48
 
 /* 70% centered block (logo + right column) */
 .vip-site-footer__inner {
-	width: 70%;
+	width: 67%;
 	margin: 0 auto;
 }
 
 /* Customized footer without __inner wrapper (Site Editor) */
 .vip-site-footer__container:not(:has(.vip-site-footer__inner)) > .vip-site-footer__main,
 .vip-site-footer__container:not(:has(.vip-site-footer__inner)) > .wp-block-group.vip-site-footer__main {
-	width: 70%;
+	width: 75%;
 	margin-left: auto;
 	margin-right: auto;
 }
@@ -221,8 +267,8 @@ Updated: 2026-05-18 11:34:48
 
 .vip-site-footer__main {
 	display: grid;
-	grid-template-columns: 15% 75%;
-	column-gap: 40px;
+	grid-template-columns: 21% 79%;
+	column-gap: 25px;
 	align-items: center;
 	width: 100%;
 	margin: 0;
@@ -371,5 +417,88 @@ Updated: 2026-05-18 11:34:48
 	.vip-site-footer__legal,
 	.vip-site-footer__content .vip-site-footer__legal {
 		text-align: center;
+	}
+}
+
+/**
+ * Delivery locations — fallback when vip-home block CSS is cached/missing.
+ * Full rules live in blocks/vip-home/style.css.
+ */
+.vip-delivery {
+	--vip-delivery-font: var(--vip-nav-font, "Newsreader", "Times New Roman", Georgia, serif);
+	background: #000;
+	color: #fff;
+	padding: clamp(3rem, 5.5vw, 4.75rem) 0;
+	font-family: var(--vip-delivery-font);
+}
+
+.vip-delivery__title {
+	font-family: var(--vip-delivery-font);
+	font-weight: 500;
+	font-size: 32px;
+	line-height: 32px;
+	letter-spacing: -0.04em;
+	color: #fff;
+}
+
+.vip-delivery__intro {
+	font-family: var(--vip-delivery-font);
+	font-weight: 400;
+	font-size: 16px;
+	line-height: 24px;
+	letter-spacing: -0.01em;
+	color: #f9f9f9;
+}
+
+.vip-delivery__name {
+	font-family: var(--vip-delivery-font);
+	font-weight: 500;
+	font-size: 20px;
+	line-height: 20px;
+	letter-spacing: -0.02em;
+	color: #f9f9f9;
+}
+
+.vip-delivery__text {
+	font-family: var(--vip-delivery-font);
+	font-weight: 400;
+	font-size: 14px;
+	line-height: 14px;
+	letter-spacing: -0.01em;
+	color: #f9f9f9;
+}
+
+.vip-delivery__grid {
+	display: grid !important;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	column-gap: clamp(1.25rem, 2.2vw, 2rem);
+	row-gap: clamp(2.25rem, 3.5vw, 3rem);
+	margin: 0;
+	padding: 0;
+}
+
+.vip-delivery__media {
+	aspect-ratio: 16 / 9;
+	overflow: hidden;
+	margin: 0 0 1rem;
+}
+
+.vip-delivery__media img,
+.vip-delivery__img {
+	display: block;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+@media (max-width: 900px) {
+	.vip-delivery__grid {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+}
+
+@media (max-width: 560px) {
+	.vip-delivery__grid {
+		grid-template-columns: minmax(0, 1fr);
 	}
 }

@@ -98,6 +98,10 @@ if ( ! $home_id ) {
 					</div>
 				</div>
 				<?php
+			} elseif ( 'why_rent' === $layout ) {
+				get_template_part( 'template-parts/home/section', 'why-rent' );
+			} elseif ( 'delivery_locations' === $layout ) {
+				get_template_part( 'template-parts/home/section', 'delivery-locations' );
 			} elseif ( 'cta_banner' === $layout ) {
 				get_template_part( 'template-parts/home/section', 'cta-banner' );
 			}

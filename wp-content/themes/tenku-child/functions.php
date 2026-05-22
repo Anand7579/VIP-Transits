@@ -51,6 +51,11 @@ if ( file_exists( $vip_vehicle_blocks ) ) {
 	require_once $vip_vehicle_blocks;
 }
 
+$vip_theme_icons = get_stylesheet_directory() . '/inc/theme-icons.php';
+if ( file_exists( $vip_theme_icons ) ) {
+	require_once $vip_theme_icons;
+}
+
 /**
  * WordPress Studio / large Figma PNG uploads: avoid thumbnail generation failures.
  */

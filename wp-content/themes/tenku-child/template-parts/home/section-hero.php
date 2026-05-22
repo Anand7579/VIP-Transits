@@ -97,10 +97,11 @@ $hero_classes  = 'vip-hero' . ( $use_video ? ' vip-hero--video' : ' vip-hero--im
 					value="<?php echo esc_attr( get_search_query() ); ?>"
 				/>
 				<button class="vip-hero__search-btn" type="submit" aria-label="<?php esc_attr_e( 'Search', 'tenku-child' ); ?>">
-					<svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-						<circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.75"/>
-						<path d="M20 20L16 16" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/>
-					</svg>
+					<?php
+					if ( function_exists( 'vip_transits_theme_icon_img' ) ) {
+						echo vip_transits_theme_icon_img( 'search', array( 'class' => 'vip-hero__search-icon' ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+					}
+					?>
 				</button>
 			</form>
 
