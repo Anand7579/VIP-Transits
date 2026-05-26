@@ -651,6 +651,6 @@ Updated: 2026-05-18 11:34:48
 	}
 }
 
-main.vip-fleet-main {
-    margin: 0;
+main.vip-fleet-main, main#wp--skip-link--target {
+    margin: 0 !important;
 }

@@ -3,9 +3,16 @@
  */
 
 /* Native lazy render for below-fold sections (hero excluded — always visible) */
-[data-vip-section]:not(.vip-hero):not(.vip-vdetail__hero) {
+[data-vip-section]:not(.vip-hero):not(.vip-vdetail__hero):not(.vip-categories):not(.vip-fleet--section) {
 	content-visibility: auto;
 	contain-intrinsic-size: auto 420px;
+}
+
+/* Avoid paint seam between adjacent gray homepage sections */
+.vip-categories[data-vip-section],
+.vip-fleet.vip-fleet--section[data-vip-section] {
+	content-visibility: visible;
+	contain-intrinsic-size: none;
 }
 
 /* Hero banner: media fade + content rises bottom → top */

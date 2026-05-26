@@ -255,6 +255,7 @@
 	 line-height: 16px;
 	 letter-spacing: 0;
 	 opacity: 0.95;
+	 margin-top: 6px;
  }
  
  @media (max-width: 768px) {
@@ -290,10 +291,28 @@
  
  /* Vehicle categories (image + label) */
  .vip-categories {
-	 background: #f9f9f9;
+	 --vip-section-surface: #f9f9f9;
+	 background: var(--vip-section-surface);
 	 padding: clamp(2rem, 4vw, 3rem) 0;
 	 color: #0a0c0f;
 	 font-family: var(--vip-hero-font, "Newsreader", "Times New Roman", Georgia, serif);
+ }
+
+ /* No white seam between categories and fleet (FSE block-gap / parent background) */
+ .vip-home > .vip-categories {
+	 margin-block-end: 0 !important;
+ }
+
+ .vip-home > .vip-categories + .vip-fleet {
+	 margin-block-start: 0 !important;
+ }
+
+ .vip-home > .vip-categories:has(+ .vip-fleet) {
+	 padding-block-end: clamp(1.25rem, 2.5vw, 2rem);
+ }
+
+ .vip-home > .vip-categories + .vip-fleet {
+	 padding-block-start: clamp(1.25rem, 2.5vw, 2rem);
  }
  
  .vip-categories__grid {
