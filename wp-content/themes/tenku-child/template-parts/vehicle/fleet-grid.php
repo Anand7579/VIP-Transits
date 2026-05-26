@@ -45,6 +45,21 @@ $max   = (int) $query->max_num_pages;
 				);
 				?>
 			</p>
+			<div class="vip-fleet__toolbar-actions">
+				<?php if ( $show_filters ) : ?>
+				<button
+					type="button"
+					class="vip-fleet__filter-toggle"
+					data-vip-fleet-filter-toggle
+					aria-expanded="false"
+					aria-controls="vip-fleet-filters-panel"
+				>
+					<svg class="vip-fleet__filter-toggle-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
+						<path d="M3 6h18M6 12h12M9 18h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+					</svg>
+					<span class="vip-fleet__filter-toggle-text"><?php esc_html_e( 'Filter', 'tenku-child' ); ?></span>
+				</button>
+				<?php endif; ?>
 			<div class="vip-fleet__sort" data-vip-fleet-sort-wrap>
 				<input type="hidden" data-vip-fleet-sort value="title-asc" />
 				<div class="vip-fleet__sort-box">
@@ -55,6 +70,7 @@ $max   = (int) $query->max_num_pages;
 					</button>
 				</div>
 				<ul class="vip-fleet__sort-menu" data-vip-fleet-sort-menu role="listbox" hidden></ul>
+			</div>
 			</div>
 		</div>
 

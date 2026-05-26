@@ -43,7 +43,7 @@ $price_bounds = function_exists( 'vip_transits_get_fleet_price_bounds' )
 $price_min    = (int) $price_bounds['min'];
 $price_max    = (int) $price_bounds['max'];
 ?>
-<aside class="vip-fleet__filters" aria-label="<?php esc_attr_e( 'Filter vehicles', 'tenku-child' ); ?>">
+<aside id="vip-fleet-filters-panel" class="vip-fleet__filters" aria-label="<?php esc_attr_e( 'Filter vehicles', 'tenku-child' ); ?>">
 	<h2 class="vip-fleet__filters-title"><?php esc_html_e( 'Filter', 'tenku-child' ); ?></h2>
 
 	<?php if ( $categories ) : ?>

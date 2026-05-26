@@ -481,24 +481,41 @@ function vip_transits_vehicle_acf_rows( $field, $post_id, $sub_keys = array() ) 
  */
 function vip_transits_vehicle_related_posts( $post_id, $limit = 2 ) {
 	$brand = vip_transits_vehicle_primary_brand( $post_id );
-	if ( ! $brand ) {
-		return array();
+	
+	$args = array(
+		'post_type'      => 'vip_vehicle',
+		'post_status'    => 'publish',
+		'posts_per_page' => $limit,
+		'post__not_in'   => array( (int) $post_id ),
+	);
+
+	if ( $brand ) {
+		$args['tax_query'] = array(
+			array(
+				'taxonomy' => 'vehicle_brand',
+				'field'    => 'term_id',
+				'terms'    => array( (int) $brand->term_id ),
+			),
+		);
 	}
-	$query = new WP_Query(
-		array(
+	
+	$query = new WP_Query( $args );
+	
+	if ( $query->post_count < $limit ) {
+		$exclude = array( (int) $post_id );
+		foreach ( $query->posts as $p ) {
+			$exclude[] = $p->ID;
+		}
+		
+		$fallback_args = array(
 			'post_type'      => 'vip_vehicle',
 			'post_status'    => 'publish',
-			'posts_per_page' => $limit,
-			'post__not_in'   => array( (int) $post_id ),
-			'tax_query'      => array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
-				array(
-					'taxonomy' => 'vehicle_brand',
-					'field'    => 'term_id',
-					'terms'    => array( (int) $brand->term_id ),
-				),
-			),
-		)
-	);
+			'posts_per_page' => $limit - $query->post_count,
+			'post__not_in'   => $exclude,
+		);
+		$fallback_query = new WP_Query( $fallback_args );
+		return array_merge( $query->posts, $fallback_query->posts );
+	}
 	return $query->posts;
 }
 
@@ -592,6 +609,15 @@ function vip_transits_get_vehicle_single_data( $post_id = 0 ) {
 	}
 
 	$variants = vip_transits_vehicle_acf_rows( 'vehicle_variants', $post_id, array( 'name', 'note' ) );
+	if ( empty( $variants ) ) {
+		$variants = array(
+			array( 'name' => 'Huracan EVO', 'note' => '' ),
+			array( 'name' => 'Huracan EVO Spyder', 'note' => '(convertible)' ),
+			array( 'name' => 'Huracan Tecnica', 'note' => '' ),
+			array( 'name' => 'Huracan Sterrato', 'note' => '' ),
+			array( 'name' => 'Huracan STO', 'note' => '' ),
+		);
+	}
 	$routes   = vip_transits_vehicle_acf_rows( 'driving_routes', $post_id, array( 'title', 'description' ) );
 	$faq      = vip_transits_vehicle_acf_rows( 'vehicle_faq', $post_id, array( 'question', 'answer' ) );
 

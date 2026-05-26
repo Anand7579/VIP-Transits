@@ -17,6 +17,9 @@
 		var sortLabel = root.querySelector('[data-vip-fleet-sort-label]');
 		var sortMenu = root.querySelector('[data-vip-fleet-sort-menu]');
 		var loadBtn = root.querySelector('[data-vip-fleet-load-more]');
+		var filterToggle = root.querySelector('[data-vip-fleet-filter-toggle]');
+		var filtersPanel = root.querySelector('.vip-fleet__filters');
+		var mobileFiltersMq = window.matchMedia('(max-width: 768px)');
 
 		var sortOptionsMap = {
 			'title-asc': 'Car Type',
@@ -297,6 +300,58 @@
 			if (sortMenu) {
 				sortMenu.hidden = true;
 			}
+		}
+
+		function isMobileFilters() {
+			return mobileFiltersMq.matches;
+		}
+
+		function setFiltersOpen(open) {
+			if (!filtersPanel || !isMobileFilters()) {
+				return;
+			}
+			root.classList.toggle('vip-fleet__layout--filters-open', open);
+			filtersPanel.setAttribute('aria-hidden', open ? 'false' : 'true');
+			if (filterToggle) {
+				filterToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+			}
+		}
+
+		function syncFiltersPanelState() {
+			if (!filtersPanel) {
+				return;
+			}
+			if (isMobileFilters()) {
+				var open = root.classList.contains('vip-fleet__layout--filters-open');
+				filtersPanel.setAttribute('aria-hidden', open ? 'false' : 'true');
+				if (filterToggle) {
+					filterToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+				}
+			} else {
+				root.classList.remove('vip-fleet__layout--filters-open');
+				filtersPanel.setAttribute('aria-hidden', 'false');
+				if (filterToggle) {
+					filterToggle.setAttribute('aria-expanded', 'false');
+				}
+			}
+		}
+
+		if (filtersPanel) {
+			if (filterToggle) {
+				filterToggle.addEventListener('click', function () {
+					if (!isMobileFilters()) {
+						return;
+					}
+					setFiltersOpen(!root.classList.contains('vip-fleet__layout--filters-open'));
+				});
+			}
+
+			if (typeof mobileFiltersMq.addEventListener === 'function') {
+				mobileFiltersMq.addEventListener('change', syncFiltersPanelState);
+			} else if (typeof mobileFiltersMq.addListener === 'function') {
+				mobileFiltersMq.addListener(syncFiltersPanelState);
+			}
+			syncFiltersPanelState();
 		}
 
 		if (sortWrap && sortTrigger && sortMenu) {
