@@ -20,7 +20,7 @@ $load_more    = null === $load_more ? true : (bool) $load_more;
 
 $query = new WP_Query( vip_transits_vehicle_query_args( array( 'posts_per_page' => $per_page ) ) );
 ?>
-<section class="vip-fleet vip-fleet--section" data-vip-section>
+<section id="vip-fleet" class="vip-fleet vip-fleet--section" data-vip-section>
 	<div class="vip-fleet__container vip-content-container">
 		<header class="vip-fleet__header">
 			<?php if ( $title ) : ?>

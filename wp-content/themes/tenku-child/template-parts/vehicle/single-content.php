@@ -117,6 +117,8 @@ $seo_heading = sprintf(
 	<div class="vip-vdetail__container vip-content-container">
 		<?php get_template_part( 'template-parts/vehicle/single', 'hero-panel', array( 'd' => $d ) ); ?>
 
+		<div class="main_content_wrap">
+<div class="left_wrap">
 		<section class="vip-vdetail__intro" data-vip-section>
 			<h2 class="vip-vdetail__h2"><?php echo esc_html( $d['short_name'] ); ?></h2>
 			<?php if ( $d['intro'] ) : ?>
@@ -124,24 +126,8 @@ $seo_heading = sprintf(
 			<?php endif; ?>
 		</section>
 
-		<?php if ( ! empty( $d['included'] ) ) : ?>
-			<section class="vip-vdetail__included" data-vip-section>
-				<h2 class="vip-vdetail__section-title vip-vdetail__section-title--rule-only"><?php echo esc_html( $included_heading ); ?></h2>
-				<ul class="vip-vdetail__included-list">
-					<?php foreach ( $d['included'] as $item ) : ?>
-						<?php
-						$inc_title = isset( $item['title'] ) ? trim( (string) $item['title'] ) : '';
-						if ( ! $inc_title ) {
-							continue;
-						}
-						?>
-						<li class="vip-vdetail__included-item"><?php echo esc_html( $inc_title ); ?></li>
-					<?php endforeach; ?>
-				</ul>
-			</section>
-		<?php endif; ?>
 
-		<?php if ( ! empty( $d['specs'] ) ) : ?>
+			<?php if ( ! empty( $d['specs'] ) ) : ?>
 			<section class="vip-vdetail__specs" data-vip-section>
 				<h2 class="vip-vdetail__section-title"><?php echo esc_html( $specs_heading ); ?></h2>
 				<table class="vip-vdetail__spec-table">
@@ -162,6 +148,37 @@ $seo_heading = sprintf(
 				</table>
 			</section>
 		<?php endif; ?>
+
+</div>
+<div class="right_wrap">
+	<?php if ( ! empty( $d['included'] ) ) : ?>
+			<section class="vip-vdetail__included" data-vip-section>
+				<h2 class="vip-vdetail__section-title vip-vdetail__section-title--rule-only"><?php echo esc_html( $included_heading ); ?></h2>
+				<ul class="vip-vdetail__included-list">
+					<?php foreach ( $d['included'] as $item ) : ?>
+						<?php
+						$inc_title = isset( $item['title'] ) ? trim( (string) $item['title'] ) : '';
+						if ( ! $inc_title ) {
+							continue;
+						}
+						?>
+						<li class="vip-vdetail__included-item"><?php echo esc_html( $inc_title ); ?></li>
+					<?php endforeach; ?>
+				</ul>
+			</section>
+		<?php endif; ?>
+</div>
+
+</div>
+
+
+
+
+
+
+
+
+
 
 		<div class="vip-vdetail__mid<?php echo empty( $d['related'] ) ? ' vip-vdetail__mid--no-related' : ''; ?>">
 			<?php if ( ! empty( $d['related'] ) ) : ?>
@@ -224,7 +241,7 @@ $seo_heading = sprintf(
 				</ul>
 			</section>
 		<?php endif; ?>
-
+<div class="cta_section">
 		<section class="vip-vdetail__steps" data-vip-section>
 			<h2 class="vip-vdetail__section-title"><?php echo esc_html( $book_heading ); ?></h2>
 			<ol class="vip-vdetail__steps-list">
@@ -262,7 +279,7 @@ $seo_heading = sprintf(
 				<?php endif; ?>
 			</div>
 		<?php endif; ?>
-
+</div>
 		<?php if ( ! empty( $d['routes'] ) ) : ?>
 			<section class="vip-vdetail__routes" data-vip-section>
 				<h2 class="vip-vdetail__section-title"><?php echo esc_html( $routes_heading ); ?></h2>

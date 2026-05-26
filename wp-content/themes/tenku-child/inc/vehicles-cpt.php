@@ -60,6 +60,23 @@ function vip_transits_register_vehicle_cpt() {
 	);
 
 	register_taxonomy(
+		'vehicle_category',
+		'vip_vehicle',
+		array(
+			'labels'            => array(
+				'name'          => __( 'Categories', 'tenku-child' ),
+				'singular_name' => __( 'Category', 'tenku-child' ),
+				'add_new_item'  => __( 'Add category', 'tenku-child' ),
+			),
+			'hierarchical'      => true,
+			'public'            => true,
+			'show_admin_column' => true,
+			'rewrite'           => array( 'slug' => 'vehicle-category' ),
+			'show_in_rest'      => true,
+		)
+	);
+
+	register_taxonomy(
 		'vehicle_seat',
 		'vip_vehicle',
 		array(
@@ -174,6 +191,45 @@ function vip_transits_register_default_seat_terms() {
 	}
 }
 add_action( 'init', 'vip_transits_register_default_seat_terms', 12 );
+
+/**
+ * Default vehicle category terms (homepage category row + fleet filter).
+ */
+function vip_transits_register_default_category_terms() {
+	if ( ! taxonomy_exists( 'vehicle_category' ) ) {
+		return;
+	}
+
+	$defaults = array(
+		'sports'      => __( 'Sports', 'tenku-child' ),
+		'convertible' => __( 'Convertible', 'tenku-child' ),
+		'luxury'      => __( 'Luxury', 'tenku-child' ),
+		'suv'         => __( 'SUV', 'tenku-child' ),
+	);
+
+	foreach ( $defaults as $slug => $name ) {
+		if ( ! term_exists( $slug, 'vehicle_category' ) ) {
+			wp_insert_term( $name, 'vehicle_category', array( 'slug' => $slug ) );
+		}
+	}
+}
+add_action( 'init', 'vip_transits_register_default_category_terms', 12 );
+
+/**
+ * Slug used for fleet filtering from a homepage category card.
+ *
+ * @param string $title      Display title (e.g. SPORTS).
+ * @param string $filter_slug Optional explicit slug from ACF.
+ * @return string
+ */
+function vip_transits_category_filter_slug( $title, $filter_slug = '' ) {
+	$filter_slug = sanitize_title( (string) $filter_slug );
+	if ( $filter_slug ) {
+		return $filter_slug;
+	}
+
+	return sanitize_title( (string) $title );
+}
 
 /**
  * Get taxonomy terms in a fixed slug order (for fleet filters).
@@ -324,14 +380,18 @@ function vip_transits_vehicle_query_args( $args = array() ) {
  */
 function vip_transits_get_vehicle_card_data( $post_id = 0 ) {
 	$post_id = $post_id ? $post_id : get_the_ID();
-	$brands  = wp_get_post_terms( $post_id, 'vehicle_brand', array( 'fields' => 'slugs' ) );
-	$seats   = wp_get_post_terms( $post_id, 'vehicle_seat', array( 'fields' => 'slugs' ) );
+	$brands     = wp_get_post_terms( $post_id, 'vehicle_brand', array( 'fields' => 'slugs' ) );
+	$seats      = wp_get_post_terms( $post_id, 'vehicle_seat', array( 'fields' => 'slugs' ) );
+	$categories = wp_get_post_terms( $post_id, 'vehicle_category', array( 'fields' => 'slugs' ) );
 
 	if ( is_wp_error( $brands ) ) {
 		$brands = array();
 	}
 	if ( is_wp_error( $seats ) ) {
 		$seats = array();
+	}
+	if ( is_wp_error( $categories ) ) {
+		$categories = array();
 	}
 
 	$price = (int) get_field( 'daily_price', $post_id );
@@ -353,6 +413,7 @@ function vip_transits_get_vehicle_card_data( $post_id = 0 ) {
 		'delivery'     => (bool) get_field( 'delivery_hotel_home', $post_id, false ),
 		'brands'       => $brands,
 		'seat_terms'   => $seats,
+		'categories'   => $categories,
 	);
 }
 

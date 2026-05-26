@@ -9,6 +9,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+$category_order = array(
+	'sports',
+	'convertible',
+	'luxury',
+	'suv',
+);
+
+$categories = vip_transits_get_ordered_terms( 'vehicle_category', $category_order );
+
 $brand_order = array(
 	'lamborghini',
 	'ferrari',
@@ -30,6 +39,23 @@ $price_max = 5000;
 ?>
 <aside class="vip-fleet__filters" aria-label="<?php esc_attr_e( 'Filter vehicles', 'tenku-child' ); ?>">
 	<h2 class="vip-fleet__filters-title"><?php esc_html_e( 'Filter', 'tenku-child' ); ?></h2>
+
+	<?php if ( $categories ) : ?>
+		<div class="vip-fleet__filter-group">
+			<h3 class="vip-fleet__filter-label"><?php esc_html_e( 'Car Category', 'tenku-child' ); ?></h3>
+			<ul class="vip-fleet__filter-list">
+				<?php foreach ( $categories as $term ) : ?>
+					<li>
+						<label class="vip-fleet__check">
+							<input type="checkbox" name="category" value="<?php echo esc_attr( $term->slug ); ?>" data-vip-fleet-filter="category" />
+							<span class="vip-fleet__check-box" aria-hidden="true"></span>
+							<span class="vip-fleet__check-text"><?php echo esc_html( $term->name ); ?></span>
+						</label>
+					</li>
+				<?php endforeach; ?>
+			</ul>
+		</div>
+	<?php endif; ?>
 
 	<?php if ( $brands ) : ?>
 		<div class="vip-fleet__filter-group">

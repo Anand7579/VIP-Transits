@@ -204,8 +204,16 @@
                                     "parent": "field_viph_cat_items"
                                 },
                                 {
+                                    "key": "field_viph_cat_filter_slug",
+                                    "label": "Filter slug",
+                                    "name": "filter_slug",
+                                    "type": "text",
+                                    "instructions": "Optional. Must match a Vehicles → Categories slug (sports, convertible, luxury, suv). Leave empty to derive from title.",
+                                    "parent": "field_viph_cat_items"
+                                },
+                                {
                                     "key": "field_viph_cat_link",
-                                    "label": "Link (optional)",
+                                    "label": "Link (optional, unused)",
                                     "name": "link",
                                     "type": "link",
                                     "return_format": "array",

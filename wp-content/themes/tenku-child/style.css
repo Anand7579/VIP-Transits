@@ -6,7 +6,7 @@ Author: Automattic
 Author URI: https://automattic.com/
 Description: Tenku is a classic "magazine" theme with a rich, dense homepage perfect for pro-bloggers.
 Tags: blog,two-columns,wide-blocks,block-patterns,custom-background,custom-colors,custom-logo,custom-menu,editor-style,featured-images,full-site-editing,template-editing,rtl-language-support,threaded-comments,translation-ready
-Version: 1.1.5.1779084288
+Version: 1.42.560.1779084288
 Updated: 2026-05-18 11:34:48
 
 */
@@ -66,12 +66,17 @@ Updated: 2026-05-18 11:34:48
 	box-sizing: border-box;
 }
 
+.vip-site-header__inner,
+.vip-site-header__inner.is-layout-flex,
+.vip-site-header__end.is-layout-flex {
+	flex-wrap: nowrap;
+	align-items: center;
+}
+
 .vip-site-header__inner {
 	display: flex;
-	flex-wrap: wrap;
-	align-items: flex-start;
 	justify-content: space-between;
-	gap: 1rem;
+	gap: clamp(0.75rem, 2vw, 1.5rem);
 }
 
 .vip-site-header .wp-block-site-logo img {
@@ -79,6 +84,7 @@ Updated: 2026-05-18 11:34:48
 }
 
 .vip-site-header__brand {
+	flex-shrink: 0;
 	align-items: center;
 	text-align: center;
 	gap: 0.35rem;
@@ -95,8 +101,79 @@ Updated: 2026-05-18 11:34:48
 }
 
 .vip-site-header__end {
-	gap: clamp(1rem, 2.5vw, 2rem);
+	display: flex;
+	flex-wrap: nowrap;
+	flex: 1 1 auto;
+	min-width: 0;
+	justify-content: flex-end;
 	align-items: center;
+	gap: clamp(0.75rem, 2vw, 1.5rem);
+}
+
+.vip-site-header__nav.wp-block-navigation {
+	display: flex;
+	align-items: center;
+	flex: 0 1 auto;
+	min-width: 0;
+}
+
+.vip-site-header__nav .wp-block-navigation-item {
+	display: flex;
+	align-items: center;
+}
+
+.vip-site-header__nav .wp-block-navigation__responsive-container-open,
+.vip-site-header__nav .wp-block-navigation__responsive-container-close {
+	align-items: center;
+	justify-content: center;
+	padding: 0;
+	margin: 0;
+}
+
+.vip-site-header__social,
+.vip-site-header__social.wp-block-social-links {
+	display: flex;
+	align-items: center;
+	margin: 0;
+}
+
+.vip-site-header__social .wp-block-social-links {
+	flex-wrap: nowrap;
+	gap: 0.5rem;
+}
+
+/* Desktop: inline nav in header row (no hamburger) */
+@media (min-width: 1101px) {
+	.vip-site-header__nav .wp-block-navigation__responsive-container-open:not(.always-shown) {
+		display: none;
+	}
+
+	.vip-site-header__nav .wp-block-navigation__responsive-container:not(.is-menu-open) {
+		display: block;
+		position: relative;
+		width: auto;
+		z-index: auto;
+	}
+
+	.vip-site-header__nav .wp-block-navigation__responsive-container-content,
+	.vip-site-header__nav .wp-block-navigation__container {
+		display: flex;
+		flex-direction: row;
+		flex-wrap: nowrap;
+		align-items: center;
+		gap: clamp(0.75rem, 1.5vw, 1.5rem);
+	}
+}
+
+/* Tablet + mobile (iPad Mini / Air / Pro): hamburger only — avoids double menu + stacked links */
+@media (max-width: 1100px) {
+	.vip-site-header__nav .wp-block-navigation__responsive-container-open {
+		display: inline-flex;
+	}
+
+	.vip-site-header__nav .wp-block-navigation__responsive-container:not(.is-menu-open) {
+		display: none !important;
+	}
 }
 
 /* Figma menu type: Newsreader Medium (500), 14/14, 8% tracking, centered */
@@ -130,8 +207,8 @@ Updated: 2026-05-18 11:34:48
 }
 
 /* Figma: “Home” is italic; targets first menu item in header + footer */
-.vip-site-header__nav .wp-block-navigation-item:first-child .wp-block-navigation-item__content,
-.vip-site-footer__nav .wp-block-navigation-item:first-child .wp-block-navigation-item__content {
+.vip-site-header__nav .wp-block-navigation .current-menu-item .wp-block-navigation-item__label,
+.vip-site-footer__nav .wp-block-navigation .current-menu-item .wp-block-navigation-item__label {
 	font-style: italic !important;
 }
 
@@ -194,18 +271,59 @@ Updated: 2026-05-18 11:34:48
 	background: #ffffff;
 }
 
-@media (max-width: 768px) {
+.main_content_wrap{display: flex; justify-content: space-between; gap: 50px;}
+.cta_section { padding: 30px; background: #000;color: #fff;margin-bottom: 30px;}
+.cta_section .vip-vdetail__section-title{    border-bottom: 1px solid #fff;}
+.cta_section .vip-vdetail__step{    flex-direction: column;border: 1px solid #ACACAC; padding: 20px; background: #1D1D1D;}
+.vip-vdetail__faq-accordion { display: grid; grid-template-columns: repeat(2, 1fr); }
+.main_content_wrap .vip-vdetail__spec-table thead th{background: #000000; color: #fff; padding: 20px 15px 15px 40px;}
+.main_content_wrap .vip-vdetail__spec-table tbody  {    background: #F3F3F3;}
+.main_content_wrap .vip-vdetail__spec-table tbody th{padding: 20px 15px 15px 40px;}
+
+/* Mobile: logo | menu + icons on one row */
+@media (max-width: 767px) {
+	.vip-hero__title-primary{
+		font-size: 44px !important;
+    	line-height: 44px !important;
+	}
+	
+	.vip-cta__copy {
+		flex: 1 1 75px !important;
+	}
+	
+	.vip-site-header {
+		padding-top: 1rem;
+		padding-bottom: 1rem;
+	}
+
+	.vip-site-header__inner {
+		align-items: center;
+		flex-wrap: nowrap;
+	}
+
+	.vip-site-header__tagline {
+		display: none;
+	}
+	
 	.vip-site-header__end {
-		width: 100%;
-		justify-content: center;
+		width: auto;
+		flex: 1 1 auto;
+		justify-content: flex-end;
+		align-items: center;
+		gap: 0.75rem;
 	}
 
 	.vip-site-header__nav {
-		width: 100%;
+		width: auto;
 	}
 
 	.vip-site-header__nav .wp-block-navigation__container {
-		justify-content: center;
+		justify-content: flex-end;
+	}
+	
+	.vip-site-header__search-link,
+	.vip-site-header__social {
+		flex-shrink: 0;
 	}
 }
 
@@ -416,7 +534,31 @@ Updated: 2026-05-18 11:34:48
 
 	.vip-site-footer__legal,
 	.vip-site-footer__content .vip-site-footer__legal {
-		text-align: center;
+		text-align: center !important;
+	}
+	.vip-site-footer__legal, .vip-site-footer__content .vip-site-footer__legal{
+		line-height: 20px !important;
+	}
+}
+
+
+@media (min-width:768px) and (max-width: 1100px) {
+	.vip-cta__copy {
+		flex: 1 1 75px !important;
+	}
+	
+	.vip-hero__title{
+		max-width: 37ch !important;
+	}
+	.vip-site-footer__legal, .vip-site-footer__content .vip-site-footer__legal, .vip-site-footer__content > .wp-block-paragraph.vip-site-footer__legal{
+		line-height: 26px;
+	}
+	.vip-site-footer__inner{
+		width: 87% !important;
+	}
+	.vip-site-footer__legal{
+		text-align: center !important;
+		line-height: 20px !important;
 	}
 }
 
@@ -500,5 +642,11 @@ Updated: 2026-05-18 11:34:48
 @media (max-width: 560px) {
 	.vip-delivery__grid {
 		grid-template-columns: minmax(0, 1fr);
+	}
+}
+
+@media (min-width: 900px) and (max-width: 1100px) {
+	.vip-site-footer__legal, .vip-site-footer__content .vip-site-footer__legal, .vip-site-footer__content > .wp-block-paragraph.vip-site-footer__legal{
+		text-align: left !important;
 	}
 }

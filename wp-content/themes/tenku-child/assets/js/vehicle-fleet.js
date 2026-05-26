@@ -78,18 +78,33 @@
 		}
 
 		function cardMatches(card) {
+			var categories = root.querySelectorAll('[data-vip-fleet-filter="category"]:checked');
 			var brands = root.querySelectorAll('[data-vip-fleet-filter="brand"]:checked');
 			var seats = root.querySelectorAll('[data-vip-fleet-filter="seat"]:checked');
 			var delivery = root.querySelector('[data-vip-fleet-filter="delivery"]');
 			var minR = root.querySelector('[data-vip-fleet-price-min]');
 			var maxR = root.querySelector('[data-vip-fleet-price-max]');
 
+			var categorySlugs = (card.getAttribute('data-categories') || '').split(/\s+/).filter(Boolean);
 			var brandSlugs = (card.getAttribute('data-brands') || '').split(/\s+/).filter(Boolean);
 			var seatSlugs = (card.getAttribute('data-seats') || '').split(/\s+/).filter(Boolean);
 			var price = parseInt(card.getAttribute('data-price') || '0', 10);
 			var hasDelivery = card.getAttribute('data-delivery') === '1';
 
 			var i;
+			if (categories.length) {
+				var categoryOk = false;
+				for (i = 0; i < categories.length; i++) {
+					if (categorySlugs.indexOf(categories[i].value) !== -1) {
+						categoryOk = true;
+						break;
+					}
+				}
+				if (!categoryOk) {
+					return false;
+				}
+			}
+
 			if (brands.length) {
 				var brandOk = false;
 				for (i = 0; i < brands.length; i++) {

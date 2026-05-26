@@ -19,26 +19,27 @@ if ( ! have_rows( 'categories' ) ) {
 			<?php
 			while ( have_rows( 'categories' ) ) :
 				the_row();
-				$image = get_sub_field( 'image' );
-				$title = get_sub_field( 'title' );
-				$link  = get_sub_field( 'link' );
+				$image       = get_sub_field( 'image' );
+				$title       = get_sub_field( 'title' );
+				$filter_slug = get_sub_field( 'filter_slug' );
 
 				if ( ! $title && ! ( is_array( $image ) && ! empty( $image['url'] ) ) ) {
 					continue;
 				}
 
+				$slug    = function_exists( 'vip_transits_category_filter_slug' )
+					? vip_transits_category_filter_slug( (string) $title, (string) $filter_slug )
+					: sanitize_title( (string) $title );
 				$img_url = is_array( $image ) && ! empty( $image['url'] ) ? $image['url'] : '';
 				$img_alt = is_array( $image ) && ! empty( $image['alt'] ) ? $image['alt'] : $title;
-				$href    = is_array( $link ) && ! empty( $link['url'] ) ? $link['url'] : '';
-				$target  = is_array( $link ) && ! empty( $link['target'] ) ? $link['target'] : '';
 				?>
 				<li class="vip-categories__item">
-					<?php if ( $href ) : ?>
-						<a class="vip-categories__card" href="<?php echo esc_url( $href ); ?>"<?php echo $target ? ' target="' . esc_attr( $target ) . '" rel="noopener noreferrer"' : ''; ?>>
-					<?php else : ?>
-						<div class="vip-categories__card">
-					<?php endif; ?>
-
+					<button
+						type="button"
+						class="vip-categories__card"
+						data-vip-category-filter="<?php echo esc_attr( $slug ); ?>"
+						aria-pressed="false"
+					>
 						<?php if ( $img_url ) : ?>
 							<figure class="vip-categories__media">
 								<img
@@ -54,12 +55,7 @@ if ( ! have_rows( 'categories' ) ) {
 						<?php if ( $title ) : ?>
 							<p class="vip-categories__label"><?php echo esc_html( $title ); ?></p>
 						<?php endif; ?>
-
-					<?php if ( $href ) : ?>
-						</a>
-					<?php else : ?>
-						</div>
-					<?php endif; ?>
+					</button>
 				</li>
 			<?php endwhile; ?>
 		</ul>
