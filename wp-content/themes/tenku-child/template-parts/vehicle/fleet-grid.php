@@ -57,7 +57,9 @@ $max   = (int) $query->max_num_pages;
 					<svg class="vip-fleet__filter-toggle-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
 						<path d="M3 6h18M6 12h12M9 18h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
 					</svg>
-					<span class="vip-fleet__filter-toggle-text"><?php esc_html_e( 'Filter', 'tenku-child' ); ?></span>
+					<span class="vip-fleet__filter-toggle-text">
+						<?php esc_html_e( 'Filter', 'tenku-child' ); ?><span class="vip-fleet__filter-toggle-count" data-vip-fleet-filter-count hidden></span>
+					</span>
 				</button>
 				<?php endif; ?>
 			<div class="vip-fleet__sort" data-vip-fleet-sort-wrap>
@@ -89,13 +91,18 @@ $max   = (int) $query->max_num_pages;
 					wp_reset_postdata();
 				else :
 					?>
-					<p class="vip-fleet__empty"><?php esc_html_e( 'No vehicles match your filters. Add vehicles under Vehicles in the admin.', 'tenku-child' ); ?></p>
+					<p class="vip-fleet__empty vip-fleet__empty--no-posts"><?php esc_html_e( 'No vehicles published yet. Add vehicles under Vehicles in the admin.', 'tenku-child' ); ?></p>
 				<?php endif; ?>
+			</div>
+			<div class="vip-fleet__filter-empty" data-vip-fleet-filter-empty hidden>
+				<p class="vip-fleet__filter-empty-text">
+					<?php esc_html_e( 'No vehicles match your current filters. Modify your filter choices or reset filters to see more results.', 'tenku-child' ); ?>
+				</p>
 			</div>
 		</div>
 
 		<?php if ( $show_load_more && $max > 1 ) : ?>
-			<div class="vip-fleet__more-wrap">
+			<div class="vip-fleet__more-wrap" data-vip-fleet-load-more-wrap>
 				<button type="button" class="vip-fleet__load-more" data-vip-fleet-load-more data-page="1">
 					<?php esc_html_e( 'Load more', 'tenku-child' ); ?> →
 				</button>

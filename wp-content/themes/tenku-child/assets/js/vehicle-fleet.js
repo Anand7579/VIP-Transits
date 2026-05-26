@@ -17,9 +17,16 @@
 		var sortLabel = root.querySelector('[data-vip-fleet-sort-label]');
 		var sortMenu = root.querySelector('[data-vip-fleet-sort-menu]');
 		var loadBtn = root.querySelector('[data-vip-fleet-load-more]');
+		var loadMoreWrap = root.querySelector('[data-vip-fleet-load-more-wrap]');
+		var filterEmptyEl = root.querySelector('[data-vip-fleet-filter-empty]');
+		var filterResetBtn = root.querySelector('[data-vip-fleet-filter-reset]');
 		var filterToggle = root.querySelector('[data-vip-fleet-filter-toggle]');
+		var filterToggleCount = root.querySelector('[data-vip-fleet-filter-count]');
 		var filtersPanel = root.querySelector('.vip-fleet__filters');
 		var mobileFiltersMq = window.matchMedia('(max-width: 768px)');
+		var filterToggleDefaultLabel = filterToggle
+			? filterToggle.getAttribute('aria-label') || 'Filter'
+			: 'Filter';
 
 		var sortOptionsMap = {
 			'title-asc': 'Car Type',
@@ -160,8 +167,63 @@
 		var loaderMinMs = 280;
 		var loaderStartedAt = 0;
 
+		function countActiveFilters() {
+			var count = 0;
+			var checked = root.querySelectorAll(
+				'[data-vip-fleet-filter="category"]:checked, [data-vip-fleet-filter="brand"]:checked, [data-vip-fleet-filter="seat"]:checked'
+			);
+			count += checked.length;
+
+			var delivery = root.querySelector('[data-vip-fleet-filter="delivery"]');
+			if (delivery && delivery.checked) {
+				count++;
+			}
+
+			var minR = root.querySelector('[data-vip-fleet-price-min]');
+			var maxR = root.querySelector('[data-vip-fleet-price-max]');
+			if (minR && maxR) {
+				var floor = parseInt(minR.min, 10);
+				var ceil = parseInt(maxR.max, 10);
+				var minVal = parseInt(minR.value, 10);
+				var maxVal = parseInt(maxR.value, 10);
+				if (minVal > floor || maxVal < ceil) {
+					count++;
+				}
+			}
+
+			return count;
+		}
+
+		function updateFilterToggleCount() {
+			if (!filterToggle || !filterToggleCount) {
+				return;
+			}
+
+			if (!mobileFiltersMq.matches) {
+				filterToggleCount.hidden = true;
+				filterToggleCount.textContent = '';
+				filterToggle.setAttribute('aria-label', filterToggleDefaultLabel);
+				return;
+			}
+
+			var active = countActiveFilters();
+			if (active > 0) {
+				filterToggleCount.hidden = false;
+				filterToggleCount.textContent = ' (' + active + ')';
+				filterToggle.setAttribute(
+					'aria-label',
+					filterToggleDefaultLabel + ', ' + active + ' filters applied'
+				);
+			} else {
+				filterToggleCount.hidden = true;
+				filterToggleCount.textContent = '';
+				filterToggle.setAttribute('aria-label', filterToggleDefaultLabel);
+			}
+		}
+
 		function applyFilters() {
 			var visible = 0;
+			var total = cards().length;
 			cards().forEach(function (card) {
 				var show = cardMatches(card);
 				if (show) {
@@ -173,6 +235,50 @@
 				}
 			});
 			updateCount(visible);
+			updateResultsChrome(visible, total);
+			updateFilterToggleCount();
+		}
+
+		function updateResultsChrome(visible, total) {
+			var cardTotal = typeof total === 'number' ? total : cards().length;
+			var showFilterEmpty = cardTotal > 0 && visible === 0;
+
+			if (filterEmptyEl) {
+				filterEmptyEl.hidden = !showFilterEmpty;
+			}
+
+			if (loadMoreWrap) {
+				var showLoadMore = visible > 0;
+				if (loadBtn) {
+					showLoadMore = showLoadMore && !loadBtn.hidden;
+				}
+				loadMoreWrap.hidden = !showLoadMore;
+			}
+		}
+
+		function resetFilters() {
+			root.querySelectorAll('[data-vip-fleet-filter]').forEach(function (input) {
+				if (input.type === 'checkbox' || input.type === 'radio') {
+					input.checked = false;
+				}
+			});
+
+			var minR = root.querySelector('[data-vip-fleet-price-min]');
+			var maxR = root.querySelector('[data-vip-fleet-price-max]');
+			if (minR) {
+				minR.value = minR.min;
+			}
+			if (maxR) {
+				maxR.value = maxR.max;
+			}
+			updatePriceRange();
+
+			var categoryInput = root.querySelector('[data-vip-fleet-filter="category"]');
+			if (categoryInput) {
+				categoryInput.dispatchEvent(new Event('change', { bubbles: true }));
+			}
+
+			runResultsUpdate();
 		}
 
 		function setResultsLoading(loading) {
@@ -282,6 +388,9 @@
 						sortLabel.textContent = sortOptionsMap[key];
 					}
 					closeSortMenu();
+					if (isMobileFilters()) {
+						closeFiltersPanel();
+					}
 					runResultsUpdate();
 				});
 				li.appendChild(btn);
@@ -310,11 +419,19 @@
 			if (!filtersPanel || !isMobileFilters()) {
 				return;
 			}
-			root.classList.toggle('vip-fleet__layout--filters-open', open);
+			if (open) {
+				root.classList.add('vip-fleet__layout--filters-open');
+			} else {
+				root.classList.remove('vip-fleet__layout--filters-open');
+			}
 			filtersPanel.setAttribute('aria-hidden', open ? 'false' : 'true');
 			if (filterToggle) {
 				filterToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
 			}
+		}
+
+		function closeFiltersPanel() {
+			setFiltersOpen(false);
 		}
 
 		function syncFiltersPanelState() {
@@ -336,20 +453,35 @@
 			}
 		}
 
+		if (filterResetBtn) {
+			filterResetBtn.addEventListener('click', function () {
+				resetFilters();
+			});
+		}
+
 		if (filtersPanel) {
 			if (filterToggle) {
 				filterToggle.addEventListener('click', function () {
 					if (!isMobileFilters()) {
 						return;
 					}
-					setFiltersOpen(!root.classList.contains('vip-fleet__layout--filters-open'));
+					var opening = !root.classList.contains('vip-fleet__layout--filters-open');
+					setFiltersOpen(opening);
+					if (opening) {
+						closeSortMenu();
+					}
 				});
 			}
 
+			function onMobileFiltersMqChange() {
+				syncFiltersPanelState();
+				updateFilterToggleCount();
+			}
+
 			if (typeof mobileFiltersMq.addEventListener === 'function') {
-				mobileFiltersMq.addEventListener('change', syncFiltersPanelState);
+				mobileFiltersMq.addEventListener('change', onMobileFiltersMqChange);
 			} else if (typeof mobileFiltersMq.addListener === 'function') {
-				mobileFiltersMq.addListener(syncFiltersPanelState);
+				mobileFiltersMq.addListener(onMobileFiltersMqChange);
 			}
 			syncFiltersPanelState();
 		}
@@ -357,6 +489,9 @@
 		if (sortWrap && sortTrigger && sortMenu) {
 			sortTrigger.addEventListener('click', function (e) {
 				e.stopPropagation();
+				if (isMobileFilters()) {
+					closeFiltersPanel();
+				}
 				var opening = !sortWrap.classList.contains('is-open');
 				if (opening) {
 					populateSortMenu();

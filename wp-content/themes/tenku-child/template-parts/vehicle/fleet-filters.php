@@ -44,7 +44,12 @@ $price_min    = (int) $price_bounds['min'];
 $price_max    = (int) $price_bounds['max'];
 ?>
 <aside id="vip-fleet-filters-panel" class="vip-fleet__filters" aria-label="<?php esc_attr_e( 'Filter vehicles', 'tenku-child' ); ?>">
-	<h2 class="vip-fleet__filters-title"><?php esc_html_e( 'Filter', 'tenku-child' ); ?></h2>
+	<div class="vip-fleet__filters-head">
+		<h2 class="vip-fleet__filters-title"><?php esc_html_e( 'Filter', 'tenku-child' ); ?></h2>
+		<button type="button" class="vip-fleet__filter-reset" data-vip-fleet-filter-reset>
+			<?php esc_html_e( 'Reset', 'tenku-child' ); ?>
+		</button>
+	</div>
 
 	<?php if ( $categories ) : ?>
 		<div class="vip-fleet__filter-group">
