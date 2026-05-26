@@ -70,10 +70,10 @@
 			var minLabel = root.querySelector('[data-vip-fleet-price-min-label]');
 			var maxLabel = root.querySelector('[data-vip-fleet-price-max-label]');
 			if (minLabel) {
-				minLabel.textContent = String(minVal);
+				minLabel.textContent = minVal.toLocaleString();
 			}
 			if (maxLabel) {
-				maxLabel.textContent = String(maxVal);
+				maxLabel.textContent = maxVal.toLocaleString();
 			}
 		}
 

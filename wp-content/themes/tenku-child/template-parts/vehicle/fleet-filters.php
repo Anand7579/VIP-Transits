@@ -34,8 +34,14 @@ $brands = vip_transits_get_ordered_terms( 'vehicle_brand', $brand_order );
 $seat_order = array( '2-seats', '4-seats', '5-seats', '7-seats' );
 $seats      = vip_transits_get_ordered_terms( 'vehicle_seat', $seat_order );
 
-$price_min = 500;
-$price_max = 5000;
+$price_bounds = function_exists( 'vip_transits_get_fleet_price_bounds' )
+	? vip_transits_get_fleet_price_bounds()
+	: array(
+		'min' => 500,
+		'max' => 5000,
+	);
+$price_min    = (int) $price_bounds['min'];
+$price_max    = (int) $price_bounds['max'];
 ?>
 <aside class="vip-fleet__filters" aria-label="<?php esc_attr_e( 'Filter vehicles', 'tenku-child' ); ?>">
 	<h2 class="vip-fleet__filters-title"><?php esc_html_e( 'Filter', 'tenku-child' ); ?></h2>
@@ -92,7 +98,7 @@ $price_max = 5000;
 	<?php endif; ?>
 
 	<div class="vip-fleet__filter-group">
-		<h3 class="vip-fleet__filter-label"><?php esc_html_e( 'Price Balance', 'tenku-child' ); ?></h3>
+		<h3 class="vip-fleet__filter-label"><?php esc_html_e( 'Price Balance (AED)', 'tenku-child' ); ?></h3>
 		<div class="vip-fleet__range" data-vip-fleet-price-range>
 			<div class="vip-fleet__range-track">
 				<div class="vip-fleet__range-fill" data-vip-fleet-range-fill></div>
@@ -100,8 +106,8 @@ $price_max = 5000;
 				<input type="range" class="vip-fleet__range-input vip-fleet__range-input--max" data-vip-fleet-price-max min="<?php echo esc_attr( (string) $price_min ); ?>" max="<?php echo esc_attr( (string) $price_max ); ?>" value="<?php echo esc_attr( (string) $price_max ); ?>" step="50" aria-label="<?php esc_attr_e( 'Maximum price', 'tenku-child' ); ?>" />
 			</div>
 			<div class="vip-fleet__range-labels">
-				<span data-vip-fleet-price-min-label><?php echo esc_html( (string) $price_min ); ?></span>
-				<span data-vip-fleet-price-max-label><?php echo esc_html( (string) $price_max ); ?></span>
+				<span data-vip-fleet-price-min-label><?php echo esc_html( number_format_i18n( $price_min ) ); ?></span>
+				<span data-vip-fleet-price-max-label><?php echo esc_html( number_format_i18n( $price_max ) ); ?></span>
 			</div>
 		</div>
 	</div>

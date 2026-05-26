@@ -36,6 +36,11 @@ if ( file_exists( $vip_whatsapp ) ) {
 	require_once $vip_whatsapp;
 }
 
+$vip_whatsapp_sticky = get_stylesheet_directory() . '/inc/whatsapp-sticky-widget.php';
+if ( file_exists( $vip_whatsapp_sticky ) ) {
+	require_once $vip_whatsapp_sticky;
+}
+
 $vip_home_acf = get_stylesheet_directory() . '/inc/homepage-acf.php';
 if ( file_exists( $vip_home_acf ) ) {
 	require_once $vip_home_acf;

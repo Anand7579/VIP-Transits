@@ -1,0 +1,113 @@
+/**
+ * Sticky WhatsApp concierge widget — bottom-right, all pages.
+ */
+
+ .vip-wa-sticky {
+	--vip-wa-sticky-green: #25d366;
+	--vip-wa-sticky-black: #0a0c0f;
+	--vip-wa-sticky-serif: "Newsreader", "Times New Roman", Georgia, serif;
+
+	position: fixed;
+	right: 15px;
+	bottom: 20px;
+	z-index: 99990;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	width: max-content;
+	max-width: min(280px, calc(100vw - 32px));
+	text-decoration: none;
+	color: #fff;
+	pointer-events: auto;
+}
+
+.vip-wa-sticky:focus {
+	outline: none;
+}
+
+.vip-wa-sticky:focus-visible .vip-wa-sticky__icon {
+	outline: 2px solid var(--vip-wa-sticky-black);
+	outline-offset: 3px;
+}
+
+.vip-wa-sticky__icon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 56px;
+	height: 56px;
+	border-radius: 50%;
+	background: var(--vip-wa-sticky-green);
+	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.22);
+	position: relative;
+	z-index: 2;
+	flex-shrink: 0;
+	transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.vip-wa-sticky__svg {
+	display: block;
+	width: 28px;
+	height: 28px;
+}
+
+.vip-wa-sticky__label {
+	position: relative;
+	display: block;
+	margin-top: 14px;
+	padding: 11px 16px 10px;
+	background: var(--vip-wa-sticky-black);
+	text-align: center;
+}
+
+.vip-wa-sticky__caret {
+	position: absolute;
+	top: -7px;
+	left: 50%;
+	transform: translateX(-50%);
+	width: 0;
+	height: 0;
+	border-left: 7px solid transparent;
+	border-right: 7px solid transparent;
+	border-bottom: 7px solid var(--vip-wa-sticky-black);
+}
+
+.vip-wa-sticky__text {
+	display: block;
+	font-family: var(--vip-wa-sticky-serif);
+	font-size: 13px;
+	font-weight: 500;
+	line-height: 1.2;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+	white-space: nowrap;
+	color: #fff;
+}
+
+@media (hover: hover) {
+	.vip-wa-sticky:hover .vip-wa-sticky__icon {
+		transform: translateY(-2px);
+		box-shadow: 0 6px 20px rgba(0, 0, 0, 0.28);
+	}
+}
+
+@media (max-width: 480px) {
+	.vip-wa-sticky__icon {
+		width: 52px;
+		height: 52px;
+	}
+
+	.vip-wa-sticky__svg {
+		width: 26px;
+		height: 26px;
+	}
+
+	.vip-wa-sticky__text {
+		font-size: 11px;
+		letter-spacing: 0.08em;
+	}
+
+	.vip-wa-sticky__label {
+		padding: 9px 12px 8px;
+	}
+}

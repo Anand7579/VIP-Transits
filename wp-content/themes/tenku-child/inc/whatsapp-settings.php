@@ -14,6 +14,18 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 define( 'VIP_TRANSITS_WHATSAPP_OPTION', 'vip_transits_whatsapp_number' );
 
+/** @var string Fleet filter slider minimum (AED). */
+define( 'VIP_TRANSITS_FLEET_PRICE_MIN_OPTION', 'vip_transits_fleet_price_min' );
+
+/** @var string Fleet filter slider maximum (AED). */
+define( 'VIP_TRANSITS_FLEET_PRICE_MAX_OPTION', 'vip_transits_fleet_price_max' );
+
+/** Default fleet price filter minimum (AED). */
+define( 'VIP_TRANSITS_FLEET_PRICE_MIN_DEFAULT', 500 );
+
+/** Default fleet price filter maximum (AED). */
+define( 'VIP_TRANSITS_FLEET_PRICE_MAX_DEFAULT', 5000 );
+
 /**
  * Register settings page under Settings.
  */
@@ -43,6 +55,55 @@ function vip_transits_register_whatsapp_settings() {
 		'vip_transits_whatsapp_section',
 		array(
 			'label_for' => 'vip_transits_whatsapp_number',
+		)
+	);
+
+	register_setting(
+		'vip_transits_settings',
+		VIP_TRANSITS_FLEET_PRICE_MIN_OPTION,
+		array(
+			'type'              => 'integer',
+			'sanitize_callback' => 'vip_transits_sanitize_fleet_price_min',
+			'default'           => VIP_TRANSITS_FLEET_PRICE_MIN_DEFAULT,
+		)
+	);
+
+	register_setting(
+		'vip_transits_settings',
+		VIP_TRANSITS_FLEET_PRICE_MAX_OPTION,
+		array(
+			'type'              => 'integer',
+			'sanitize_callback' => 'vip_transits_sanitize_fleet_price_max',
+			'default'           => VIP_TRANSITS_FLEET_PRICE_MAX_DEFAULT,
+		)
+	);
+
+	add_settings_section(
+		'vip_transits_fleet_section',
+		__( 'Fleet filters', 'tenku-child' ),
+		'vip_transits_fleet_section_cb',
+		'vip-transits-settings'
+	);
+
+	add_settings_field(
+		VIP_TRANSITS_FLEET_PRICE_MIN_OPTION,
+		__( 'Price filter minimum (AED)', 'tenku-child' ),
+		'vip_transits_fleet_price_min_field_cb',
+		'vip-transits-settings',
+		'vip_transits_fleet_section',
+		array(
+			'label_for' => VIP_TRANSITS_FLEET_PRICE_MIN_OPTION,
+		)
+	);
+
+	add_settings_field(
+		VIP_TRANSITS_FLEET_PRICE_MAX_OPTION,
+		__( 'Price filter maximum (AED)', 'tenku-child' ),
+		'vip_transits_fleet_price_max_field_cb',
+		'vip-transits-settings',
+		'vip_transits_fleet_section',
+		array(
+			'label_for' => VIP_TRANSITS_FLEET_PRICE_MAX_OPTION,
 		)
 	);
 }
@@ -109,6 +170,114 @@ function vip_transits_whatsapp_number_field_cb() {
 		<?php esc_html_e( 'International format without + or spaces (e.g. 971501234567 for UAE).', 'tenku-child' ); ?>
 	</p>
 	<?php
+}
+
+/**
+ * Fleet filters section description.
+ */
+function vip_transits_fleet_section_cb() {
+	echo '<p>';
+	esc_html_e( 'Controls the Price Balance (AED) range slider on the homepage fleet section and the fleet archive page.', 'tenku-child' );
+	echo '</p>';
+}
+
+/**
+ * Fleet price minimum field.
+ */
+function vip_transits_fleet_price_min_field_cb() {
+	$bounds = vip_transits_get_fleet_price_bounds();
+	?>
+	<input
+		type="number"
+		id="<?php echo esc_attr( VIP_TRANSITS_FLEET_PRICE_MIN_OPTION ); ?>"
+		name="<?php echo esc_attr( VIP_TRANSITS_FLEET_PRICE_MIN_OPTION ); ?>"
+		value="<?php echo esc_attr( (string) $bounds['min'] ); ?>"
+		class="small-text"
+		min="0"
+		step="50"
+	/>
+	<p class="description">
+		<?php esc_html_e( 'Lowest value on the daily-rate filter slider.', 'tenku-child' ); ?>
+	</p>
+	<?php
+}
+
+/**
+ * Fleet price maximum field.
+ */
+function vip_transits_fleet_price_max_field_cb() {
+	$bounds = vip_transits_get_fleet_price_bounds();
+	?>
+	<input
+		type="number"
+		id="<?php echo esc_attr( VIP_TRANSITS_FLEET_PRICE_MAX_OPTION ); ?>"
+		name="<?php echo esc_attr( VIP_TRANSITS_FLEET_PRICE_MAX_OPTION ); ?>"
+		value="<?php echo esc_attr( (string) $bounds['max'] ); ?>"
+		class="small-text"
+		min="0"
+		step="50"
+	/>
+	<p class="description">
+		<?php esc_html_e( 'Highest value on the daily-rate filter slider. Must be greater than the minimum.', 'tenku-child' ); ?>
+	</p>
+	<?php
+}
+
+/**
+ * Sanitize fleet price minimum (AED).
+ *
+ * @param mixed $value Raw input.
+ * @return int
+ */
+function vip_transits_sanitize_fleet_price_min( $value ) {
+	$min = max( 0, (int) $value );
+	$max = (int) get_option( VIP_TRANSITS_FLEET_PRICE_MAX_OPTION, VIP_TRANSITS_FLEET_PRICE_MAX_DEFAULT );
+
+	if ( $max > 0 && $min >= $max ) {
+		$min = max( 0, $max - 50 );
+	}
+
+	return $min;
+}
+
+/**
+ * Sanitize fleet price maximum (AED).
+ *
+ * @param mixed $value Raw input.
+ * @return int
+ */
+function vip_transits_sanitize_fleet_price_max( $value ) {
+	$max = max( 0, (int) $value );
+	$min = (int) get_option( VIP_TRANSITS_FLEET_PRICE_MIN_OPTION, VIP_TRANSITS_FLEET_PRICE_MIN_DEFAULT );
+
+	if ( $max <= $min ) {
+		$max = $min + 50;
+	}
+
+	return $max;
+}
+
+/**
+ * Fleet filter slider bounds (AED).
+ *
+ * @return array{min:int,max:int}
+ */
+function vip_transits_get_fleet_price_bounds() {
+	$min = (int) get_option( VIP_TRANSITS_FLEET_PRICE_MIN_OPTION, VIP_TRANSITS_FLEET_PRICE_MIN_DEFAULT );
+	$max = (int) get_option( VIP_TRANSITS_FLEET_PRICE_MAX_OPTION, VIP_TRANSITS_FLEET_PRICE_MAX_DEFAULT );
+
+	if ( $min < 0 ) {
+		$min = 0;
+	}
+
+	if ( $max <= $min ) {
+		$max = $min + 50;
+	}
+
+	return array(
+		'min' => $min,
+		'max' => $max,
+	);
 }
 
 /**
