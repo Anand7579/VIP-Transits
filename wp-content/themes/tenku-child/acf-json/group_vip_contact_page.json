@@ -1,0 +1,262 @@
+{
+    "key": "group_vip_contact_page",
+    "title": "VIP Contact Us page",
+    "fields": [
+        {
+            "key": "field_vipcontact_tab_masthead",
+            "label": "Masthead",
+            "name": "",
+            "type": "tab",
+            "placement": "top"
+        },
+        {
+            "key": "field_vipcontact_masthead_lead",
+            "label": "Subtitle",
+            "name": "contact_masthead_lead",
+            "type": "text",
+            "instructions": "Optional line under the page title.",
+            "placeholder": "We respond quickly — reach our concierge team anytime."
+        },
+        {
+            "key": "field_vipcontact_tab_intro",
+            "label": "Introduction",
+            "name": "",
+            "type": "tab",
+            "placement": "top"
+        },
+        {
+            "key": "field_vipcontact_intro_content",
+            "label": "Intro text",
+            "name": "contact_intro_content",
+            "type": "wysiwyg",
+            "tabs": "visual",
+            "toolbar": "basic",
+            "media_upload": 0
+        },
+        {
+            "key": "field_vipcontact_tab_form",
+            "label": "Contact form",
+            "name": "",
+            "type": "tab",
+            "placement": "top"
+        },
+        {
+            "key": "field_vipcontact_form_heading",
+            "label": "Form heading",
+            "name": "contact_form_heading",
+            "type": "text",
+            "default_value": "Get in touch"
+        },
+        {
+            "key": "field_vipcontact_form_shortcode",
+            "label": "Contact form (shortcode)",
+            "name": "contact_form_shortcode",
+            "type": "wysiwyg",
+            "tabs": "text",
+            "toolbar": "basic",
+            "media_upload": 0,
+            "instructions": "Paste your Contact Form 7 shortcode. Create the form under Contact → Contact Forms, then copy the shortcode here. Recommended fields: name, email, phone, message."
+        },
+        {
+            "key": "field_vipcontact_tab_details",
+            "label": "Contact details",
+            "name": "",
+            "type": "tab",
+            "placement": "top"
+        },
+        {
+            "key": "field_vipcontact_sidebar_heading",
+            "label": "Sidebar heading",
+            "name": "contact_sidebar_heading",
+            "type": "text",
+            "default_value": "Our contact"
+        },
+        {
+            "key": "field_vipcontact_details",
+            "label": "Contact lines",
+            "name": "contact_details",
+            "type": "repeater",
+            "layout": "table",
+            "button_label": "Add line",
+            "sub_fields": [
+                {
+                    "key": "field_vipcontact_detail_type",
+                    "label": "Type",
+                    "name": "type",
+                    "type": "select",
+                    "choices": {
+                        "phone": "Phone",
+                        "email": "Email",
+                        "address": "Address",
+                        "text": "Other"
+                    },
+                    "default_value": "text",
+                    "parent": "field_vipcontact_details"
+                },
+                {
+                    "key": "field_vipcontact_detail_label",
+                    "label": "Label",
+                    "name": "label",
+                    "type": "text",
+                    "placeholder": "Phone",
+                    "parent": "field_vipcontact_details"
+                },
+                {
+                    "key": "field_vipcontact_detail_value",
+                    "label": "Value",
+                    "name": "value",
+                    "type": "text",
+                    "parent": "field_vipcontact_details"
+                },
+                {
+                    "key": "field_vipcontact_detail_link",
+                    "label": "Link (optional)",
+                    "name": "link",
+                    "type": "text",
+                    "instructions": "Leave empty to auto-link phone\/email from Value. Or paste tel:+971…, mailto:email@…, or https:\/\/…",
+                    "parent": "field_vipcontact_details"
+                }
+            ]
+        },
+        {
+            "key": "field_vipcontact_hours",
+            "label": "Operation hours",
+            "name": "contact_hours",
+            "type": "repeater",
+            "layout": "table",
+            "button_label": "Add row",
+            "sub_fields": [
+                {
+                    "key": "field_vipcontact_hours_day",
+                    "label": "Day",
+                    "name": "day",
+                    "type": "text",
+                    "placeholder": "Mon – Sun",
+                    "parent": "field_vipcontact_hours"
+                },
+                {
+                    "key": "field_vipcontact_hours_time",
+                    "label": "Hours",
+                    "name": "hours",
+                    "type": "text",
+                    "placeholder": "24 \/ 7",
+                    "parent": "field_vipcontact_hours"
+                }
+            ]
+        },
+        {
+            "key": "field_vipcontact_tab_whatsapp",
+            "label": "WhatsApp",
+            "name": "",
+            "type": "tab",
+            "placement": "top"
+        },
+        {
+            "key": "field_vipcontact_show_whatsapp",
+            "label": "Show WhatsApp button",
+            "name": "contact_show_whatsapp",
+            "type": "true_false",
+            "ui": 1,
+            "default_value": 1,
+            "instructions": "Uses the global number from Settings → VIP Transits."
+        },
+        {
+            "key": "field_vipcontact_whatsapp_label",
+            "label": "Button label",
+            "name": "contact_whatsapp_label",
+            "type": "text",
+            "default_value": "Chat on WhatsApp",
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_vipcontact_show_whatsapp",
+                        "operator": "==",
+                        "value": "1"
+                    }
+                ]
+            ]
+        },
+        {
+            "key": "field_vipcontact_whatsapp_message",
+            "label": "Prefilled message",
+            "name": "contact_whatsapp_message",
+            "type": "textarea",
+            "rows": 3,
+            "default_value": "Hello, I would like to enquire about luxury car rental.",
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_vipcontact_show_whatsapp",
+                        "operator": "==",
+                        "value": "1"
+                    }
+                ]
+            ]
+        },
+        {
+            "key": "field_vipcontact_tab_map",
+            "label": "Map",
+            "name": "",
+            "type": "tab",
+            "placement": "top"
+        },
+        {
+            "key": "field_vipcontact_show_map",
+            "label": "Show map",
+            "name": "contact_show_map",
+            "type": "true_false",
+            "ui": 1,
+            "default_value": 0
+        },
+        {
+            "key": "field_vipcontact_map_embed",
+            "label": "Map embed",
+            "name": "contact_map_embed",
+            "type": "textarea",
+            "rows": 5,
+            "new_lines": "",
+            "instructions": "Paste a Google Maps share link (maps.app.goo.gl or google.com/maps), OR paste the full iframe code from Google Maps: Share → Embed a map → copy HTML. No Visual/Text tabs needed—use this box only.",
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_vipcontact_show_map",
+                        "operator": "==",
+                        "value": "1"
+                    }
+                ]
+            ]
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "page_template",
+                "operator": "==",
+                "value": "templates\/page-contact.html"
+            }
+        ],
+        [
+            {
+                "param": "page_template",
+                "operator": "==",
+                "value": "page-contact"
+            }
+        ],
+        [
+            {
+                "param": "block",
+                "operator": "==",
+                "value": "acf\/vip-page-contact"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "active": true,
+    "description": "Content for the VIP Contact Us page template (Contact Form 7 shortcode in WYSIWYG).",
+    "show_in_rest": 1,
+    "modified": 1780385800
+}

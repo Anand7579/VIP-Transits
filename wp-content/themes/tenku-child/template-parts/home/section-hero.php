@@ -26,6 +26,8 @@ if ( ! $heading_highlight && $heading && preg_match( '/^(.+?),\s*(via\b.+)$/iu',
 }
 $search_ph     = get_sub_field( 'search_placeholder' ) ?: __( 'Search', 'tenku-child' );
 $search_url    = get_sub_field( 'search_action_url' );
+$hero_brands   = function_exists( 'vip_transits_get_fleet_brand_terms' ) ? vip_transits_get_fleet_brand_terms() : array();
+$fleet_on_home = is_front_page() && $hero_brands;
 
 $img_url   = is_array( $bg_image ) && ! empty( $bg_image['url'] ) ? $bg_image['url'] : '';
 $video_url = '';
@@ -86,17 +88,35 @@ $hero_classes  = 'vip-hero' . ( $use_video ? ' vip-hero--video' : ' vip-hero--im
 				</h1>
 			<?php endif; ?>
 
-			<form class="vip-hero__search" role="search" method="get" action="<?php echo esc_url( $search_action ); ?>">
-				<label class="screen-reader-text" for="vip-hero-search"><?php esc_html_e( 'Search', 'tenku-child' ); ?></label>
-				<input
-					id="vip-hero-search"
-					class="vip-hero__search-input"
-					type="search"
-					name="s"
-					placeholder="<?php echo esc_attr( $search_ph ); ?>"
-					value="<?php echo esc_attr( get_search_query() ); ?>"
-				/>
-				<button class="vip-hero__search-btn" type="submit" aria-label="<?php esc_attr_e( 'Search', 'tenku-child' ); ?>">
+			<form
+				class="vip-hero__search"
+				role="search"
+				method="get"
+				action="<?php echo esc_url( $search_action ); ?>"
+				<?php echo $fleet_on_home ? ' data-vip-hero-fleet-search' : ''; ?>
+			>
+				<?php if ( $fleet_on_home ) : ?>
+					<label class="vip-hero__brand-field">
+						<span class="screen-reader-text"><?php esc_html_e( 'Car brand', 'tenku-child' ); ?></span>
+						<select id="vip-hero-brand" class="vip-hero__brand-select" name="vip_hero_brand" data-vip-hero-brand required>
+							<option value="" disabled selected hidden><?php echo esc_html( $search_ph ); ?></option>
+							<?php foreach ( $hero_brands as $term ) : ?>
+								<option value="<?php echo esc_attr( $term->slug ); ?>"><?php echo esc_html( $term->name ); ?></option>
+							<?php endforeach; ?>
+						</select>
+					</label>
+				<?php else : ?>
+					<label class="screen-reader-text" for="vip-hero-search"><?php esc_html_e( 'Search', 'tenku-child' ); ?></label>
+					<input
+						id="vip-hero-search"
+						class="vip-hero__search-input"
+						type="search"
+						name="s"
+						placeholder="<?php echo esc_attr( $search_ph ); ?>"
+						value="<?php echo esc_attr( get_search_query() ); ?>"
+					/>
+				<?php endif; ?>
+				<button class="vip-hero__search-btn" type="submit" aria-label="<?php esc_attr_e( 'Search fleet', 'tenku-child' ); ?>">
 					<?php
 					if ( function_exists( 'vip_transits_theme_icon_img' ) ) {
 						echo vip_transits_theme_icon_img( 'search', array( 'class' => 'vip-hero__search-icon' ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped

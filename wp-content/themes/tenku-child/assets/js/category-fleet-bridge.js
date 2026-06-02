@@ -52,8 +52,13 @@
 
 			applyCategoryFilter(slug);
 
-			if (fleetSection) {
+			if (fleetSection && fleetSection.classList.contains('vip-fleet--section')) {
 				fleetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+			} else {
+				var fleetMain = fleetRoot.closest('.vip-fleet__main') || fleetRoot;
+				if (fleetMain && typeof fleetMain.scrollIntoView === 'function') {
+					fleetMain.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+				}
 			}
 		});
 	});

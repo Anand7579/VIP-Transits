@@ -1,0 +1,220 @@
+{
+    "key": "group_vip_about_page",
+    "title": "VIP About Us page",
+    "fields": [
+        {
+            "key": "field_vipabout_tab_masthead",
+            "label": "Masthead",
+            "name": "",
+            "type": "tab",
+            "placement": "top"
+        },
+        {
+            "key": "field_vipabout_masthead_lead",
+            "label": "Subtitle",
+            "name": "about_masthead_lead",
+            "type": "text",
+            "instructions": "Optional line under the page title (black masthead).",
+            "placeholder": "Luxury car rental in Dubai — trusted by discerning clients."
+        },
+        {
+            "key": "field_vipabout_tab_intro",
+            "label": "Introduction",
+            "name": "",
+            "type": "tab",
+            "placement": "top"
+        },
+        {
+            "key": "field_vipabout_intro_heading",
+            "label": "Intro heading",
+            "name": "about_intro_heading",
+            "type": "text",
+            "default_value": "About VIP Transits"
+        },
+        {
+            "key": "field_vipabout_intro_content",
+            "label": "Intro content",
+            "name": "about_intro_content",
+            "type": "wysiwyg",
+            "tabs": "visual",
+            "toolbar": "basic",
+            "media_upload": 0,
+            "instructions": "Brand overview and business details."
+        },
+        {
+            "key": "field_vipabout_intro_image",
+            "label": "Intro image",
+            "name": "about_intro_image",
+            "type": "image",
+            "return_format": "array",
+            "preview_size": "medium",
+            "library": "all"
+        },
+        {
+            "key": "field_vipabout_tab_trust",
+            "label": "Trust highlights",
+            "name": "",
+            "type": "tab",
+            "placement": "top"
+        },
+        {
+            "key": "field_vipabout_trust_stats",
+            "label": "Stats",
+            "name": "about_trust_stats",
+            "type": "repeater",
+            "instructions": "Years of experience, fleet size, locations, etc.",
+            "layout": "table",
+            "button_label": "Add stat",
+            "min": 0,
+            "max": 6,
+            "sub_fields": [
+                {
+                    "key": "field_vipabout_stat_value",
+                    "label": "Value",
+                    "name": "stat_value",
+                    "type": "text",
+                    "placeholder": "10+",
+                    "parent": "field_vipabout_trust_stats"
+                },
+                {
+                    "key": "field_vipabout_stat_label",
+                    "label": "Label",
+                    "name": "stat_label",
+                    "type": "text",
+                    "placeholder": "Years of experience",
+                    "parent": "field_vipabout_trust_stats"
+                }
+            ]
+        },
+        {
+            "key": "field_vipabout_tab_blocks",
+            "label": "Content sections",
+            "name": "",
+            "type": "tab",
+            "placement": "top"
+        },
+        {
+            "key": "field_vipabout_content_blocks",
+            "label": "Sections",
+            "name": "about_content_blocks",
+            "type": "repeater",
+            "layout": "row",
+            "button_label": "Add section",
+            "sub_fields": [
+                {
+                    "key": "field_vipabout_block_heading",
+                    "label": "Heading",
+                    "name": "heading",
+                    "type": "text",
+                    "parent": "field_vipabout_content_blocks"
+                },
+                {
+                    "key": "field_vipabout_block_content",
+                    "label": "Content",
+                    "name": "content",
+                    "type": "wysiwyg",
+                    "tabs": "visual",
+                    "toolbar": "basic",
+                    "media_upload": 1,
+                    "parent": "field_vipabout_content_blocks"
+                }
+            ]
+        },
+        {
+            "key": "field_vipabout_tab_cta",
+            "label": "Call to action",
+            "name": "",
+            "type": "tab",
+            "placement": "top"
+        },
+        {
+            "key": "field_vipabout_show_cta",
+            "label": "Show CTA band",
+            "name": "about_show_cta",
+            "type": "true_false",
+            "ui": 1,
+            "default_value": 1
+        },
+        {
+            "key": "field_vipabout_cta_heading",
+            "label": "CTA heading",
+            "name": "about_cta_heading",
+            "type": "text",
+            "default_value": "Ready to book your luxury car?",
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_vipabout_show_cta",
+                        "operator": "==",
+                        "value": "1"
+                    }
+                ]
+            ]
+        },
+        {
+            "key": "field_vipabout_cta_text",
+            "label": "CTA text",
+            "name": "about_cta_text",
+            "type": "textarea",
+            "rows": 3,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_vipabout_show_cta",
+                        "operator": "==",
+                        "value": "1"
+                    }
+                ]
+            ]
+        },
+        {
+            "key": "field_vipabout_cta_button_label",
+            "label": "WhatsApp button label",
+            "name": "about_cta_button_label",
+            "type": "text",
+            "default_value": "Speak to concierge",
+            "instructions": "Uses the global WhatsApp number from Settings → VIP Transits.",
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_vipabout_show_cta",
+                        "operator": "==",
+                        "value": "1"
+                    }
+                ]
+            ]
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "page_template",
+                "operator": "==",
+                "value": "templates\/page-about.html"
+            }
+        ],
+        [
+            {
+                "param": "page_template",
+                "operator": "==",
+                "value": "page-about"
+            }
+        ],
+        [
+            {
+                "param": "block",
+                "operator": "==",
+                "value": "acf\/vip-page-about"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "active": true,
+    "description": "Content for the VIP About Us page template.",
+    "show_in_rest": 1,
+    "modified": 1780385800
+}

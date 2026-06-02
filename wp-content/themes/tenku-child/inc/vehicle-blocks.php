@@ -25,11 +25,76 @@ function vip_transits_fleet_block_assets() {
 	$script_ver = file_exists( $script_path ) ? (string) filemtime( $script_path ) : $theme_ver;
 
 	return array(
-		'style'        => get_stylesheet_directory_uri() . '/assets/css/vehicle-fleet.css',
-		'script'       => get_stylesheet_directory_uri() . '/assets/js/vehicle-fleet.js',
-		'version'      => $style_ver,
+		'style'          => get_stylesheet_directory_uri() . '/assets/css/vehicle-fleet.css',
+		'script'         => get_stylesheet_directory_uri() . '/assets/js/vehicle-fleet.js',
+		'version'        => $style_ver,
 		'style_version'  => $style_ver,
 		'script_version' => $script_ver,
+	);
+}
+
+/**
+ * Single vehicle page asset URLs and filemtime versions.
+ *
+ * @return array{style:string,gallery_script:string,faq_script:string,version:string,gallery_version:string,faq_version:string}
+ */
+function vip_transits_vehicle_single_assets() {
+	$theme_dir = get_stylesheet_directory();
+	$theme_uri = get_stylesheet_directory_uri();
+	$theme_ver = wp_get_theme()->get( 'Version' );
+
+	$style_path   = $theme_dir . '/assets/css/vehicle-single.css';
+	$gallery_path = $theme_dir . '/assets/js/vehicle-single-gallery.js';
+	$faq_path     = $theme_dir . '/blocks/vip-home/faq.js';
+
+	$style_ver   = file_exists( $style_path ) ? (string) filemtime( $style_path ) : $theme_ver;
+	$gallery_ver = file_exists( $gallery_path ) ? (string) filemtime( $gallery_path ) : $style_ver;
+	$faq_ver     = file_exists( $faq_path ) ? (string) filemtime( $faq_path ) : $style_ver;
+
+	return array(
+		'style'           => $theme_uri . '/assets/css/vehicle-single.css',
+		'gallery_script'  => $theme_uri . '/assets/js/vehicle-single-gallery.js',
+		'faq_script'      => $theme_uri . '/blocks/vip-home/faq.js',
+		'version'         => $style_ver,
+		'gallery_version' => $gallery_ver,
+		'faq_version'     => $faq_ver,
+	);
+}
+
+/**
+ * Enqueue vehicle single CSS/JS (shared by front end, block editor, and ACF block).
+ */
+function vip_transits_enqueue_vehicle_single_assets() {
+	$assets = vip_transits_vehicle_single_assets();
+	$deps   = array( 'chld_thm_cfg_child', 'chld_thm_cfg_parent' );
+
+	wp_enqueue_style(
+		'vip-vehicle-single',
+		$assets['style'],
+		$deps,
+		$assets['version']
+	);
+
+	wp_enqueue_script(
+		'vip-vehicle-single-gallery',
+		$assets['gallery_script'],
+		array(),
+		$assets['gallery_version'],
+		array(
+			'in_footer' => true,
+			'strategy'  => 'defer',
+		)
+	);
+
+	wp_enqueue_script(
+		'vip-vehicle-single-faq',
+		$assets['faq_script'],
+		array(),
+		$assets['faq_version'],
+		array(
+			'in_footer' => true,
+			'strategy'  => 'defer',
+		)
 	);
 }
 
@@ -52,7 +117,7 @@ function vip_transits_register_vehicle_blocks() {
 			'icon'            => 'car',
 			'keywords'        => array( 'vehicle', 'fleet', 'vip' ),
 			'render_template' => $dir . '/blocks/vip-vehicle-single/render.php',
-			'enqueue_style'   => get_stylesheet_directory_uri() . '/assets/css/vehicle-single.css',
+			'enqueue_assets'  => 'vip_transits_enqueue_vehicle_single_block_assets',
 			'mode'            => 'preview',
 			'supports'        => array(
 				'align'  => array( 'wide', 'full' ),
@@ -81,6 +146,38 @@ function vip_transits_register_vehicle_blocks() {
 	);
 }
 add_action( 'acf/init', 'vip_transits_register_vehicle_blocks', 5 );
+
+/**
+ * ACF block preview: vehicle-single.css with filemtime version.
+ *
+ * @param array $block_type Block type settings.
+ */
+function vip_transits_enqueue_vehicle_single_block_assets( $block_type ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter
+	unset( $block_type );
+	vip_transits_enqueue_vehicle_single_assets();
+}
+
+/**
+ * Block editor: same dynamic version for vehicle single preview.
+ */
+function vip_transits_enqueue_vehicle_single_editor_assets() {
+	$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
+	if ( ! $screen ) {
+		return;
+	}
+
+	$load = false;
+	if ( 'vip_vehicle' === $screen->post_type || 'site-editor' === $screen->id ) {
+		$load = true;
+	}
+
+	if ( ! $load ) {
+		return;
+	}
+
+	vip_transits_enqueue_vehicle_single_assets();
+}
+add_action( 'enqueue_block_editor_assets', 'vip_transits_enqueue_vehicle_single_editor_assets' );
 
 /**
  * Fleet CSS/JS on archive, single vehicle, and homepage (fleet section in vip-home).
@@ -116,12 +213,26 @@ function vip_transits_enqueue_fleet_block_assets() {
 			true
 		);
 
+		wp_enqueue_script(
+			'vip-category-fleet-bridge',
+			$theme_uri . '/assets/js/category-fleet-bridge.js',
+			array( 'vip-fleet' ),
+			$bridge_ver,
+			array(
+				'in_footer' => true,
+				'strategy'  => 'defer',
+			)
+		);
+
 		if ( is_front_page() ) {
+			$hero_bridge_js  = $theme_dir . '/assets/js/hero-fleet-bridge.js';
+			$hero_bridge_ver = file_exists( $hero_bridge_js ) ? (string) filemtime( $hero_bridge_js ) : $assets['script_version'];
+
 			wp_enqueue_script(
-				'vip-category-fleet-bridge',
-				$theme_uri . '/assets/js/category-fleet-bridge.js',
+				'vip-hero-fleet-bridge',
+				$theme_uri . '/assets/js/hero-fleet-bridge.js',
 				array( 'vip-fleet' ),
-				$bridge_ver,
+				$hero_bridge_ver,
 				array(
 					'in_footer' => true,
 					'strategy'  => 'defer',
@@ -144,41 +255,7 @@ function vip_transits_enqueue_fleet_block_assets() {
 	}
 
 	if ( $is_single ) {
-		$single_css   = $theme_dir . '/assets/css/vehicle-single.css';
-		$gallery_js   = $theme_dir . '/assets/js/vehicle-single-gallery.js';
-		$faq_js       = $theme_dir . '/blocks/vip-home/faq.js';
-		$single_ver   = file_exists( $single_css ) ? (string) filemtime( $single_css ) : $assets['version'];
-		$gallery_ver  = file_exists( $gallery_js ) ? (string) filemtime( $gallery_js ) : $single_ver;
-		$faq_ver      = file_exists( $faq_js ) ? (string) filemtime( $faq_js ) : $single_ver;
-
-		wp_enqueue_style(
-			'vip-vehicle-single',
-			$theme_uri . '/assets/css/vehicle-single.css',
-			array( 'chld_thm_cfg_child', 'chld_thm_cfg_parent' ),
-			$single_ver
-		);
-
-		wp_enqueue_script(
-			'vip-vehicle-single-gallery',
-			$theme_uri . '/assets/js/vehicle-single-gallery.js',
-			array(),
-			$gallery_ver,
-			array(
-				'in_footer' => true,
-				'strategy'  => 'defer',
-			)
-		);
-
-		wp_enqueue_script(
-			'vip-vehicle-single-faq',
-			$theme_uri . '/blocks/vip-home/faq.js',
-			array(),
-			$faq_ver,
-			array(
-				'in_footer' => true,
-				'strategy'  => 'defer',
-			)
-		);
+		vip_transits_enqueue_vehicle_single_assets();
 	}
 }
 add_action( 'wp_enqueue_scripts', 'vip_transits_enqueue_fleet_block_assets', 20 );

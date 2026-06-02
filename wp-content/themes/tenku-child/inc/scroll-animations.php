@@ -17,6 +17,10 @@ function vip_transits_enqueue_scroll_animations() {
 		return;
 	}
 
+	if ( function_exists( 'vip_transits_scroll_animations_enabled' ) && ! vip_transits_scroll_animations_enabled() ) {
+		return;
+	}
+
 	$theme_dir = get_stylesheet_directory();
 	$theme_uri = get_stylesheet_directory_uri();
 

@@ -1,0 +1,450 @@
+/**
+ * Article listing (blog archive, categories, tags) — Tenku-style layout.
+ */
+
+.vip-articles {
+	--vip-articles-font: var(--vip-nav-font, "Newsreader", "Times New Roman", Georgia, serif);
+	--vip-articles-text: #0a0c0f;
+	--vip-articles-muted: #5c5c5c;
+	--vip-articles-line: #e3e6ea;
+	font-family: var(--vip-articles-font);
+	color: var(--vip-articles-text);
+}
+
+.vip-articles--archive {
+	padding: 0;
+}
+
+/* Full-width black masthead (Tenku archive hero) */
+.vip-articles__masthead {
+	background: #000000;
+	color: #ffffff;
+	width: 100%;
+}
+
+.vip-articles__masthead-inner {
+	padding: clamp(4rem, 12vw, 7.5rem) var(--vip-pad-x, clamp(1.25rem, 4vw, 3.5rem));
+	text-align: center;
+}
+
+.vip-articles__masthead-title {
+	margin: 0 0 0.75rem;
+	font-size: clamp(2.25rem, 5.5vw, 3.75rem);
+	font-weight: 400;
+	line-height: 1.15;
+	letter-spacing: -0.02em;
+	color: #ffffff;
+}
+
+.vip-articles__masthead-lead {
+	margin: 0 auto;
+	max-width: 36rem;
+	font-size: clamp(1rem, 2vw, 1.125rem);
+	line-height: 1.55;
+	color: rgba(255, 255, 255, 0.88);
+}
+
+/* White content area + topic label (category archives) */
+.vip-articles__body {
+	background: #ffffff;
+	padding: clamp(2.5rem, 5vw, 3.5rem) 0 clamp(3rem, 6vw, 4.5rem);
+}
+
+.vip-articles__container {
+	width: 100%;
+}
+
+.vip-articles__topic {
+	margin-bottom: clamp(1.5rem, 3vw, 2.5rem);
+	padding-bottom: 0;
+	border-bottom: 3px solid #000000;
+}
+
+.vip-articles__topic-title {
+	margin: 0 0 0.75rem;
+	font-size: clamp(1.125rem, 2.5vw, 1.375rem);
+	font-weight: 400;
+	line-height: 1.2;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+}
+
+/* Magazine listing — LATEST + TRENDING (Tenku blog index) */
+.vip-articles__magazine {
+	display: flex;
+	flex-direction: column;
+	gap: 25px;
+}
+
+.vip-articles__section--trending {
+	margin-top: 50px;
+}
+
+.vip-articles__section-label {
+	margin: 0 0 0.85rem;
+	padding: 0 0 0.85rem;
+	border-bottom: 2px solid #000000;
+	font-size: clamp(1.125rem, 2.5vw, 1.375rem);
+	font-weight: 700;
+	line-height: 1.2;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+}
+
+.vip-articles__latest {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+	gap: clamp(1.25rem, 2.5vw, 2rem);
+	align-items: start;
+}
+
+.vip-articles__latest-grid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: clamp(1rem, 2vw, 1.5rem);
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.blog .vip-articles__masthead-inner {
+	padding: 30px 0 50px 0;
+}
+
+.vip-articles--archive .vip-article-card--featured .vip-article-card__author, .vip-articles--archive .vip-article-card--compact .vip-article-card__author, .vip-articles--archive .vip-article-card--trending .vip-article-card__author {
+	margin: 0 !important;
+}
+
+
+.vip-articles__latest-grid-item,
+.vip-articles__trending-grid-item {
+	margin: 0;
+	padding: 0;
+}
+
+.vip-articles__trending-grid {
+	display: grid;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	gap: clamp(1.25rem, 2.5vw, 2rem);
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+/* Magazine cards — category (italic), title, author */
+.vip-articles--archive .vip-article-card--featured .vip-article-card__media,
+.vip-articles--archive .vip-article-card--compact .vip-article-card__media,
+.vip-articles--archive .vip-article-card--trending .vip-article-card__media {
+	display: block;
+	overflow: hidden;
+	background: #ebebeb;
+	margin-bottom: 0.75rem;
+}
+
+.vip-articles--archive .vip-article-card--featured .vip-article-card__media {
+	aspect-ratio: 16 / 10;
+}
+
+.vip-articles--archive .vip-article-card--compact .vip-article-card__media,
+.vip-articles--archive .vip-article-card--trending .vip-article-card__media {
+	aspect-ratio: 4 / 3;
+}
+
+.vip-articles--archive .vip-article-card__category {
+	margin: 0 0 0.35rem;
+	font-size: clamp(0.9375rem, 1.6vw, 1.0625rem);
+	font-style: italic;
+	font-weight: 400;
+	line-height: 1.3;
+	color: var(--vip-articles-text);
+}
+
+.vip-articles--archive .vip-article-card--featured .vip-article-card__title {
+	font-size: clamp(1.5rem, 3vw, 2.125rem);
+	font-weight: 600;
+	line-height: 1.2;
+}
+
+.vip-articles--archive .vip-article-card--compact .vip-article-card__title,
+.vip-articles--archive .vip-article-card--trending .vip-article-card__title {
+	font-size: clamp(1rem, 1.8vw, 1.1875rem);
+	font-weight: 700;
+	line-height: 1.3;
+}
+
+.vip-articles--archive .vip-article-card--featured .vip-article-card__author,
+.vip-articles--archive .vip-article-card--compact .vip-article-card__author,
+.vip-articles--archive .vip-article-card--trending .vip-article-card__author {
+	margin: 0.4rem 0 0;
+	font-size: 0.8125rem;
+	font-style: normal;
+	font-weight: 400;
+	color: #9a9a9a;
+}
+
+.vip-articles--archive .vip-article-card--featured .vip-article-card__date,
+.vip-articles--archive .vip-article-card--compact .vip-article-card__date,
+.vip-articles--archive .vip-article-card--trending .vip-article-card__date,
+.vip-articles--archive .vip-article-card--featured .vip-article-card__excerpt,
+.vip-articles--archive .vip-article-card--compact .vip-article-card__excerpt,
+.vip-articles--archive .vip-article-card--trending .vip-article-card__excerpt,
+.vip-articles--archive .vip-article-card--featured .vip-article-card__link,
+.vip-articles--archive .vip-article-card--compact .vip-article-card__link,
+.vip-articles--archive .vip-article-card--trending .vip-article-card__link {
+	display: none;
+}
+
+@media (max-width: 1024px) {
+	.vip-articles__latest {
+		grid-template-columns: 1fr;
+	}
+
+	.vip-articles__trending-grid {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+}
+
+@media (max-width: 640px) {
+	.vip-articles__latest-grid {
+		grid-template-columns: 1fr;
+	}
+
+	.vip-articles__trending-grid {
+		grid-template-columns: 1fr;
+	}
+}
+
+/* Grid — pagination pages & fallback (4 → 2 → 1) */
+.vip-articles__grid {
+	display: grid;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	gap: clamp(1.5rem, 3vw, 2.5rem);
+}
+
+.vip-articles__empty {
+	margin: 2rem 0 0;
+	color: var(--vip-articles-muted);
+}
+
+/* Card — image, date, title, author (no boxed border) */
+.vip-articles--archive .vip-article-card {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	border: 0;
+	background: transparent;
+}
+
+.vip-articles--archive .vip-article-card__media {
+	display: block;
+	aspect-ratio: 3 / 2;
+	overflow: hidden;
+	background: #ebebeb;
+	margin-bottom: 0.65rem;
+}
+
+.vip-articles--archive .vip-article-card__img {
+	display: block;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.vip-articles--archive .vip-article-card__body {
+	display: flex;
+	flex-direction: column;
+	gap: 0.2rem;
+	padding: 0;
+}
+
+.vip-articles--archive .vip-article-card__date {
+	font-size: 0.8125rem;
+	color: var(--vip-articles-muted);
+}
+
+.vip-articles--archive .vip-article-card__date,
+.vip-articles--archive .vip-article-card__title a {
+	font-family: var(--vip-articles-font);
+}
+
+.vip-articles--archive .vip-article-card__title {
+	margin: 0;
+	font-size: clamp(1.0625rem, 2vw, 1.25rem);
+	font-weight: 400;
+	line-height: 1.35;
+}
+
+.vip-articles--archive .vip-article-card__title a {
+	color: inherit;
+	text-decoration: none;
+}
+
+.vip-articles--archive .vip-article-card__title a:hover {
+	text-decoration: underline;
+}
+
+.vip-articles--archive .vip-article-card__author {
+	margin: 0.15rem 0 0;
+	font-size: 0.8125rem;
+	color: var(--vip-articles-muted);
+}
+
+.vip-articles--archive .vip-article-card__excerpt,
+.vip-articles--archive .vip-article-card__link {
+	display: none;
+}
+
+/* Non-archive contexts (e.g. related articles sidebar) keep boxed card */
+.vip-article-card {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	border: 1px solid var(--vip-articles-line);
+	background: #fff;
+}
+
+.vip-article-card__media {
+	display: block;
+	aspect-ratio: 16 / 10;
+	overflow: hidden;
+	background: #ebebeb;
+}
+
+.vip-article-card__img {
+	display: block;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.vip-article-card__body {
+	display: flex;
+	flex: 1 1 auto;
+	flex-direction: column;
+	gap: 0.5rem;
+	padding: 1rem 1.125rem 1.25rem;
+}
+
+.vip-article-card__date {
+	font-size: 0.8125rem;
+	color: var(--vip-articles-muted);
+}
+
+.vip-article-card__title {
+	margin: 0;
+	font-size: 1.125rem;
+	font-weight: 500;
+	line-height: 1.3;
+}
+
+.vip-article-card__title a {
+	color: inherit;
+	text-decoration: none;
+}
+
+.vip-article-card__title a:hover {
+	text-decoration: underline;
+}
+
+.vip-article-card__excerpt {
+	margin: 0;
+	flex: 1 1 auto;
+	font-size: 0.9375rem;
+	line-height: 1.5;
+	color: var(--vip-articles-muted);
+}
+
+.vip-article-card__link {
+	margin-top: 0.25rem;
+	font-size: 0.875rem;
+	font-weight: 500;
+	color: var(--vip-articles-text);
+	text-decoration: underline;
+	text-underline-offset: 2px;
+}
+
+.vip-articles__pagination {
+	margin-top: clamp(2rem, 4vw, 3rem);
+	padding-top: clamp(1.25rem, 2.5vw, 1.75rem);
+	border-top: 1px solid #000000;
+}
+
+/* Centered pagination between LATEST and TRENDING */
+.vip-articles__pagination--latest {
+	margin: clamp(2rem, 4vw, 2.5rem) auto;
+	padding: 0;
+	border-top: 0;
+	text-align: center;
+}
+
+.vip-articles__pagination--latest ul {
+	display: inline-flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 0.35rem;
+	margin: 0 auto;
+	padding: 0;
+	list-style: none;
+}
+
+.vip-articles__magazine.is-loading [data-vip-blog-latest],
+.vip-articles__magazine.is-loading [data-vip-blog-trending] {
+	opacity: 0.55;
+	transition: opacity 0.2s ease;
+}
+
+.vip-articles__loading {
+	margin: 1rem 0;
+	text-align: center;
+	color: var(--vip-articles-muted);
+	font-size: 0.9375rem;
+}
+
+.vip-articles__pagination .page-numbers {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 2.25rem;
+	height: 2.25rem;
+	margin: 0 0.15rem;
+	padding: 0 0.5rem;
+	border: 1px solid var(--vip-articles-line);
+	font-size: 0.875rem;
+	text-decoration: none;
+	color: var(--vip-articles-text);
+	list-style: none;
+}
+
+.vip-articles__pagination ul {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.35rem;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	border: unset !important;
+}
+
+.vip-articles__pagination .current {
+	background: #000000;
+	border-color: #000000;
+	color: #fff;
+}
+
+@media (max-width: 1200px) {
+	.vip-articles__grid {
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+	}
+}
+
+@media (max-width: 1024px) {
+	.vip-articles__grid {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+}
+
+@media (max-width: 640px) {
+	.vip-articles__grid {
+		grid-template-columns: 1fr;
+	}
+}

@@ -29,6 +29,77 @@ function vip_transits_home_page_id() {
 }
 
 /**
+ * Normalize one vehicle category card from ACF row data.
+ *
+ * @param array<string, mixed> $row ACF repeater row (title, image, filter_slug).
+ * @return array<string, string>|null
+ */
+function vip_transits_normalize_vehicle_category_row( $row ) {
+	if ( ! is_array( $row ) ) {
+		return null;
+	}
+
+	$title       = isset( $row['title'] ) ? (string) $row['title'] : '';
+	$image       = isset( $row['image'] ) ? $row['image'] : null;
+	$filter_slug = isset( $row['filter_slug'] ) ? (string) $row['filter_slug'] : '';
+
+	if ( ! $title && ( ! is_array( $image ) || empty( $image['url'] ) ) ) {
+		return null;
+	}
+
+	$slug = function_exists( 'vip_transits_category_filter_slug' )
+		? vip_transits_category_filter_slug( $title, $filter_slug )
+		: sanitize_title( $title );
+
+	return array(
+		'title'     => $title,
+		'slug'      => $slug,
+		'image_url' => is_array( $image ) && ! empty( $image['url'] ) ? (string) $image['url'] : '',
+		'image_alt' => is_array( $image ) && ! empty( $image['alt'] ) ? (string) $image['alt'] : $title,
+	);
+}
+
+/**
+ * Vehicle category cards from the homepage ACF flexible content (shared with fleet archive).
+ *
+ * @return array<int, array<string, string>>
+ */
+function vip_transits_get_homepage_vehicle_categories() {
+	$categories = array();
+	$home_id    = vip_transits_home_page_id();
+
+	if ( ! $home_id || ! function_exists( 'get_field' ) ) {
+		return $categories;
+	}
+
+	$sections = get_field( 'sections', $home_id );
+	if ( ! is_array( $sections ) ) {
+		return $categories;
+	}
+
+	foreach ( $sections as $section ) {
+		if ( empty( $section['acf_fc_layout'] ) || 'vehicle_categories' !== $section['acf_fc_layout'] ) {
+			continue;
+		}
+
+		if ( empty( $section['categories'] ) || ! is_array( $section['categories'] ) ) {
+			break;
+		}
+
+		foreach ( $section['categories'] as $row ) {
+			$normalized = vip_transits_normalize_vehicle_category_row( $row );
+			if ( $normalized ) {
+				$categories[] = $normalized;
+			}
+		}
+
+		break;
+	}
+
+	return $categories;
+}
+
+/**
  * Child theme folder for ACF local JSON (requires tenku-child active).
  *
  * @return string Absolute path with trailing slash.
@@ -84,9 +155,138 @@ function vip_transits_acf_json_save_paths( $paths, $post = array() ) {
 add_filter( 'acf/json/save_paths', 'vip_transits_acf_json_save_paths', 10, 2 );
 
 /**
+ * All database post IDs for an ACF field group key (post_name).
+ *
+ * @param string $key Field group key, e.g. group_vip_vehicle.
+ * @return int[]
+ */
+function vip_transits_get_field_group_post_ids_by_key( $key ) {
+	$key = sanitize_key( (string) $key );
+	if ( $key === '' ) {
+		return array();
+	}
+
+	$ids = get_posts(
+		array(
+			'post_type'              => 'acf-field-group',
+			'posts_per_page'         => -1,
+			'post_status'            => array( 'publish', 'acf-disabled', 'trash', 'draft' ),
+			'name'                   => $key,
+			'fields'                 => 'ids',
+			'orderby'                => 'ID',
+			'order'                  => 'ASC',
+			'suppress_filters'       => true,
+			'update_post_meta_cache' => false,
+			'update_post_term_cache' => false,
+		)
+	);
+
+	return array_values( array_filter( array_map( 'intval', (array) $ids ) ) );
+}
+
+/**
+ * Delete extra database copies of a field group, keeping one post ID.
+ *
+ * @param string $key     Field group key.
+ * @param int    $keep_id Post ID to keep (0 = keep highest ID).
+ * @return int Number of posts removed.
+ */
+function vip_transits_remove_duplicate_acf_field_groups( $key, $keep_id = 0 ) {
+	$ids = vip_transits_get_field_group_post_ids_by_key( $key );
+	if ( count( $ids ) <= 1 ) {
+		return 0;
+	}
+
+	$keep_id = (int) $keep_id;
+	if ( $keep_id > 0 && in_array( $keep_id, $ids, true ) ) {
+		$keep = $keep_id;
+	} else {
+		$keep = max( $ids );
+	}
+
+	$removed = 0;
+	foreach ( $ids as $id ) {
+		if ( (int) $id === (int) $keep ) {
+			continue;
+		}
+		if ( function_exists( 'acf_delete_field_group' ) ) {
+			acf_delete_field_group( $id );
+			++$removed;
+		}
+	}
+
+	vip_transits_flush_acf_field_group_cache();
+
+	return $removed;
+}
+
+/**
+ * Clear ACF field group caches after import/dedupe.
+ */
+function vip_transits_flush_acf_field_group_cache() {
+	if ( function_exists( 'acf_reset_local' ) ) {
+		acf_reset_local();
+	}
+
+	if ( function_exists( 'acf_get_store' ) ) {
+		$store = acf_get_store( 'field-groups' );
+		if ( $store ) {
+			$store->reset();
+		}
+	}
+
+	if ( function_exists( 'acf_cache_key' ) ) {
+		wp_cache_delete( acf_cache_key( 'acf_get_field_group_posts' ), 'acf' );
+	}
+}
+
+/**
+ * Match database modified time to JSON so ACF stops showing "Sync available".
+ *
+ * @param int $post_id  Field group post ID.
+ * @param int $modified Unix timestamp from JSON.
+ */
+function vip_transits_touch_field_group_modified( $post_id, $modified ) {
+	$post_id  = (int) $post_id;
+	$modified = (int) $modified;
+	if ( $post_id <= 0 || $modified <= 0 ) {
+		return;
+	}
+
+	$date = gmdate( 'Y-m-d H:i:s', $modified );
+	wp_update_post(
+		array(
+			'ID'                => $post_id,
+			'post_modified'     => $date,
+			'post_modified_gmt' => $date,
+		)
+	);
+}
+
+/**
+ * Import one field group array into the database (ACF 6+ or legacy API).
+ *
+ * @param array<string, mixed> $json Field group export array.
+ * @return array<string, mixed>|false
+ */
+function vip_transits_import_acf_field_group_array( $json ) {
+	if ( function_exists( 'acf_import_internal_post_type' ) ) {
+		return acf_import_internal_post_type( $json, 'acf-field-group' );
+	}
+
+	if ( function_exists( 'acf_import_field_group' ) ) {
+		return acf_import_field_group( $json );
+	}
+
+	return false;
+}
+
+/**
  * Import all field-group JSON files from the child theme into the database.
  *
- * @return array{ok:bool,message:string,titles:string[]}
+ * Removes duplicate DB posts per key, imports from JSON, and aligns modified times.
+ *
+ * @return array{ok:bool,message:string,titles:string[],removed:int}
  */
 function vip_transits_import_acf_json_field_groups() {
 	if ( ! function_exists( 'acf_import_field_group' ) ) {
@@ -94,6 +294,7 @@ function vip_transits_import_acf_json_field_groups() {
 			'ok'      => false,
 			'message' => __( 'ACF Pro is not active.', 'tenku-child' ),
 			'titles'  => array(),
+			'removed' => 0,
 		);
 	}
 
@@ -103,20 +304,23 @@ function vip_transits_import_acf_json_field_groups() {
 			'ok'      => false,
 			'message' => __( 'acf-json folder is missing or not readable in the child theme.', 'tenku-child' ),
 			'titles'  => array(),
+			'removed' => 0,
 		);
 	}
 
 	// Prevent JSON files being overwritten while importing.
 	acf_update_setting( 'json', false );
 
-	$titles = array();
-	$files  = glob( $dir . '/*.json' );
+	$titles  = array();
+	$removed = 0;
+	$files   = glob( $dir . '/*.json' );
 	if ( ! $files ) {
 		acf_update_setting( 'json', true );
 		return array(
 			'ok'      => false,
 			'message' => __( 'No JSON field group files found.', 'tenku-child' ),
 			'titles'  => array(),
+			'removed' => 0,
 		);
 	}
 
@@ -126,39 +330,66 @@ function vip_transits_import_acf_json_field_groups() {
 			continue;
 		}
 
-		$existing = function_exists( 'acf_get_field_group' ) ? acf_get_field_group( $json['key'] ) : null;
-		if ( is_array( $existing ) && ! empty( $existing['ID'] ) ) {
-			$json['ID'] = (int) $existing['ID'];
+		$key = (string) $json['key'];
+
+		// Drop stray duplicate database posts before import (same post_name / key).
+		$removed += vip_transits_remove_duplicate_acf_field_groups( $key );
+
+		$existing_ids = vip_transits_get_field_group_post_ids_by_key( $key );
+		$keep_id      = $existing_ids ? (int) max( $existing_ids ) : 0;
+		if ( $keep_id > 0 ) {
+			$json['ID'] = $keep_id;
+		} else {
+			unset( $json['ID'] );
 		}
 
-		$result = acf_import_field_group( $json );
+		$result = vip_transits_import_acf_field_group_array( $json );
 		if ( is_array( $result ) && ! empty( $result['title'] ) ) {
 			$titles[] = (string) $result['title'];
+
+			if ( ! empty( $result['ID'] ) ) {
+				$modified = isset( $json['modified'] ) ? (int) $json['modified'] : time();
+				vip_transits_touch_field_group_modified( (int) $result['ID'], $modified );
+			}
 		}
 	}
 
 	acf_update_setting( 'json', true );
-
-	if ( function_exists( 'acf_reset_local' ) ) {
-		acf_reset_local();
-	}
+	vip_transits_flush_acf_field_group_cache();
 
 	if ( empty( $titles ) ) {
 		return array(
 			'ok'      => false,
 			'message' => __( 'Import failed — check JSON files in acf-json.', 'tenku-child' ),
 			'titles'  => array(),
+			'removed' => $removed,
+		);
+	}
+
+	$message = sprintf(
+		/* translators: %s: comma-separated field group titles */
+		__( 'Imported: %s', 'tenku-child' ),
+		implode( ', ', $titles )
+	);
+
+	if ( $removed > 0 ) {
+		$message .= ' ' . sprintf(
+			/* translators: %d: number of duplicate field groups removed */
+			_n(
+				'Removed %d duplicate field group from the database.',
+				'Removed %d duplicate field groups from the database.',
+				$removed,
+				'tenku-child'
+			),
+			$removed
 		);
 	}
 
 	return array(
 		'ok'      => true,
-		'message' => sprintf(
-			/* translators: %s: comma-separated field group titles */
-			__( 'Imported: %s', 'tenku-child' ),
-			implode( ', ', $titles )
-		),
+		'message' => $message,
 		'titles'  => $titles,
+		'removed' => $removed,
 	);
 }
 

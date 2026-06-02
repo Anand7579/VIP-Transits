@@ -6,42 +6,117 @@
             "key": "field_vipveh_color_name",
             "label": "Color name",
             "name": "color_name",
+            "aria-label": "",
             "type": "text",
-            "default_value": "Black"
+            "instructions": "",
+            "required": false,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "Black",
+            "maxlength": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
         },
         {
             "key": "field_vipveh_color_hex",
             "label": "Color swatch",
             "name": "color_hex",
+            "aria-label": "",
             "type": "color_picker",
-            "default_value": "#000000"
+            "instructions": "",
+            "required": false,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "#000000",
+            "enable_opacity": false,
+            "custom_palette_source": "",
+            "palette_colors": "",
+            "show_color_wheel": true,
+            "return_format": "string"
         },
         {
             "key": "field_vipveh_engine",
             "label": "Engine type",
             "name": "engine_type",
+            "aria-label": "",
             "type": "text",
-            "default_value": "V8"
+            "instructions": "",
+            "required": false,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "V8",
+            "maxlength": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
         },
         {
             "key": "field_vipveh_accel",
             "label": "0–100 km\/h",
             "name": "acceleration_0_100",
+            "aria-label": "",
             "type": "text",
-            "placeholder": "3.2 sec"
+            "instructions": "",
+            "required": false,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placeholder": "3.2 sec",
+            "default_value": "",
+            "maxlength": "",
+            "prepend": "",
+            "append": ""
         },
         {
             "key": "field_vipveh_doors",
             "label": "Doors",
             "name": "doors",
+            "aria-label": "",
             "type": "text",
-            "default_value": "02"
+            "instructions": "",
+            "required": false,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "02",
+            "maxlength": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
         },
         {
             "key": "field_vipveh_seats",
             "label": "Number of seats",
             "name": "vehicle_seat",
+            "aria-label": "",
             "type": "taxonomy",
+            "instructions": "Choose a seat option. Used on the card and in fleet filters. Manage options under Vehicles → Seats.",
+            "required": false,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
             "taxonomy": "vehicle_seat",
             "field_type": "select",
             "allow_null": 0,
@@ -50,158 +125,387 @@
             "load_terms": 1,
             "return_format": "object",
             "multiple": 0,
-            "instructions": "Choose a seat option. Used on the card and in fleet filters. Manage options under Vehicles → Seats."
+            "bidirectional_target": []
         },
         {
             "key": "field_vipveh_price",
             "label": "Daily price (AED)",
             "name": "daily_price",
+            "aria-label": "",
             "type": "number",
+            "instructions": "",
+            "required": false,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
             "min": 0,
             "step": 1,
-            "default_value": 2000
+            "default_value": 2000,
+            "max": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_vipveh_price_suffix",
+            "label": "Price suffix",
+            "name": "price_suffix",
+            "type": "text",
+            "instructions": "Shown after the daily rate, e.g. + VAT",
+            "default_value": "+ VAT",
+            "placeholder": "+ VAT"
         },
         {
             "key": "field_vipveh_phone",
             "label": "Phone number",
             "name": "phone_number",
+            "aria-label": "",
             "type": "text",
-            "placeholder": "+971..."
+            "instructions": "",
+            "required": false,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placeholder": "+971...",
+            "default_value": "",
+            "maxlength": "",
+            "prepend": "",
+            "append": ""
         },
         {
             "key": "field_vipveh_delivery",
             "label": "Hotel \/ home delivery",
             "name": "delivery_hotel_home",
+            "aria-label": "",
             "type": "true_false",
+            "instructions": "",
+            "required": false,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
             "ui": 1,
-            "default_value": 0
+            "default_value": 0,
+            "message": "",
+            "ui_on_text": "",
+            "ui_off_text": ""
         },
         {
             "key": "field_vipveh_deposit",
             "label": "Security deposit (AED)",
             "name": "security_deposit",
+            "aria-label": "",
             "type": "number",
+            "instructions": "",
+            "required": false,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
             "min": 0,
             "step": 1,
-            "default_value": 5000
+            "default_value": 5000,
+            "max": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_vipveh_header_deposit_line",
+            "label": "Header deposit line",
+            "name": "header_deposit_line",
+            "type": "text",
+            "instructions": "Full line under the price in the black header bar. Overrides the default Refundable deposit text. Example: No Deposit",
+            "placeholder": "No Deposit"
+        },
+        {
+            "key": "field_vipveh_pricing_deposit_heading",
+            "label": "Pricing card deposit label",
+            "name": "pricing_deposit_heading",
+            "type": "text",
+            "instructions": "Short label in the pricing card header (default: Deposit:)",
+            "placeholder": "Deposit:"
+        },
+        {
+            "key": "field_vipveh_pricing_deposit_value",
+            "label": "Pricing card deposit value",
+            "name": "pricing_deposit_value",
+            "type": "text",
+            "instructions": "Deposit line in the pricing card and Security deposit row. Example: No deposit required or AED 5,000 (refundable). Leave empty to use the Security deposit (AED) amount.",
+            "placeholder": "AED 5,000 (refundable)"
         },
         {
             "key": "field_vipveh_weekly",
             "label": "Weekly rate label",
             "name": "weekly_rate_label",
+            "aria-label": "",
             "type": "text",
             "instructions": "e.g. Ask via WhatsApp or AED 9,500",
-            "default_value": "Ask via WhatsApp"
+            "required": false,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "Ask via WhatsApp",
+            "maxlength": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
         },
         {
             "key": "field_vipveh_power",
             "label": "Power",
             "name": "power_hp",
+            "aria-label": "",
             "type": "text",
-            "placeholder": "610 hp"
+            "instructions": "",
+            "required": false,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placeholder": "610 hp",
+            "default_value": "",
+            "maxlength": "",
+            "prepend": "",
+            "append": ""
         },
         {
             "key": "field_vipveh_top_speed",
             "label": "Top speed",
             "name": "top_speed",
+            "aria-label": "",
             "type": "text",
-            "placeholder": "325 km\/h"
+            "instructions": "",
+            "required": false,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placeholder": "325 km\/h",
+            "default_value": "",
+            "maxlength": "",
+            "prepend": "",
+            "append": ""
         },
         {
             "key": "field_vipveh_torque",
             "label": "Torque",
             "name": "torque",
+            "aria-label": "",
             "type": "text",
-            "placeholder": "560 Nm"
+            "instructions": "",
+            "required": false,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placeholder": "560 Nm",
+            "default_value": "",
+            "maxlength": "",
+            "prepend": "",
+            "append": ""
         },
         {
             "key": "field_vipveh_transmission",
             "label": "Transmission",
             "name": "transmission",
+            "aria-label": "",
             "type": "text",
-            "placeholder": "7-speed DCT"
+            "instructions": "",
+            "required": false,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placeholder": "7-speed DCT",
+            "default_value": "",
+            "maxlength": "",
+            "prepend": "",
+            "append": ""
         },
         {
             "key": "field_vipveh_drive",
             "label": "Drive",
             "name": "drive_type",
+            "aria-label": "",
             "type": "text",
-            "placeholder": "AWD"
+            "instructions": "",
+            "required": false,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placeholder": "AWD",
+            "default_value": "",
+            "maxlength": "",
+            "prepend": "",
+            "append": ""
         },
         {
             "key": "field_vipveh_intro",
             "label": "Intro (detail page)",
             "name": "intro_lead",
+            "aria-label": "",
             "type": "textarea",
+            "instructions": "Shown under the car name. Falls back to excerpt or content.",
+            "required": false,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
             "rows": 3,
-            "instructions": "Shown under the car name. Falls back to excerpt or content."
+            "default_value": "",
+            "new_lines": "",
+            "maxlength": "",
+            "placeholder": ""
         },
         {
             "key": "field_vipveh_gallery",
             "label": "Gallery images",
             "name": "gallery_images",
+            "aria-label": "",
             "type": "gallery",
+            "instructions": "Detail page gallery (main + thumbnails). Featured image is used first if not listed here.",
+            "required": false,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
             "return_format": "array",
             "preview_size": "medium",
             "library": "all",
             "min": 0,
             "max": 12,
             "insert": "append",
-            "instructions": "Detail page gallery (main + thumbnails). Featured image is used first if not listed here."
+            "min_width": 0,
+            "min_height": 0,
+            "min_size": 0,
+            "max_width": 0,
+            "max_height": 0,
+            "max_size": 0,
+            "mime_types": ""
         },
         {
             "key": "field_vipveh_min_age",
             "label": "Minimum age",
             "name": "minimum_age",
+            "aria-label": "",
             "type": "text",
-            "default_value": "25"
+            "instructions": "",
+            "required": false,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": 25,
+            "maxlength": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
         },
         {
             "key": "field_vipveh_included",
             "label": "What's included",
             "name": "included_items",
+            "aria-label": "",
             "type": "repeater",
+            "instructions": "Add, remove, or reorder boxes in the What's Included section on the vehicle page. Title is required; icon image and description are optional.",
+            "required": false,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
             "layout": "block",
             "button_label": "Add item",
+            "min": 0,
+            "max": 0,
+            "rows_per_page": 20,
+            "collapsed": "",
             "sub_fields": [
+                {
+                    "key": "field_vipveh_inc_icon",
+                    "label": "Icon image",
+                    "name": "icon",
+                    "type": "image",
+                    "instructions": "Optional square icon for this box (PNG or SVG recommended). Leave empty for the default checkmark icon.",
+                    "return_format": "array",
+                    "preview_size": "thumbnail",
+                    "library": "all",
+                    "mime_types": "jpg,jpeg,png,svg,webp",
+                    "parent_repeater": "field_vipveh_included"
+                },
                 {
                     "key": "field_vipveh_inc_title",
                     "label": "Title",
                     "name": "title",
+                    "aria-label": "",
                     "type": "text",
-                    "parent": "field_vipveh_included"
+                    "instructions": "",
+                    "required": false,
+                    "conditional_logic": false,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "maxlength": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "parent_repeater": "field_vipveh_included"
                 },
                 {
                     "key": "field_vipveh_inc_text",
                     "label": "Description",
                     "name": "description",
+                    "aria-label": "",
                     "type": "textarea",
+                    "instructions": "",
+                    "required": false,
+                    "conditional_logic": false,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
                     "rows": 2,
-                    "parent": "field_vipveh_included"
-                }
-            ]
-        },
-        {
-            "key": "field_vipveh_variants",
-            "label": "Variants",
-            "name": "vehicle_variants",
-            "type": "repeater",
-            "layout": "table",
-            "button_label": "Add variant",
-            "sub_fields": [
-                {
-                    "key": "field_vipveh_var_name",
-                    "label": "Name",
-                    "name": "name",
-                    "type": "text",
-                    "parent": "field_vipveh_variants"
-                },
-                {
-                    "key": "field_vipveh_var_note",
-                    "label": "Note",
-                    "name": "note",
-                    "type": "text",
-                    "parent": "field_vipveh_variants"
+                    "default_value": "",
+                    "new_lines": "",
+                    "maxlength": "",
+                    "placeholder": "",
+                    "parent_repeater": "field_vipveh_included"
                 }
             ]
         },
@@ -209,24 +513,64 @@
             "key": "field_vipveh_routes",
             "label": "Best routes",
             "name": "driving_routes",
+            "aria-label": "",
             "type": "repeater",
+            "instructions": "",
+            "required": false,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
             "layout": "block",
             "button_label": "Add route",
+            "min": 0,
+            "max": 0,
+            "rows_per_page": 20,
+            "collapsed": "",
             "sub_fields": [
                 {
                     "key": "field_vipveh_route_title",
                     "label": "Title",
                     "name": "title",
+                    "aria-label": "",
                     "type": "text",
-                    "parent": "field_vipveh_routes"
+                    "instructions": "",
+                    "required": false,
+                    "conditional_logic": false,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "maxlength": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "parent_repeater": "field_vipveh_routes"
                 },
                 {
                     "key": "field_vipveh_route_desc",
                     "label": "Description",
                     "name": "description",
+                    "aria-label": "",
                     "type": "textarea",
+                    "instructions": "",
+                    "required": false,
+                    "conditional_logic": false,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
                     "rows": 2,
-                    "parent": "field_vipveh_routes"
+                    "default_value": "",
+                    "new_lines": "",
+                    "maxlength": "",
+                    "placeholder": "",
+                    "parent_repeater": "field_vipveh_routes"
                 }
             ]
         },
@@ -234,26 +578,64 @@
             "key": "field_vipveh_faq",
             "label": "FAQ (detail page)",
             "name": "vehicle_faq",
+            "aria-label": "",
             "type": "repeater",
+            "instructions": "",
+            "required": false,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
             "layout": "block",
             "button_label": "Add question",
+            "min": 0,
+            "max": 0,
+            "rows_per_page": 20,
+            "collapsed": "",
             "sub_fields": [
                 {
                     "key": "field_vipveh_faq_q",
                     "label": "Question",
                     "name": "question",
+                    "aria-label": "",
                     "type": "text",
-                    "parent": "field_vipveh_faq"
+                    "instructions": "",
+                    "required": false,
+                    "conditional_logic": false,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "maxlength": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "parent_repeater": "field_vipveh_faq"
                 },
                 {
                     "key": "field_vipveh_faq_a",
                     "label": "Answer",
                     "name": "answer",
+                    "aria-label": "",
                     "type": "wysiwyg",
+                    "instructions": "",
+                    "required": false,
+                    "conditional_logic": false,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
                     "tabs": "visual",
                     "toolbar": "basic",
                     "media_upload": 0,
-                    "parent": "field_vipveh_faq"
+                    "default_value": "",
+                    "delay": 0,
+                    "parent_repeater": "field_vipveh_faq"
                 }
             ]
         },
@@ -261,11 +643,21 @@
             "key": "field_vipveh_seo",
             "label": "SEO content block",
             "name": "seo_content",
+            "aria-label": "",
             "type": "wysiwyg",
+            "instructions": "Long-form paragraph(s) below routes.",
+            "required": false,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
             "tabs": "visual",
             "toolbar": "basic",
             "media_upload": 0,
-            "instructions": "Long-form paragraph(s) below routes."
+            "default_value": "",
+            "delay": 0
         }
     ],
     "location": [
@@ -282,8 +674,12 @@
     "style": "default",
     "label_placement": "top",
     "instruction_placement": "label",
+    "hide_on_screen": "",
     "active": true,
     "description": "Specs for fleet vehicles. WhatsApp number is set under Settings → VIP Transits.",
     "show_in_rest": 1,
-    "modified": 1779784200
+    "display_title": "",
+    "allow_ai_access": false,
+    "ai_description": "",
+    "modified": 1780385800
 }

@@ -56,6 +56,31 @@ if ( file_exists( $vip_vehicle_blocks ) ) {
 	require_once $vip_vehicle_blocks;
 }
 
+$vip_articles = get_stylesheet_directory() . '/inc/articles.php';
+if ( file_exists( $vip_articles ) ) {
+	require_once $vip_articles;
+}
+
+$vip_article_blocks = get_stylesheet_directory() . '/inc/article-blocks.php';
+if ( file_exists( $vip_article_blocks ) ) {
+	require_once $vip_article_blocks;
+}
+
+$vip_page_content = get_stylesheet_directory() . '/inc/page-content-acf.php';
+if ( file_exists( $vip_page_content ) ) {
+	require_once $vip_page_content;
+}
+
+$vip_editor_blocks = get_stylesheet_directory() . '/inc/editor-blocks.php';
+if ( file_exists( $vip_editor_blocks ) ) {
+	require_once $vip_editor_blocks;
+}
+
+$vip_template_parts = get_stylesheet_directory() . '/inc/theme-template-parts.php';
+if ( file_exists( $vip_template_parts ) ) {
+	require_once $vip_template_parts;
+}
+
 $vip_theme_icons = get_stylesheet_directory() . '/inc/theme-icons.php';
 if ( file_exists( $vip_theme_icons ) ) {
 	require_once $vip_theme_icons;

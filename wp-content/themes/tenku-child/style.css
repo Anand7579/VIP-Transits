@@ -6,7 +6,7 @@ Author: Automattic
 Author URI: https://automattic.com/
 Description: Tenku is a classic "magazine" theme with a rich, dense homepage perfect for pro-bloggers.
 Tags: blog,two-columns,wide-blocks,block-patterns,custom-background,custom-colors,custom-logo,custom-menu,editor-style,featured-images,full-site-editing,template-editing,rtl-language-support,threaded-comments,translation-ready
-Version: 1.42.560.1779084288
+Version: 1.69.560.1779084288
 Updated: 2026-05-18 11:34:48
 
 */
@@ -18,6 +18,7 @@ Updated: 2026-05-18 11:34:48
 	--vip-content-max: 1440px;
 	--vip-content-pad-x: clamp(1.25rem, 4vw, 3.5rem);
 	--vip-nav-font: "Newsreader", "Times New Roman", Georgia, serif;
+	 --vip-section-gap: 50px;
 }
 
 .vip-content-container {
@@ -38,7 +39,7 @@ Updated: 2026-05-18 11:34:48
 	position: relative;
 	z-index: 100;
 	width: 100%;
-	background: #0a0c0f;
+	background: #000000;
 	color: #fff;
 	font-family: var(--vip-header-font);
 	padding-top: 1.25rem;
@@ -141,6 +142,7 @@ Updated: 2026-05-18 11:34:48
 	flex-wrap: nowrap;
 	gap: 0.5rem;
 }
+
 
 /* Desktop: inline nav in header row (no hamburger) */
 @media (min-width: 1101px) {
@@ -260,7 +262,7 @@ Updated: 2026-05-18 11:34:48
 .single-vip_vehicle .vip-site-header,
 .post-type-archive-vip_vehicle .vip-site-header {
 	position: relative;
-	background: #0a0c0f;
+	background: #000000;
 	padding-top: 1.25rem;
 }
 
@@ -653,4 +655,8 @@ Updated: 2026-05-18 11:34:48
 
 main.vip-fleet-main, main#wp--skip-link--target {
     margin: 0 !important;
+}
+
+.vip-fleet__container > .vip-categories--fleet .vip-categories__container.vip-content-container{
+	padding: 0 !important;
 }

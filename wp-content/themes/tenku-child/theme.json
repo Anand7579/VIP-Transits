@@ -24,6 +24,16 @@
 			"name": "single-vip_vehicle",
 			"title": "Single vehicle",
 			"postTypes": [ "vip_vehicle" ]
+		},
+		{
+			"name": "page-about",
+			"title": "VIP About Us",
+			"postTypes": [ "page" ]
+		},
+		{
+			"name": "page-contact",
+			"title": "VIP Contact Us",
+			"postTypes": [ "page" ]
 		}
 	]
 }

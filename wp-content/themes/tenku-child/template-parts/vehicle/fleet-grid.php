@@ -26,10 +26,11 @@ if ( ! $query instanceof WP_Query ) {
 	return;
 }
 
-$found = (int) $query->found_posts;
-$max   = (int) $query->max_num_pages;
+$found           = (int) $query->found_posts;
+$max             = (int) $query->max_num_pages;
+$delivery_total  = function_exists( 'vip_transits_count_delivery_vehicles' ) ? vip_transits_count_delivery_vehicles() : 0;
 ?>
-<div class="vip-fleet__layout<?php echo $show_filters ? '' : ' vip-fleet__layout--no-sidebar'; ?>" data-vip-fleet data-per-page="<?php echo esc_attr( (string) $per_page ); ?>" data-max-pages="<?php echo esc_attr( (string) $max ); ?>">
+<div class="vip-fleet__layout<?php echo $show_filters ? '' : ' vip-fleet__layout--no-sidebar'; ?>" data-vip-fleet data-per-page="<?php echo esc_attr( (string) $per_page ); ?>" data-max-pages="<?php echo esc_attr( (string) $max ); ?>" data-delivery-total="<?php echo esc_attr( (string) $delivery_total ); ?>">
 	<?php if ( $show_filters ) : ?>
 		<?php get_template_part( 'template-parts/vehicle/fleet', 'filters' ); ?>
 	<?php endif; ?>
@@ -104,7 +105,7 @@ $max   = (int) $query->max_num_pages;
 		<?php if ( $show_load_more && $max > 1 ) : ?>
 			<div class="vip-fleet__more-wrap" data-vip-fleet-load-more-wrap>
 				<button type="button" class="vip-fleet__load-more" data-vip-fleet-load-more data-page="1">
-					<?php esc_html_e( 'Load more', 'tenku-child' ); ?> →
+					<?php esc_html_e( 'Load more', 'tenku-child' ); ?> <span>→</span>
 				</button>
 			</div>
 		<?php endif; ?>

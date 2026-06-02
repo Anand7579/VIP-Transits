@@ -32,7 +32,6 @@ $delivery_label = ! empty( $d['delivery'] )
 	: __( 'Ask on WhatsApp', 'tenku-child' );
 
 $main_image = ! empty( $gallery[0] ) ? $gallery[0] : null;
-$has_slider = count( $gallery ) > 3;
 ?>
 <section class="vip-vdetail__hero" data-vip-section>
 	<div class="vip-vdetail__hero-layout">
@@ -51,54 +50,13 @@ $has_slider = count( $gallery ) > 3;
 						/>
 					</div>
 
-					<?php if ( count( $gallery ) > 1 ) : ?>
-						<div class="vip-vdetail__gallery-thumbs-bar">
-							<button
-								type="button"
-								class="vip-vdetail__gallery-nav vip-vdetail__gallery-nav--prev"
-								data-vip-gallery-prev
-								aria-label="<?php esc_attr_e( 'Previous images', 'tenku-child' ); ?>"
-								<?php echo $has_slider ? '' : ' hidden'; ?>
-							>
-								<span aria-hidden="true">‹</span>
-							</button>
-
-							<div class="vip-vdetail__gallery-thumbs-viewport" data-vip-gallery-viewport>
-								<div class="vip-vdetail__gallery-thumbs-track" data-vip-gallery-track>
-									<?php foreach ( $gallery as $index => $image ) : ?>
-										<button
-											type="button"
-											class="vip-vdetail__gallery-thumb<?php echo 0 === (int) $index ? ' is-active' : ''; ?>"
-											data-vip-gallery-thumb
-											data-index="<?php echo esc_attr( (string) $index ); ?>"
-											data-full="<?php echo esc_url( $image['url'] ); ?>"
-											aria-label="<?php echo esc_attr( sprintf( __( 'Show image %d', 'tenku-child' ), (int) $index + 1 ) ); ?>"
-											aria-pressed="<?php echo 0 === (int) $index ? 'true' : 'false'; ?>"
-										>
-											<img
-												src="<?php echo esc_url( $image['thumb'] ); ?>"
-												alt=""
-												width="280"
-												height="160"
-												loading="lazy"
-												decoding="async"
-											/>
-										</button>
-									<?php endforeach; ?>
-								</div>
-							</div>
-
-							<button
-								type="button"
-								class="vip-vdetail__gallery-nav vip-vdetail__gallery-nav--next"
-								data-vip-gallery-next
-								aria-label="<?php esc_attr_e( 'Next images', 'tenku-child' ); ?>"
-								<?php echo $has_slider ? '' : ' hidden'; ?>
-							>
-								<span aria-hidden="true">›</span>
-							</button>
-						</div>
-					<?php endif; ?>
+					<?php
+					get_template_part(
+						'template-parts/vehicle/gallery',
+						'thumbs',
+						array( 'gallery' => $gallery )
+					);
+					?>
 				</div>
 			<?php else : ?>
 				<span class="vip-vdetail__gallery-placeholder" aria-hidden="true"></span>

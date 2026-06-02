@@ -1,0 +1,34 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "tenku-child/vip-border-section",
+	"version": "1.0.0",
+	"title": "VIP Border section",
+	"category": "vip-transits",
+	"icon": "layout",
+	"description": "Content with corner bracket borders and optional grey background.",
+	"keywords": [ "vip", "border", "section", "panel" ],
+	"textdomain": "tenku-child",
+	"attributes": {
+		"surface": {
+			"type": "boolean",
+			"default": false
+		},
+		"align": {
+			"type": "string",
+			"default": ""
+		}
+	},
+	"supports": {
+		"html": false,
+		"align": [ "full", "wide" ],
+		"spacing": {
+			"padding": true,
+			"margin": true
+		}
+	},
+	"editorScript": "file:./editor.js",
+	"style": "file:./style.css",
+	"editorStyle": "file:./style.css",
+	"render": "file:./render.php"
+}

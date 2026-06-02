@@ -18,18 +18,9 @@ $category_order = array(
 
 $categories = vip_transits_get_ordered_terms( 'vehicle_category', $category_order );
 
-$brand_order = array(
-	'lamborghini',
-	'ferrari',
-	'rolls-royce',
-	'mercedes-g63',
-	'bugatti',
-	'porsche',
-	'bentley',
-	'mclaren',
-);
-
-$brands = vip_transits_get_ordered_terms( 'vehicle_brand', $brand_order );
+$brands = function_exists( 'vip_transits_get_fleet_brand_terms' )
+	? vip_transits_get_fleet_brand_terms()
+	: array();
 
 $seat_order = array( '2-seats', '4-seats', '5-seats', '7-seats' );
 $seats      = vip_transits_get_ordered_terms( 'vehicle_seat', $seat_order );
@@ -122,9 +113,12 @@ $price_max    = (int) $price_bounds['max'];
 		<label class="vip-fleet__toggle">
 			<span class="vip-fleet__toggle-text"><?php esc_html_e( 'Deliver To Hotel / Home', 'tenku-child' ); ?></span>
 			<span class="vip-fleet__toggle-control">
-				<input type="checkbox" data-vip-fleet-filter="delivery" class="vip-fleet__toggle-input" value="1" />
+				<input type="checkbox" data-vip-fleet-filter="delivery" class="vip-fleet__toggle-input" value="1" aria-describedby="vip-fleet-delivery-hint" />
 				<span class="vip-fleet__toggle-switch" aria-hidden="true"></span>
 			</span>
 		</label>
+		<p id="vip-fleet-delivery-hint" class="vip-fleet__filter-hint">
+			<?php esc_html_e( 'Off: show all vehicles. On: only vehicles with hotel / home delivery enabled in the editor.', 'tenku-child' ); ?>
+		</p>
 	</div>
 </aside>

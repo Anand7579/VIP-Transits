@@ -28,8 +28,11 @@ if ( empty( $d['id'] ) ) {
 }
 
 $fleet_url   = get_post_type_archive_link( 'vip_vehicle' );
-$price_fmt   = $d['daily_price'] ? number_format_i18n( (int) $d['daily_price'] ) : '';
-$deposit_fmt = number_format_i18n( (int) $d['security_deposit'] );
+$price_fmt              = $d['daily_price'] ? number_format_i18n( (int) $d['daily_price'] ) : '';
+$price_suffix           = ! empty( $d['price_suffix'] ) ? (string) $d['price_suffix'] : '';
+$header_deposit_text    = vip_transits_vehicle_header_deposit_text( $d );
+$pricing_deposit_text   = vip_transits_vehicle_pricing_deposit_text( $d );
+$pricing_deposit_label  = vip_transits_vehicle_pricing_deposit_heading( $d );
 $faq_items   = $d['faq'];
 
 if ( empty( $faq_items ) ) {
@@ -46,7 +49,7 @@ if ( empty( $faq_items ) ) {
 					__( 'The %1$s starts from AED %2$s per day. A refundable security deposit of AED %3$s is held at delivery. Insurance is included. Weekly rates are available at a reduced daily rate.', 'tenku-child' ),
 					$d['short_name'],
 					$price_fmt,
-					$deposit_fmt
+					$pricing_deposit_text
 				)
 				: '',
 		),
@@ -160,6 +163,11 @@ $seo_heading = sprintf(
 	.vip-vdetail__variants-grid::-webkit-scrollbar {
 		display: none;
 	}
+	.vip-vdetail__variant-card-link {
+		display: block;
+		color: inherit;
+		text-decoration: none;
+	}
 	.vip-vdetail__variant-media {
 		position: relative;
 		overflow: hidden;
@@ -236,15 +244,14 @@ $seo_heading = sprintf(
 					<div class="vip-vdetail__masthead-price">
 						<span class="vip-vdetail__masthead-from"><?php esc_html_e( 'From', 'tenku-child' ); ?></span>
 						<div class="vip-vdetail__masthead-rate">
-							<span class="vip-vdetail__masthead-amount"><?php echo esc_html( sprintf( 'AED %s', $price_fmt ) ); ?></span><span class="vip-vdetail__masthead-unit">/day</span>
+							<span class="vip-vdetail__masthead-amount"><?php echo esc_html( sprintf( 'AED %s', $price_fmt ) ); ?></span><span class="vip-vdetail__masthead-unit">/day<?php echo $price_suffix ? ' ' . esc_html( $price_suffix ) : ''; ?></span>
 						</div>
 					</div>
 				<?php endif; ?>
 
-				<p class="vip-vdetail__masthead-deposit">
-					<?php esc_html_e( 'Refundable deposit:', 'tenku-child' ); ?>
-					<span class="vip-vdetail__masthead-deposit-amount"> <?php echo esc_html( sprintf( 'AED %s', $deposit_fmt ) ); ?></span>
-				</p>
+				<?php if ( $header_deposit_text ) : ?>
+					<p class="vip-vdetail__masthead-deposit"><?php echo esc_html( $header_deposit_text ); ?></p>
+				<?php endif; ?>
 			</div>
 
 			<div class="vip-vdetail__masthead-right">
@@ -284,6 +291,7 @@ $seo_heading = sprintf(
 						<?php if ( ! empty( $d['tel_href'] ) ) : ?>
 							<a class="vip-vdetail__masthead-call" href="<?php echo esc_url( $d['tel_href'] ); ?>" aria-label="<?php esc_attr_e( 'Call now', 'tenku-child' ); ?>">
 								<svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 4h3l2 5-2.5 1.5a11 11 0 005 5L13 13l5 2v3a2 2 0 01-2 2A15 15 0 013 6a2 2 0 012-2z" stroke="currentColor" stroke-width="1.75" stroke-linejoin="round"/></svg>
+								<span class="vip-vdetail__masthead-call_text">Call Me</span>
 							</a>
 						<?php endif; ?>
 					</div>
@@ -314,7 +322,6 @@ $seo_heading = sprintf(
 					);
 				}
 				$main_image = ! empty( $gallery[0] ) ? $gallery[0] : null;
-				$has_slider = count( $gallery ) > 3;
 				?>
 				<?php if ( $main_image ) : ?>
 					<div class="vip-vdetail__gallery" data-vip-gallery>
@@ -330,54 +337,13 @@ $seo_heading = sprintf(
 							/>
 						</div>
 
-						<?php if ( count( $gallery ) > 1 ) : ?>
-							<div class="vip-vdetail__gallery-thumbs-bar">
-								<button
-									type="button"
-									class="vip-vdetail__gallery-nav vip-vdetail__gallery-nav--prev"
-									data-vip-gallery-prev
-									aria-label="<?php esc_attr_e( 'Previous images', 'tenku-child' ); ?>"
-									<?php echo $has_slider ? '' : ' hidden'; ?>
-								>
-									<span aria-hidden="true">‹</span>
-								</button>
-
-								<div class="vip-vdetail__gallery-thumbs-viewport" data-vip-gallery-viewport>
-									<div class="vip-vdetail__gallery-thumbs-track" data-vip-gallery-track>
-										<?php foreach ( $gallery as $index => $image ) : ?>
-											<button
-												type="button"
-												class="vip-vdetail__gallery-thumb<?php echo 0 === (int) $index ? ' is-active' : ''; ?>"
-												data-vip-gallery-thumb
-												data-index="<?php echo esc_attr( (string) $index ); ?>"
-												data-full="<?php echo esc_url( $image['url'] ); ?>"
-												aria-label="<?php echo esc_attr( sprintf( __( 'Show image %d', 'tenku-child' ), (int) $index + 1 ) ); ?>"
-												aria-pressed="<?php echo 0 === (int) $index ? 'true' : 'false'; ?>"
-											>
-												<img
-													src="<?php echo esc_url( $image['thumb'] ); ?>"
-													alt=""
-													width="280"
-													height="160"
-													loading="lazy"
-													decoding="async"
-												/>
-											</button>
-										<?php endforeach; ?>
-									</div>
-								</div>
-
-								<button
-									type="button"
-									class="vip-vdetail__gallery-nav vip-vdetail__gallery-nav--next"
-									data-vip-gallery-next
-									aria-label="<?php esc_attr_e( 'Next images', 'tenku-child' ); ?>"
-									<?php echo $has_slider ? '' : ' hidden'; ?>
-								>
-									<span aria-hidden="true">›</span>
-								</button>
-							</div>
-						<?php endif; ?>
+						<?php
+						get_template_part(
+							'template-parts/vehicle/gallery',
+							'thumbs',
+							array( 'gallery' => $gallery )
+						);
+						?>
 					</div>
 				<?php else : ?>
 					<span class="vip-vdetail__gallery-placeholder" aria-hidden="true"></span>
@@ -399,6 +365,7 @@ $seo_heading = sprintf(
 								<span class="vip-vdetail__stat-label"><?php echo esc_html( $stat['label'] ); ?></span>
 								<span class="vip-vdetail__stat-value"><?php echo esc_html( $stat['value'] ); ?></span>
 							</li>
+							<span class="vip-vdetail_divider"></span>
 						<?php endforeach; ?>
 					</ul>
 				<?php endif; ?>
@@ -445,13 +412,13 @@ $seo_heading = sprintf(
 							<span class="vip-vdetail__pricing-from"><?php esc_html_e( 'From', 'tenku-child' ); ?></span>
 							<?php if ( $price_fmt ) : ?>
 								<p class="vip-vdetail__pricing-rate">
-									<span class="vip-vdetail__pricing-amount"><?php echo esc_html( sprintf( 'AED %s', $price_fmt ) ); ?></span><span class="vip-vdetail__pricing-unit">/day</span>
+									<span class="vip-vdetail__pricing-amount"><?php echo esc_html( sprintf( 'AED %s', $price_fmt ) ); ?></span><span class="vip-vdetail__pricing-unit">/day<?php echo $price_suffix ? ' ' . esc_html( $price_suffix ) : ''; ?></span>
 								</p>
 							<?php endif; ?>
 						</div>
 						<p class="vip-vdetail__pricing-deposit-hd">
-							<?php esc_html_e( 'Deposit:', 'tenku-child' ); ?>
-							<span><?php echo esc_html( sprintf( 'AED %s', $deposit_fmt ) ); ?></span>
+							<?php echo esc_html( $pricing_deposit_label ); ?>
+							<span><?php echo esc_html( $pricing_deposit_text ); ?></span>
 						</p>
 					</div>
 
@@ -463,7 +430,7 @@ $seo_heading = sprintf(
 							</div>
 							<div class="vip-vdetail__pricing-row">
 								<dt><?php esc_html_e( 'Security deposit', 'tenku-child' ); ?></dt>
-								<dd><?php echo esc_html( sprintf( 'AED %s (refundable)', $deposit_fmt ) ); ?></dd>
+								<dd><?php echo esc_html( $pricing_deposit_text ); ?></dd>
 							</div>
 							<div class="vip-vdetail__pricing-row">
 								<dt><?php esc_html_e( 'Insurance', 'tenku-child' ); ?></dt>
@@ -484,19 +451,19 @@ $seo_heading = sprintf(
 						<?php if ( ! empty( $d['wa_href_attr'] ) || ! empty( $d['tel_href'] ) ) : ?>
 							<div class="vip-vdetail__pricing-actions">
 								<?php if ( ! empty( $d['wa_href_attr'] ) ) : ?>
-									<a class="vip-vdetail__pricing-wa" href="<?php echo $d['wa_href_attr']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>" target="_blank" rel="noopener noreferrer">
-										<span class="vip-vdetail__pricing-wa-icon" aria-hidden="true">
-											<svg width="22" height="22" viewBox="0 0 24 24" focusable="false"><path fill="currentColor" d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.435 9.884-9.882 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-										</span>
-										<span class="vip-vdetail__pricing-wa-text">
-											<span class="vip-vdetail__pricing-wa-kicker"><?php esc_html_e( 'Book in a few minutes', 'tenku-child' ); ?></span>
-											<span class="vip-vdetail__pricing-wa-label"><?php esc_html_e( 'Chat on WhatsApp now', 'tenku-child' ); ?></span>
-										</span>
-									</a>
+									<a class="vip-vdetail__masthead-wa" href="<?php echo $d['wa_href_attr']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>" target="_blank" rel="noopener noreferrer">
+								<span class="vip-vdetail__masthead-wa-inner">
+									<span class="vip-vdetail__masthead-wa-icon" aria-hidden="true">
+										<svg width="22" height="22" viewBox="0 0 24 24" focusable="false"><path fill="currentColor" d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.435 9.884-9.882 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+									</span>
+									<span class="vip-vdetail__masthead-wa-label">Book in a few minutes <span>Chat on WhatsApp now</span></span>
+								</span>
+							</a>
 								<?php endif; ?>
 								<?php if ( ! empty( $d['tel_href'] ) ) : ?>
 									<a class="vip-vdetail__pricing-call" href="<?php echo esc_url( $d['tel_href'] ); ?>" aria-label="<?php esc_attr_e( 'Call now', 'tenku-child' ); ?>">
 										<svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 4h3l2 5-2.5 1.5a11 11 0 005 5L13 13l5 2v3a2 2 0 01-2 2A15 15 0 013 6a2 2 0 012-2z" stroke="currentColor" stroke-width="1.75" stroke-linejoin="round"/></svg>
+										<span class="vip-vdetail__pricing-call_text">Call Me</span>
 									</a>
 								<?php endif; ?>
 							</div>
@@ -505,53 +472,18 @@ $seo_heading = sprintf(
 					</div>
 				</aside>
 
-				<!-- B. What's Included Card Grid (Figma style) -->
-				<section class="vip-vdetail__included" data-vip-section>
-					<h2 class="vip-vdetail__section-title vip-vdetail__section-title--rule-only"><?php echo esc_html( $included_heading ); ?></h2>
-					<div class="vip-included__grid">
-						
-						<!-- Item 1: Insurance -->
-						<div class="vip-included__item">
-							<div class="vip-included__icon">
-								<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-							</div>
-							<div class="vip-included__text"><?php esc_html_e( 'Full comprehensive insurance', 'tenku-child' ); ?></div>
-						</div>
-
-						<!-- Item 2: Free Delivery -->
-						<div class="vip-included__item">
-							<div class="vip-included__icon">
-								<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13" rx="2"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
-							</div>
-							<div class="vip-included__text"><?php esc_html_e( 'Free delivery to hotel/home', 'tenku-child' ); ?></div>
-						</div>
-
-						<!-- Item 3: Min Age -->
-						<div class="vip-included__item">
-							<div class="vip-included__icon">
-								<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-							</div>
-							<div class="vip-included__text"><?php echo esc_html( sprintf( __( 'Minimum age %s', 'tenku-child' ), $d['minimum_age'] ) ); ?></div>
-						</div>
-
-						<!-- Item 4: Driving Licence -->
-						<div class="vip-included__item">
-							<div class="vip-included__icon">
-								<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><line x1="7" y1="8" x2="17" y2="8"/><line x1="7" y1="12" x2="17" y2="12"/><line x1="7" y1="16" x2="13" y2="16"/></svg>
-							</div>
-							<div class="vip-included__text"><?php esc_html_e( 'Valid driving licence required', 'tenku-child' ); ?></div>
-						</div>
-
-						<!-- Item 5: Security Deposit -->
-						<div class="vip-included__item">
-							<div class="vip-included__icon">
-								<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><line x1="12" y1="4" x2="12" y2="20"/><line x1="2" y1="12" x2="22" y2="12"/></svg>
-							</div>
-							<div class="vip-included__text"><?php echo esc_html( sprintf( __( 'Refundable security deposit: AED %s', 'tenku-child' ), $deposit_fmt ) ); ?></div>
-						</div>
-
-					</div>
-				</section>
+				<?php if ( ! empty( $d['included'] ) ) : ?>
+					<section class="vip-vdetail__included" data-vip-section>
+						<h2 class="vip-vdetail__section-title vip-vdetail__section-title--rule-only"><?php echo esc_html( $included_heading ); ?></h2>
+						<?php
+						get_template_part(
+							'template-parts/vehicle/included-grid',
+							null,
+							array( 'items' => $d['included'] )
+						);
+						?>
+					</section>
+				<?php endif; ?>
 
 				<!-- C. Related Vehicles -->
 				<?php if ( ! empty( $d['related'] ) ) : ?>
@@ -596,23 +528,27 @@ $seo_heading = sprintf(
 					<?php foreach ( $d['variants'] as $variant ) : ?>
 						<?php
 						$vname = isset( $variant['name'] ) ? trim( (string) $variant['name'] ) : '';
-						$vnote = isset( $variant['note'] ) ? trim( (string) $variant['note'] ) : '';
 						if ( ! $vname ) {
 							continue;
 						}
-						// If we have an image field for the variant (like in FSE screenshot, let's fall back to default vehicle card image if not specified)
-						$vimage = isset( $variant['image'] ) ? $variant['image'] : $d['hero_image'];
+						$vimage     = ! empty( $variant['image'] ) ? (string) $variant['image'] : '';
+						$vpermalink = ! empty( $variant['permalink'] ) ? (string) $variant['permalink'] : '';
 						?>
 						<li class="vip-vdetail__variant-card">
+							<?php if ( $vpermalink ) : ?>
+								<a class="vip-vdetail__variant-card-link" href="<?php echo esc_url( $vpermalink ); ?>">
+							<?php endif; ?>
 							<div class="vip-vdetail__variant-media">
-								<img src="<?php echo esc_url( $vimage ); ?>" alt="<?php echo esc_attr( $vname ); ?>" loading="lazy" width="220" height="140" />
+								<?php if ( $vimage ) : ?>
+									<img src="<?php echo esc_url( $vimage ); ?>" alt="<?php echo esc_attr( $vname ); ?>" loading="lazy" width="220" height="140" />
+								<?php endif; ?>
 								<div class="vip-vdetail__variant-overlay">
 									<span class="vip-vdetail__variant-name"><?php echo esc_html( $vname ); ?></span>
-									<?php if ( $vnote ) : ?>
-										<span class="vip-vdetail__variant-note"><?php echo esc_html( $vnote ); ?></span>
-									<?php endif; ?>
 								</div>
 							</div>
+							<?php if ( $vpermalink ) : ?>
+								</a>
+							<?php endif; ?>
 						</li>
 					<?php endforeach; ?>
 				</ul>
@@ -642,18 +578,14 @@ $seo_heading = sprintf(
 			<?php if ( $d['wa_href_attr'] || $d['tel_href'] ) : ?>
 				<div class="vip-vdetail__cta-bar">
 					<?php if ( $d['wa_href_attr'] ) : ?>
-						<a class="vip-vdetail__cta vip-vdetail__cta--wa" href="<?php echo $d['wa_href_attr']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>" target="_blank" rel="noopener noreferrer">
-							<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:8px"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
-							<?php
-							echo esc_html(
-								strtoupper( sprintf(
-									/* translators: %s: vehicle short name */
-									__( 'Book the %s via WhatsApp', 'tenku-child' ),
-									$d['short_name']
-								) )
-							);
-							?>
-						</a>
+						<a class="vip-vdetail__masthead-wa" href="<?php echo $d['wa_href_attr']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>" target="_blank" rel="noopener noreferrer">
+								<span class="vip-vdetail__masthead-wa-inner">
+									<span class="vip-vdetail__masthead-wa-icon" aria-hidden="true">
+										<svg width="22" height="22" viewBox="0 0 24 24" focusable="false"><path fill="currentColor" d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.435 9.884-9.882 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+									</span>
+									<span class="vip-vdetail__masthead-wa-label"><?php esc_html_e( 'Book in a few minutes – Chat on WhatsApp now', 'tenku-child' ); ?></span>
+								</span>
+							</a>
 					<?php endif; ?>
 					<?php if ( $d['tel_href'] ) : ?>
 						<a class="vip-vdetail__cta vip-vdetail__cta--call" href="<?php echo esc_url( $d['tel_href'] ); ?>">
@@ -723,48 +655,80 @@ $seo_heading = sprintf(
 			<section class="vip-vdetail__faq" data-vip-section>
 				<h2 class="vip-vdetail__faq-title"><?php echo esc_html( $faq_heading ); ?></h2>
 				<div class="vip-vdetail__faq-accordion" data-vip-faq-accordion>
-					<?php
-					$faq_i = 0;
-					foreach ( $faq_items as $faq_row ) :
-						$question = isset( $faq_row['question'] ) ? trim( (string) $faq_row['question'] ) : '';
-						$answer   = isset( $faq_row['answer'] ) ? (string) $faq_row['answer'] : '';
-						if ( ! $question ) {
-							continue;
-						}
-						$is_open   = 0 === $faq_i;
-						$item_id   = 'vip-vdetail-faq-' . (int) $faq_i;
-						$panel_id  = $item_id . '-panel';
-						$button_id = $item_id . '-btn';
-						++$faq_i;
-						?>
-						<div class="vip-faq__item<?php echo $is_open ? ' is-open' : ''; ?>" data-vip-faq-item>
-							<button
-								type="button"
-								class="vip-faq__question"
-								id="<?php echo esc_attr( $button_id ); ?>"
-								data-vip-faq-trigger
-								aria-expanded="<?php echo $is_open ? 'true' : 'false'; ?>"
-								aria-controls="<?php echo esc_attr( $panel_id ); ?>"
-							>
-								<span class="vip-faq__question-text"><?php echo esc_html( $question ); ?></span>
-								<span class="vip-faq__chevron" aria-hidden="true"></span>
-							</button>
-							<?php if ( $answer ) : ?>
-								<div
-									class="vip-faq__answer"
-									id="<?php echo esc_attr( $panel_id ); ?>"
-									role="region"
-									aria-labelledby="<?php echo esc_attr( $button_id ); ?>"
-									<?php echo $is_open ? '' : ' inert'; ?>
-								>
-									<div class="vip-faq__answer-inner">
-										<?php echo wp_kses_post( $answer ); ?>
-									</div>
-								</div>
-							<?php endif; ?>
-						</div>
-					<?php endforeach; ?>
-				</div>
+
+    <?php
+    $faq_count = count($faq_items);
+    $half_count = ceil($faq_count / 2);
+
+    $faq_i = 0;
+    ?>
+
+    <div class="vip-faq__column">
+
+        <?php foreach ($faq_items as $faq_row) : ?>
+
+            <?php
+            if ($faq_i == $half_count) {
+                echo '</div><div class="vip-faq__column">';
+            }
+
+            $question = isset($faq_row['question']) ? trim((string) $faq_row['question']) : '';
+            $answer   = isset($faq_row['answer']) ? (string) $faq_row['answer'] : '';
+
+            if (!$question) {
+                continue;
+            }
+
+            $is_open   = 0 === $faq_i;
+            $item_id   = 'vip-vdetail-faq-' . (int) $faq_i;
+            $panel_id  = $item_id . '-panel';
+            $button_id = $item_id . '-btn';
+
+            ++$faq_i;
+            ?>
+
+            <div class="vip-faq__item<?php echo $is_open ? ' is-open' : ''; ?>" data-vip-faq-item>
+
+                <button
+                    type="button"
+                    class="vip-faq__question"
+                    id="<?php echo esc_attr($button_id); ?>"
+                    data-vip-faq-trigger
+                    aria-expanded="<?php echo $is_open ? 'true' : 'false'; ?>"
+                    aria-controls="<?php echo esc_attr($panel_id); ?>"
+                >
+                    <span class="vip-faq__question-text">
+                        <?php echo esc_html($question); ?>
+                    </span>
+
+                    <span class="vip-faq__chevron" aria-hidden="true"></span>
+                </button>
+
+                <?php if ($answer) : ?>
+
+                    <div
+                        class="vip-faq__answer"
+                        id="<?php echo esc_attr($panel_id); ?>"
+                        role="region"
+                        aria-labelledby="<?php echo esc_attr($button_id); ?>"
+                        <?php echo $is_open ? '' : ' inert'; ?>
+                    >
+
+                        <div class="vip-faq__answer-inner">
+                            <?php echo wp_kses_post($answer); ?>
+                        </div>
+
+                    </div>
+
+                <?php endif; ?>
+
+            </div>
+
+        <?php endforeach; ?>
+
+    </div>
+
+</div>
 			</section>
 		<?php endif; ?>
 

@@ -1,0 +1,96 @@
+/**
+ * VIP Border section — corner L-brackets (design ref).
+ */
+
+.vip-border-section {
+	--vip-border-accent: #e9967a;
+	--vip-border-bracket-size: 3.25rem;
+	--vip-border-bracket-weight: 2px;
+	--vip-border-text: #2b2f36;
+	width: 100%;
+	margin: 1.75rem 0;
+	padding: 0;
+	color: var(--vip-border-text);
+}
+
+.vip-border-section--surface {
+	background: #f7f7f7;
+	padding: clamp(1.5rem, 3vw, 2rem) 0;
+}
+
+.vip-border-section__frame {
+	position: relative;
+	padding: 1.75rem 2.25rem 2rem;
+}
+
+.vip-border-section__frame::before {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: var(--vip-border-bracket-size);
+	height: var(--vip-border-bracket-size);
+	border-top: var(--vip-border-bracket-weight) solid var(--vip-border-accent);
+	border-left: var(--vip-border-bracket-weight) solid var(--vip-border-accent);
+	pointer-events: none;
+	box-sizing: border-box;
+}
+
+.vip-border-section__frame::after {
+	content: "";
+	position: absolute;
+	right: 0;
+	bottom: 0;
+	width: var(--vip-border-bracket-size);
+	height: var(--vip-border-bracket-size);
+	border-right: var(--vip-border-bracket-weight) solid var(--vip-border-accent);
+	border-bottom: var(--vip-border-bracket-weight) solid var(--vip-border-accent);
+	pointer-events: none;
+	box-sizing: border-box;
+}
+
+.vip-border-section__content {
+	position: relative;
+	z-index: 1;
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+	font-size: 1rem;
+	line-height: 1.65;
+}
+
+.vip-border-section__content > *:first-child {
+	margin-top: 0;
+}
+
+.vip-border-section__content > *:last-child {
+	margin-bottom: 0;
+}
+
+.vip-border-section__content :where(h1, h2, h3, h4, h5, h6) {
+	margin: 0 0 1.125rem;
+	font-weight: 600;
+	line-height: 1.25;
+	color: #0a0c0f;
+}
+
+.vip-border-section__content :where(p) {
+	margin: 0 0 1rem;
+}
+
+.vip-border-section__content :where(ul, ol) {
+	margin: 0 0 1rem;
+	padding-left: 1.25rem;
+}
+
+.vip-border-section__content :where(li) {
+	margin-bottom: 0.65rem;
+}
+
+.vip-border-section__content :where(a) {
+	color: #2563eb;
+	text-decoration: underline;
+	text-underline-offset: 2px;
+}
+
+.editor-styles-wrapper .vip-border-section__content .block-editor-block-list__layout {
+	margin: 0;
+}

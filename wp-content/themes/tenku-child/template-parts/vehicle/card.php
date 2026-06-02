@@ -19,10 +19,11 @@ $seat_slugs      = implode( ' ', array_map( 'sanitize_html_class', $data['seat_t
 $category_slugs  = ! empty( $data['categories'] ) ? implode( ' ', array_map( 'sanitize_html_class', $data['categories'] ) ) : '';
 $wa_href_attr = function_exists( 'vip_transits_vehicle_whatsapp_href_attr' ) ? vip_transits_vehicle_whatsapp_href_attr( $data['id'] ) : '';
 $phone_url   = $data['phone'] ? 'tel:' . preg_replace( '/[^\d+]/', '', $data['phone'] ) : '';
-$color_hex   = $data['color_hex'] ? $data['color_hex'] : '#cccccc';
+$color_hex = $data['color_hex'] ? $data['color_hex'] : '#cccccc';
 ?>
 <article
 	class="vip-fleet-card"
+	data-search-text="<?php echo esc_attr( $data['search_text'] ?? '' ); ?>"
 	data-brands="<?php echo esc_attr( $brand_slugs ); ?>"
 	data-seats="<?php echo esc_attr( $seat_slugs ); ?>"
 	data-categories="<?php echo esc_attr( $category_slugs ); ?>"

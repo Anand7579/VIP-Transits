@@ -141,21 +141,23 @@
 				}
 			}
 
-			/* Delivery toggle: ON = hotel/home delivery only; OFF = vehicles without that option. */
-			if (delivery) {
-				if (delivery.checked) {
-					if (!hasDelivery) {
-						return false;
-					}
-				} else if (hasDelivery) {
-					return false;
-				}
+			/* Delivery toggle: only filter when ON (hotel/home delivery). OFF = show all vehicles. */
+			if (delivery && delivery.checked && !hasDelivery) {
+				return false;
 			}
 
 			if (minR && maxR && price > 0) {
 				var min = parseInt(minR.value, 10);
 				var max = parseInt(maxR.value, 10);
 				if (price < min || price > max) {
+					return false;
+				}
+			}
+
+			var heroQuery = (root.getAttribute('data-vip-hero-search') || '').trim().toLowerCase();
+			if (heroQuery) {
+				var searchText = (card.getAttribute('data-search-text') || '').toLowerCase();
+				if (searchText.indexOf(heroQuery) === -1) {
 					return false;
 				}
 			}
@@ -239,6 +241,49 @@
 			updateFilterToggleCount();
 		}
 
+		function isDeliveryFilterActive() {
+			var delivery = root.querySelector('[data-vip-fleet-filter="delivery"]');
+			return !!(delivery && delivery.checked);
+		}
+
+		function getDeliveryTotal() {
+			return parseInt(root.getAttribute('data-delivery-total') || '0', 10);
+		}
+
+		function countLoadedDeliveryCards() {
+			return cards().filter(function (card) {
+				return card.getAttribute('data-delivery') === '1';
+			}).length;
+		}
+
+		function hasMoreServerPages() {
+			if (!loadBtn) {
+				return false;
+			}
+			var page = parseInt(loadBtn.getAttribute('data-page') || '1', 10);
+			var maxPages = parseInt(root.getAttribute('data-max-pages') || '1', 10);
+			return page < maxPages;
+		}
+
+		function shouldShowLoadMore(visible) {
+			if (!loadBtn || visible <= 0) {
+				return false;
+			}
+
+			if (isDeliveryFilterActive()) {
+				var deliveryTotal = getDeliveryTotal();
+				if (deliveryTotal <= 0) {
+					return false;
+				}
+				/* Hide when every delivery vehicle is already in the grid (even if filtered out). */
+				if (countLoadedDeliveryCards() >= deliveryTotal) {
+					return false;
+				}
+			}
+
+			return hasMoreServerPages();
+		}
+
 		function updateResultsChrome(visible, total) {
 			var cardTotal = typeof total === 'number' ? total : cards().length;
 			var showFilterEmpty = cardTotal > 0 && visible === 0;
@@ -248,15 +293,20 @@
 			}
 
 			if (loadMoreWrap) {
-				var showLoadMore = visible > 0;
-				if (loadBtn) {
-					showLoadMore = showLoadMore && !loadBtn.hidden;
-				}
+				var showLoadMore = shouldShowLoadMore(visible);
 				loadMoreWrap.hidden = !showLoadMore;
+				if (loadBtn) {
+					loadBtn.hidden = !showLoadMore;
+				}
 			}
 		}
 
 		function resetFilters() {
+			root.removeAttribute('data-vip-hero-search');
+			root.dispatchEvent(
+				new CustomEvent('vip-hero-search-reset', { bubbles: true })
+			);
+
 			root.querySelectorAll('[data-vip-fleet-filter]').forEach(function (input) {
 				if (input.type === 'checkbox' || input.type === 'radio') {
 					input.checked = false;
@@ -526,6 +576,9 @@
 				body.append('nonce', vipFleet.nonce);
 				body.append('page', String(page));
 				body.append('per_page', String(perPage));
+				if (isDeliveryFilterActive()) {
+					body.append('delivery_only', '1');
+				}
 
 				fetch(vipFleet.ajaxUrl, { method: 'POST', body: body, credentials: 'same-origin' })
 					.then(function (r) {
@@ -537,8 +590,8 @@
 						}
 						grid.insertAdjacentHTML('beforeend', res.data.html);
 						loadBtn.setAttribute('data-page', String(page));
-						if (page >= res.data.maxPages) {
-							loadBtn.hidden = true;
+						if (res.data.maxPages) {
+							root.setAttribute('data-max-pages', String(res.data.maxPages));
 						}
 						applyFilters();
 					})

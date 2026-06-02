@@ -26,6 +26,12 @@ define( 'VIP_TRANSITS_FLEET_PRICE_MIN_DEFAULT', 500 );
 /** Default fleet price filter maximum (AED). */
 define( 'VIP_TRANSITS_FLEET_PRICE_MAX_DEFAULT', 5000 );
 
+/** @var string Enable homepage scroll animations (1 = on, 0 = off). */
+define( 'VIP_TRANSITS_SCROLL_ANIMATIONS_OPTION', 'vip_transits_scroll_animations_enabled' );
+
+/** @var string Instagram profile URL for header/footer social icons. */
+define( 'VIP_TRANSITS_INSTAGRAM_URL_OPTION', 'vip_transits_instagram_url' );
+
 /**
  * Register settings page under Settings.
  */
@@ -104,6 +110,62 @@ function vip_transits_register_whatsapp_settings() {
 		'vip_transits_fleet_section',
 		array(
 			'label_for' => VIP_TRANSITS_FLEET_PRICE_MAX_OPTION,
+		)
+	);
+
+	register_setting(
+		'vip_transits_settings',
+		VIP_TRANSITS_SCROLL_ANIMATIONS_OPTION,
+		array(
+			'type'              => 'string',
+			'sanitize_callback' => 'vip_transits_sanitize_scroll_animations_enabled',
+			'default'           => '1',
+		)
+	);
+
+	add_settings_section(
+		'vip_transits_display_section',
+		__( 'Site display', 'tenku-child' ),
+		'vip_transits_display_section_cb',
+		'vip-transits-settings'
+	);
+
+	add_settings_field(
+		VIP_TRANSITS_SCROLL_ANIMATIONS_OPTION,
+		__( 'Scroll animations', 'tenku-child' ),
+		'vip_transits_scroll_animations_field_cb',
+		'vip-transits-settings',
+		'vip_transits_display_section',
+		array(
+			'label_for' => 'vip_transits_scroll_animations_enabled',
+		)
+	);
+
+	register_setting(
+		'vip_transits_settings',
+		VIP_TRANSITS_INSTAGRAM_URL_OPTION,
+		array(
+			'type'              => 'string',
+			'sanitize_callback' => 'vip_transits_sanitize_instagram_url',
+			'default'           => '',
+		)
+	);
+
+	add_settings_section(
+		'vip_transits_social_section',
+		__( 'Social', 'tenku-child' ),
+		'vip_transits_social_section_cb',
+		'vip-transits-settings'
+	);
+
+	add_settings_field(
+		VIP_TRANSITS_INSTAGRAM_URL_OPTION,
+		__( 'Instagram URL', 'tenku-child' ),
+		'vip_transits_instagram_url_field_cb',
+		'vip-transits-settings',
+		'vip_transits_social_section',
+		array(
+			'label_for' => 'vip_transits_instagram_url',
 		)
 	);
 }
@@ -281,6 +343,125 @@ function vip_transits_get_fleet_price_bounds() {
 }
 
 /**
+ * Site display section description.
+ */
+function vip_transits_display_section_cb() {
+	echo '<p>' . esc_html__( 'Control front-end motion and lazy section effects.', 'tenku-child' ) . '</p>';
+}
+
+/**
+ * Scroll animations checkbox.
+ */
+function vip_transits_scroll_animations_field_cb() {
+	$enabled = vip_transits_scroll_animations_enabled();
+	?>
+	<input type="hidden" name="<?php echo esc_attr( VIP_TRANSITS_SCROLL_ANIMATIONS_OPTION ); ?>" value="0" />
+	<label for="vip_transits_scroll_animations_enabled">
+		<input
+			type="checkbox"
+			name="<?php echo esc_attr( VIP_TRANSITS_SCROLL_ANIMATIONS_OPTION ); ?>"
+			id="vip_transits_scroll_animations_enabled"
+			value="1"
+			<?php checked( $enabled ); ?>
+		/>
+		<?php esc_html_e( 'Enable scroll animations on the public site', 'tenku-child' ); ?>
+	</label>
+	<p class="description">
+		<?php
+		esc_html_e(
+			'When off, section reveal, card stagger, category motion, and hero entrance animations are disabled. Visitors who prefer reduced motion in their browser still skip animations automatically.',
+			'tenku-child'
+		);
+		?>
+	</p>
+	<?php
+}
+
+/**
+ * @param mixed $value Submitted value.
+ * @return string '1' or '0'.
+ */
+function vip_transits_sanitize_scroll_animations_enabled( $value ) {
+	return ! empty( $value ) && '0' !== (string) $value ? '1' : '0';
+}
+
+/**
+ * Social section description.
+ */
+function vip_transits_social_section_cb() {
+	echo '<p>';
+	esc_html_e( 'Used for Instagram icons in the site header and footer. Leave empty to keep the URL set in the Site Editor.', 'tenku-child' );
+	echo '</p>';
+}
+
+/**
+ * Instagram URL field markup.
+ */
+function vip_transits_instagram_url_field_cb() {
+	$value = vip_transits_get_instagram_url();
+	?>
+	<input
+		type="url"
+		id="vip_transits_instagram_url"
+		name="<?php echo esc_attr( VIP_TRANSITS_INSTAGRAM_URL_OPTION ); ?>"
+		value="<?php echo esc_attr( $value ); ?>"
+		class="regular-text"
+		placeholder="https://www.instagram.com/yourusername/"
+	/>
+	<p class="description">
+		<?php esc_html_e( 'Full profile link (https://www.instagram.com/…). Overrides placeholder links on Instagram social icons.', 'tenku-child' ); ?>
+	</p>
+	<?php
+}
+
+/**
+ * @param mixed $value Raw input.
+ * @return string Sanitized URL or empty.
+ */
+function vip_transits_sanitize_instagram_url( $value ) {
+	$url = esc_url_raw( trim( (string) $value ) );
+	if ( $url === '' ) {
+		return '';
+	}
+
+	$host = wp_parse_url( $url, PHP_URL_HOST );
+	if ( ! is_string( $host ) ) {
+		return '';
+	}
+
+	$host = strtolower( $host );
+	if ( ! in_array( $host, array( 'instagram.com', 'www.instagram.com' ), true ) ) {
+		add_settings_error(
+			VIP_TRANSITS_INSTAGRAM_URL_OPTION,
+			'invalid_instagram_url',
+			__( 'Please enter a valid Instagram profile URL (instagram.com).', 'tenku-child' ),
+			'error'
+		);
+		return '';
+	}
+
+	return $url;
+}
+
+/**
+ * Global Instagram profile URL from settings.
+ *
+ * @return string
+ */
+function vip_transits_get_instagram_url() {
+	return (string) get_option( VIP_TRANSITS_INSTAGRAM_URL_OPTION, '' );
+}
+
+/**
+ * Whether scroll animation assets should load on the front end.
+ *
+ * @return bool
+ */
+function vip_transits_scroll_animations_enabled() {
+	return '1' === (string) get_option( VIP_TRANSITS_SCROLL_ANIMATIONS_OPTION, '1' );
+}
+
+/**
  * Settings page output.
  */
 function vip_transits_render_settings_page() {
@@ -304,7 +485,7 @@ function vip_transits_render_settings_page() {
 			<p>
 				<?php
 				esc_html_e(
-					'If Custom Fields → Sync does nothing, import field groups from the theme JSON files here (tenku-child/acf-json). Use this after deploying theme updates.',
+					'Import field groups from the theme JSON files (tenku-child/acf-json). This updates existing groups by key, removes duplicate database copies, and clears “Sync available” after deploys.',
 					'tenku-child'
 				);
 				?>
@@ -325,8 +506,8 @@ function vip_transits_render_settings_page() {
 				<?php
 				printf(
 					/* translators: 1: field groups admin URL */
-					esc_html__( 'You can also use Custom Fields → Field Groups when “Sync available” appears: %s', 'tenku-child' ),
-					'<a href="' . esc_url( admin_url( 'edit.php?post_type=acf-field-group' ) ) . '">' . esc_html__( 'open field groups', 'tenku-child' ) . '</a>'
+					esc_html__( 'If you still see two rows for one group, run import here once, then check %s.', 'tenku-child' ),
+					'<a href="' . esc_url( admin_url( 'edit.php?post_type=acf-field-group' ) ) . '">' . esc_html__( 'Custom Fields → Field Groups', 'tenku-child' ) . '</a>'
 				);
 				?>
 			</p>
@@ -620,3 +801,57 @@ function vip_transits_cta_whatsapp_message( $heading, $text ) {
 	}
 	return $parts;
 }
+
+/**
+ * Apply Settings Instagram URL and open header/footer Instagram icons in a new tab.
+ *
+ * @param string $block_content Rendered block HTML.
+ * @param array  $block         Block data.
+ * @return string
+ */
+function vip_transits_render_instagram_social_link( $block_content, $block ) {
+	if ( ( $block['blockName'] ?? '' ) !== 'core/social-link' ) {
+		return $block_content;
+	}
+
+	$service = isset( $block['attrs']['service'] ) ? (string) $block['attrs']['service'] : '';
+	if ( 'instagram' !== $service ) {
+		return $block_content;
+	}
+
+	$url = vip_transits_get_instagram_url();
+	if ( $url !== '' ) {
+		$updated = preg_replace( '/\shref=(["\'])[^"\']*\1/', ' href="' . esc_url( $url ) . '"', $block_content, 1 );
+		if ( is_string( $updated ) ) {
+			$block_content = $updated;
+		}
+	}
+
+	if ( preg_match( '/<a\s/i', $block_content ) ) {
+		if ( ! preg_match( '/\starget\s*=/i', $block_content ) ) {
+			$block_content = preg_replace( '/<a\s/i', '<a target="_blank" ', $block_content, 1 );
+		} else {
+			$block_content = preg_replace( '/\starget=(["\'])[^"\']*\1/i', ' target="_blank"', $block_content, 1 );
+		}
+
+		if ( preg_match( '/\srel=(["\'])([^"\']*)\1/i', $block_content, $rel_match ) ) {
+			$rels = array_filter( array_map( 'trim', explode( ' ', strtolower( $rel_match[2] ) ) ) );
+			foreach ( array( 'noopener', 'noreferrer' ) as $required ) {
+				if ( ! in_array( $required, $rels, true ) ) {
+					$rels[] = $required;
+				}
+			}
+			$block_content = preg_replace(
+				'/\srel=(["\'])[^"\']*\1/i',
+				' rel="' . esc_attr( implode( ' ', $rels ) ) . '"',
+				$block_content,
+				1
+			);
+		} else {
+			$block_content = preg_replace( '/<a\s/i', '<a rel="noopener noreferrer" ', $block_content, 1 );
+		}
+	}
+
+	return $block_content;
+}
+add_filter( 'render_block', 'vip_transits_render_instagram_social_link', 10, 2 );

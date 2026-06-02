@@ -37,6 +37,20 @@
 			} );
 		}
 
+		function scrollThumbIntoView( thumbIndex ) {
+			if ( thumbs.length <= MAX_VISIBLE ) {
+				return;
+			}
+			if ( thumbIndex < slideIndex ) {
+				slideIndex = thumbIndex;
+			} else if ( thumbIndex >= slideIndex + MAX_VISIBLE ) {
+				slideIndex = thumbIndex - MAX_VISIBLE + 1;
+			}
+			slideIndex = Math.max( 0, Math.min( maxSlide, slideIndex ) );
+			updateTrackPosition();
+			updateNavState();
+		}
+
 		function updateMainFromThumb( button ) {
 			var full = button.getAttribute( 'data-full' );
 			if ( ! full ) {
@@ -48,6 +62,10 @@
 				mainImg.alt = img.alt;
 			}
 			setActiveThumb( button );
+			var thumbIndex = parseInt( button.getAttribute( 'data-index' ), 10 );
+			if ( ! isNaN( thumbIndex ) ) {
+				scrollThumbIntoView( thumbIndex );
+			}
 		}
 
 		function updateTrackPosition() {
@@ -64,13 +82,8 @@
 			if ( ! prevBtn || ! nextBtn ) {
 				return;
 			}
-			var showNav = thumbs.length > MAX_VISIBLE;
-			prevBtn.hidden = ! showNav;
-			nextBtn.hidden = ! showNav;
-			if ( showNav ) {
-				prevBtn.disabled = slideIndex <= 0;
-				nextBtn.disabled = slideIndex >= maxSlide;
-			}
+			prevBtn.disabled = slideIndex <= 0;
+			nextBtn.disabled = slideIndex >= maxSlide;
 		}
 
 		thumbs.forEach( function ( button ) {

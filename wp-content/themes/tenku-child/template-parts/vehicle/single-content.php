@@ -151,20 +151,21 @@ $seo_heading = sprintf(
 
 </div>
 <div class="right_wrap">
-	<?php if ( ! empty( $d['included'] ) ) : ?>
+	<?php
+		$included_visible = function_exists( 'vip_transits_vehicle_filter_displayable_included' )
+			? vip_transits_vehicle_filter_displayable_included( $d['included'] ?? array() )
+			: (array) ( $d['included'] ?? array() );
+		?>
+		<?php if ( $included_visible ) : ?>
 			<section class="vip-vdetail__included" data-vip-section>
 				<h2 class="vip-vdetail__section-title vip-vdetail__section-title--rule-only"><?php echo esc_html( $included_heading ); ?></h2>
-				<ul class="vip-vdetail__included-list">
-					<?php foreach ( $d['included'] as $item ) : ?>
-						<?php
-						$inc_title = isset( $item['title'] ) ? trim( (string) $item['title'] ) : '';
-						if ( ! $inc_title ) {
-							continue;
-						}
-						?>
-						<li class="vip-vdetail__included-item"><?php echo esc_html( $inc_title ); ?></li>
-					<?php endforeach; ?>
-				</ul>
+				<?php
+				get_template_part(
+					'template-parts/vehicle/included-grid',
+					null,
+					array( 'items' => $included_visible )
+				);
+				?>
 			</section>
 		<?php endif; ?>
 </div>
@@ -226,15 +227,26 @@ $seo_heading = sprintf(
 					<?php foreach ( $d['variants'] as $variant ) : ?>
 						<?php
 						$vname = isset( $variant['name'] ) ? trim( (string) $variant['name'] ) : '';
-						$vnote = isset( $variant['note'] ) ? trim( (string) $variant['note'] ) : '';
 						if ( ! $vname ) {
 							continue;
 						}
+						$vimage     = ! empty( $variant['image'] ) ? (string) $variant['image'] : '';
+						$vpermalink = ! empty( $variant['permalink'] ) ? (string) $variant['permalink'] : '';
 						?>
-						<li class="vip-vdetail__variant">
-							<span class="vip-vdetail__variant-name"><?php echo esc_html( $vname ); ?></span>
-							<?php if ( $vnote ) : ?>
-								<span class="vip-vdetail__variant-note"><?php echo esc_html( $vnote ); ?></span>
+						<li class="vip-vdetail__variant-card">
+							<?php if ( $vpermalink ) : ?>
+								<a class="vip-vdetail__variant-card-link" href="<?php echo esc_url( $vpermalink ); ?>">
+							<?php endif; ?>
+							<div class="vip-vdetail__variant-media">
+								<?php if ( $vimage ) : ?>
+									<img src="<?php echo esc_url( $vimage ); ?>" alt="<?php echo esc_attr( $vname ); ?>" loading="lazy" width="220" height="140" />
+								<?php endif; ?>
+								<div class="vip-vdetail__variant-overlay">
+									<span class="vip-vdetail__variant-name"><?php echo esc_html( $vname ); ?></span>
+								</div>
+							</div>
+							<?php if ( $vpermalink ) : ?>
+								</a>
 							<?php endif; ?>
 						</li>
 					<?php endforeach; ?>
