@@ -644,6 +644,7 @@ form.wpcf7-form p{
 .vip-occasion-page__body .vip-occasion-why-rent .vip-vdetail__lead ul > li {
 	position: relative;
 	padding-left: 2.1em;
+	padding-top: 3px;
 }
 
 .vip-occasion-page__body .vip-occasion-why-rent .vip-vdetail__lead ul > li::before {
@@ -692,10 +693,21 @@ form.wpcf7-form p{
 	background: var(--vip-occasion-bg);
 }
 
-/* Remove per-section divider rules on the occasion page (keep related sidebar rule) */
-.vip-occasion-page .vip-fleet__rule,
+/* Keep the fleet/filter divider below the title, matching the homepage. */
+.vip-occasion-page .vip-fleet__rule {
+	display: block;
+	margin: 0 0 var(--vip-section-gap, 50px);
+	border: 0;
+	border-top: 3px solid #000000;
+}
+
+/* Keep the FAQ divider below the title + description, matching the homepage. */
 .vip-occasion-page .vip-faq__rule {
-	display: none;
+	display: block;
+	margin: 0;
+	border: 0;
+	border-top: 3px solid #0a0c0f;
+	opacity: 0.85;
 }
 
 .vip-occasion-page .vip-fleet__header {
