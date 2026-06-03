@@ -660,3 +660,46 @@ main.vip-fleet-main, main#wp--skip-link--target {
 .vip-fleet__container > .vip-categories--fleet .vip-categories__container.vip-content-container{
 	padding: 0 !important;
 }
+
+/* ------------------------------------------------------------------ */
+/* Car-style bullets for content lists (site-wide)                    */
+/* Replaces the default disc on rich-text/content <ul> lists with a   */
+/* small car icon before each <li>. Scoped to content containers so   */
+/* navigation, footer, filter and social lists are untouched.         */
+/* ------------------------------------------------------------------ */
+.vip-vdetail__lead ul,
+.vip-occasion-why-rent ul,
+.vip-page__prose ul,
+.vip-faq__answer-inner ul,
+.entry-content ul,
+.wp-block-post-content ul {
+	list-style: none;
+	padding-left: 0;
+}
+
+.vip-vdetail__lead ul > li,
+.vip-occasion-why-rent ul > li,
+.vip-page__prose ul > li,
+.vip-faq__answer-inner ul > li,
+.entry-content ul > li,
+.wp-block-post-content ul > li {
+	position: relative;
+	padding-left: 2.1em;
+	margin-bottom: 0.6rem;
+}
+
+.vip-vdetail__lead ul > li::before,
+.vip-occasion-why-rent ul > li::before,
+.vip-page__prose ul > li::before,
+.vip-faq__answer-inner ul > li::before,
+.entry-content ul > li::before,
+.wp-block-post-content ul > li::before {
+	content: "";
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 1.4em;
+	height: 1.6em;
+	background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%230a0c0f'%3E%3Cpath d='M3 13l1.6-4.8A2.5 2.5 0 0 1 7 6.5h10a2.5 2.5 0 0 1 2.4 1.7L21 13l.8.3a1.5 1.5 0 0 1 1 1.4V17a1 1 0 0 1-1 1h-1.1a2.4 2.4 0 0 1-4.8 0H8.1a2.4 2.4 0 0 1-4.8 0H2a1 1 0 0 1-1-1v-2.3a1.5 1.5 0 0 1 1-1.4L3 13zm2-.8h14l-1.2-3.5a1 1 0 0 0-.9-.7H7.1a1 1 0 0 0-1 .7L5 12.2zM5.7 15a1.2 1.2 0 1 0 0 2.4 1.2 1.2 0 0 0 0-2.4zm12.6 0a1.2 1.2 0 1 0 0 2.4 1.2 1.2 0 0 0 0-2.4z'/%3E%3C/svg%3E") no-repeat left center;
+	background-size: contain;
+}

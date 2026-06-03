@@ -935,7 +935,7 @@ span.vip-vdetail_divider {
 
 .vip-vdetail__section-title--rule-only {
 	margin-bottom: 0;
-	padding-bottom: clamp(0.875rem, 1.5vw, 1.125rem);
+	padding-bottom: clamp(0.575rem, 0.5vw, 0.125rem);
 	font-size: 20px;
 }
 
@@ -1036,7 +1036,7 @@ span.vip-vdetail_divider {
 	gap: 15px;
 	margin-top: clamp(1.25rem, 2vw, 1.5rem);
 	list-style: none;
-	padding: 0;
+	padding-top: 25px !important;
 }
 
 .vip-vdetail__related-card {

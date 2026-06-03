@@ -124,9 +124,9 @@ $role_filter_label = function_exists( 'vip_transits_get_occasion_role_filter_lab
 				<div class="main_content_wrap">
 				<?php if ( $has_why_rent ) : ?>
 					<div class="left_wrap">
-						<section class="vip-vdetail__intro" data-vip-section>
+						<section class="vip-vdetail__intro vip-occasion-why-rent" data-vip-section>
 							<?php if ( $editorial_heading ) : ?>
-								<h2 class="vip-vdetail__section-title"><?php echo esc_html( $editorial_heading ); ?></h2>
+								<h2 class="vip-occasion-why-rent__title"><?php echo esc_html( $editorial_heading ); ?></h2>
 							<?php endif; ?>
 							<?php if ( $editorial_content ) : ?>
 								<div class="vip-vdetail__lead">

@@ -31,6 +31,33 @@ add_action( 'wp_enqueue_scripts', 'child_theme_configurator_css', 10 );
 // END ENQUEUE PARENT ACTION
 // Parent + child styles are enqueued above (chld_thm_cfg_*). Do not enqueue parent style.css again.
 
+/**
+ * Cache-bust the base parent/child stylesheets with filemtime.
+ *
+ * The Child Theme Configurator enqueues (above) carry no version, so browsers
+ * keep serving cached style.css after edits. Overriding the registered version
+ * with the file modification time forces a fresh fetch whenever style.css
+ * changes, without touching the auto-generated enqueue block.
+ */
+function vip_transits_version_base_styles() {
+	$styles = wp_styles();
+	if ( ! $styles ) {
+		return;
+	}
+
+	$map = array(
+		'chld_thm_cfg_parent' => get_template_directory() . '/style.css',
+		'chld_thm_cfg_child'  => get_stylesheet_directory() . '/style.css',
+	);
+
+	foreach ( $map as $handle => $path ) {
+		if ( isset( $styles->registered[ $handle ] ) && file_exists( $path ) ) {
+			$styles->registered[ $handle ]->ver = (string) filemtime( $path );
+		}
+	}
+}
+add_action( 'wp_enqueue_scripts', 'vip_transits_version_base_styles', 11 );
+
 $vip_whatsapp = get_stylesheet_directory() . '/inc/whatsapp-settings.php';
 if ( file_exists( $vip_whatsapp ) ) {
 	require_once $vip_whatsapp;
