@@ -43,6 +43,7 @@ $categories = function_exists( 'vip_transits_get_homepage_vehicle_categories' )
 				'per_page'       => $per_page,
 				'show_load_more' => true,
 				'show_filters'   => true,
+				'filter_mode'    => 'fleet',
 			)
 		);
 		?>

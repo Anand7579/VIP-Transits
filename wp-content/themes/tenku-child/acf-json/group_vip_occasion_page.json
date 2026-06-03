@@ -1,0 +1,261 @@
+{
+    "key": "group_vip_occasion_page",
+    "title": "VIP Occasion",
+    "fields": [
+        {
+            "key": "field_vipocc_tab_hero",
+            "label": "Hero",
+            "name": "",
+            "type": "tab",
+            "placement": "top"
+        },
+        {
+            "key": "field_vipocc_text_image",
+            "label": "Hero section",
+            "name": "text_image_section",
+            "type": "group",
+            "layout": "block",
+            "sub_fields": [
+                {
+                    "key": "field_vipocc_hero_heading",
+                    "label": "Hero heading (H1)",
+                    "name": "heading",
+                    "type": "text",
+                    "instructions": "Optional. Leave empty to use the post title (e.g. Wedding Car Rental in Dubai).",
+                    "parent": "field_vipocc_text_image"
+                },
+                {
+                    "key": "field_vipocc_hero_lead",
+                    "label": "Intro text",
+                    "name": "content",
+                    "type": "wysiwyg",
+                    "instructions": "Shown beside the hero image. Page title is used as the main H1.",
+                    "tabs": "visual",
+                    "toolbar": "basic",
+                    "media_upload": 0,
+                    "parent": "field_vipocc_text_image"
+                },
+                {
+                    "key": "field_vipocc_hero_image",
+                    "label": "Hero image",
+                    "name": "image",
+                    "type": "image",
+                    "return_format": "array",
+                    "preview_size": "medium",
+                    "library": "all",
+                    "parent": "field_vipocc_text_image"
+                }
+            ]
+        },
+        {
+            "key": "field_vipocc_tab_editorial",
+            "label": "Why rent",
+            "name": "",
+            "type": "tab",
+            "placement": "top"
+        },
+        {
+            "key": "field_vipocc_editorial_heading",
+            "label": "Why rent heading",
+            "name": "editorial_heading",
+            "type": "text",
+            "default_value": "Why rent your wedding car with VIP Transits",
+            "placeholder": "Why rent your wedding car with VIP Transits"
+        },
+        {
+            "key": "field_vipocc_editorial_content",
+            "label": "Why rent content",
+            "name": "editorial_content",
+            "type": "wysiwyg",
+            "instructions": "Main column body copy (same layout as vehicle detail intro). Page editor content is used as a fallback.",
+            "tabs": "visual",
+            "toolbar": "full",
+            "media_upload": 1
+        },
+        {
+            "key": "field_vipocc_related_heading",
+            "label": "Related articles heading",
+            "name": "related_articles_heading",
+            "type": "text",
+            "default_value": "Related articles"
+        },
+        {
+            "key": "field_vipocc_related_articles",
+            "label": "Related articles",
+            "name": "related_articles",
+            "type": "relationship",
+            "instructions": "Pick blog posts for the sidebar. If empty, the two latest posts are shown.",
+            "post_type": ["post"],
+            "filters": ["search"],
+            "return_format": "id",
+            "min": 0,
+            "max": 4,
+            "elements": ["featured_image"]
+        },
+        {
+            "key": "field_vipocc_tab_fleet",
+            "label": "Vehicle grid",
+            "name": "",
+            "type": "tab",
+            "placement": "top"
+        },
+        {
+            "key": "field_vipocc_fleet_section",
+            "label": "Fleet section",
+            "name": "fleet_section",
+            "type": "group",
+            "layout": "block",
+            "sub_fields": [
+                {
+                    "key": "field_vipocc_fleet_heading",
+                    "label": "Heading",
+                    "name": "heading",
+                    "type": "text",
+                    "default_value": "Cars for your occasion",
+                    "parent": "field_vipocc_fleet_section"
+                },
+                {
+                    "key": "field_vipocc_fleet_subtitle",
+                    "label": "Subtitle",
+                    "name": "subtitle",
+                    "type": "text",
+                    "default_value": "Filter by role, type, brand, budget, and passengers.",
+                    "parent": "field_vipocc_fleet_section"
+                },
+                {
+                    "key": "field_vipocc_fleet_per_page",
+                    "label": "Vehicles per page",
+                    "name": "posts_per_page",
+                    "type": "number",
+                    "default_value": 12,
+                    "min": 1,
+                    "max": 24,
+                    "step": 1,
+                    "parent": "field_vipocc_fleet_section"
+                },
+                {
+                    "key": "field_vipocc_fleet_load_more",
+                    "label": "Show load more",
+                    "name": "show_load_more",
+                    "type": "true_false",
+                    "ui": 1,
+                    "default_value": 1,
+                    "parent": "field_vipocc_fleet_section"
+                }
+            ]
+        },
+        {
+            "key": "field_vipocc_tab_faq",
+            "label": "FAQ",
+            "name": "",
+            "type": "tab",
+            "placement": "top"
+        },
+        {
+            "key": "field_vipocc_faq",
+            "label": "FAQ section",
+            "name": "faq",
+            "type": "group",
+            "layout": "block",
+            "sub_fields": [
+                {
+                    "key": "field_vipocc_faq_heading",
+                    "label": "Section heading",
+                    "name": "heading",
+                    "type": "text",
+                    "default_value": "Wedding car rental FAQ",
+                    "placeholder": "Occasion FAQ",
+                    "parent": "field_vipocc_faq"
+                },
+                {
+                    "key": "field_vipocc_faq_top",
+                    "label": "Intro",
+                    "name": "top_content",
+                    "type": "wysiwyg",
+                    "tabs": "visual",
+                    "toolbar": "basic",
+                    "media_upload": 0,
+                    "parent": "field_vipocc_faq"
+                },
+                {
+                    "key": "field_vipocc_faq_image",
+                    "label": "Side image",
+                    "name": "image",
+                    "type": "image",
+                    "return_format": "array",
+                    "preview_size": "medium",
+                    "library": "all",
+                    "parent": "field_vipocc_faq"
+                },
+                {
+                    "key": "field_vipocc_faq_items",
+                    "label": "Questions",
+                    "name": "faqs",
+                    "type": "repeater",
+                    "layout": "row",
+                    "button_label": "Add FAQ",
+                    "min": 0,
+                    "sub_fields": [
+                        {
+                            "key": "field_vipocc_faq_q",
+                            "label": "Question",
+                            "name": "question",
+                            "type": "text",
+                            "parent": "field_vipocc_faq_items"
+                        },
+                        {
+                            "key": "field_vipocc_faq_a",
+                            "label": "Answer",
+                            "name": "answer",
+                            "type": "wysiwyg",
+                            "tabs": "visual",
+                            "toolbar": "basic",
+                            "media_upload": 0,
+                            "parent": "field_vipocc_faq_items"
+                        }
+                    ],
+                    "parent": "field_vipocc_faq"
+                }
+            ]
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "post_type",
+                "operator": "==",
+                "value": "vip_occasion"
+            }
+        ],
+        [
+            {
+                "param": "page_template",
+                "operator": "==",
+                "value": "templates/page-occasion.html"
+            }
+        ],
+        [
+            {
+                "param": "page_template",
+                "operator": "==",
+                "value": "page-occasion"
+            }
+        ],
+        [
+            {
+                "param": "block",
+                "operator": "==",
+                "value": "acf/vip-occasion-listing"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "active": true,
+    "description": "Content for VIP Occasion posts (e.g. Wedding) and legacy occasion pages.",
+    "show_in_rest": 1,
+    "modified": 1748486400
+}

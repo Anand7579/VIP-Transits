@@ -51,6 +51,11 @@ if ( file_exists( $vip_vehicles ) ) {
 	require_once $vip_vehicles;
 }
 
+$vip_occasions = get_stylesheet_directory() . '/inc/occasions-cpt.php';
+if ( file_exists( $vip_occasions ) ) {
+	require_once $vip_occasions;
+}
+
 $vip_vehicle_blocks = get_stylesheet_directory() . '/inc/vehicle-blocks.php';
 if ( file_exists( $vip_vehicle_blocks ) ) {
 	require_once $vip_vehicle_blocks;
@@ -79,6 +84,11 @@ if ( file_exists( $vip_editor_blocks ) ) {
 $vip_template_parts = get_stylesheet_directory() . '/inc/theme-template-parts.php';
 if ( file_exists( $vip_template_parts ) ) {
 	require_once $vip_template_parts;
+}
+
+$vip_theme_seo = get_stylesheet_directory() . '/inc/theme-seo.php';
+if ( file_exists( $vip_theme_seo ) ) {
+	require_once $vip_theme_seo;
 }
 
 $vip_theme_icons = get_stylesheet_directory() . '/inc/theme-icons.php';

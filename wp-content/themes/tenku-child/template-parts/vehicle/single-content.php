@@ -184,7 +184,7 @@ $seo_heading = sprintf(
 		<div class="vip-vdetail__mid<?php echo empty( $d['related'] ) ? ' vip-vdetail__mid--no-related' : ''; ?>">
 			<?php if ( ! empty( $d['related'] ) ) : ?>
 				<section class="vip-vdetail__related" data-vip-section>
-					<h2 class="vip-vdetail__section-title"><?php echo esc_html( $related_heading ); ?></h2>
+					<h2 class="vip-vdetail__section-title vip-vdetail__section-title--rule-only"><?php echo esc_html( $related_heading ); ?></h2>
 					<ul class="vip-vdetail__related-list">
 						<?php
 						foreach ( $d['related'] as $related_post ) {
@@ -296,14 +296,15 @@ $seo_heading = sprintf(
 			<section class="vip-vdetail__routes" data-vip-section>
 				<h2 class="vip-vdetail__section-title"><?php echo esc_html( $routes_heading ); ?></h2>
 				<ul class="vip-vdetail__routes-grid">
-					<?php foreach ( $d['routes'] as $route ) : ?>
-						<li class="vip-vdetail__route">
-							<h3 class="vip-vdetail__route-title"><?php echo esc_html( $route['title'] ?? '' ); ?></h3>
-							<?php if ( ! empty( $route['description'] ) ) : ?>
-								<p class="vip-vdetail__route-text"><?php echo esc_html( $route['description'] ); ?></p>
-							<?php endif; ?>
-						</li>
-					<?php endforeach; ?>
+					<?php
+					foreach ( $d['routes'] as $route ) :
+						get_template_part(
+							'template-parts/vehicle/route',
+							'card',
+							array( 'route' => $route )
+						);
+					endforeach;
+					?>
 				</ul>
 			</section>
 		<?php endif; ?>

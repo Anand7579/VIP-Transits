@@ -182,8 +182,86 @@ add_action( 'enqueue_block_editor_assets', 'vip_transits_enqueue_vehicle_single_
 /**
  * Fleet CSS/JS on archive, single vehicle, and homepage (fleet section in vip-home).
  */
+/**
+ * Whether the current request is an occasion listing page.
+ *
+ * @param int $post_id Optional page ID.
+ * @return bool
+ */
+function vip_transits_is_occasion_listing_page( $post_id = 0 ) {
+	if ( function_exists( 'vip_transits_is_occasion_detail' ) ) {
+		return vip_transits_is_occasion_detail( $post_id );
+	}
+
+	if ( is_singular( 'vip_occasion' ) ) {
+		return true;
+	}
+
+	if ( ! function_exists( 'vip_transits_page_uses_vip_template' ) ) {
+		return false;
+	}
+
+	$post_id = $post_id ? (int) $post_id : (int) get_queried_object_id();
+	if ( $post_id <= 0 ) {
+		return false;
+	}
+
+	return is_page( $post_id ) && vip_transits_page_uses_vip_template( $post_id, 'occasion' );
+}
+
+/**
+ * Enqueue fleet assets (CSS, JS, AJAX) for a listing view.
+ */
+function vip_transits_enqueue_fleet_listing_assets() {
+	$theme_dir = get_stylesheet_directory();
+	$theme_uri = get_stylesheet_directory_uri();
+	$assets    = vip_transits_fleet_block_assets();
+
+	$bridge_js  = $theme_dir . '/assets/js/category-fleet-bridge.js';
+	$bridge_ver = file_exists( $bridge_js ) ? (string) filemtime( $bridge_js ) : $assets['script_version'];
+
+	wp_enqueue_style(
+		'vip-vehicle-fleet',
+		$assets['style'],
+		array( 'chld_thm_cfg_child', 'chld_thm_cfg_parent' ),
+		$assets['style_version']
+	);
+
+	wp_enqueue_script(
+		'vip-fleet',
+		$assets['script'],
+		array(),
+		$assets['script_version'],
+		true
+	);
+
+	wp_enqueue_script(
+		'vip-category-fleet-bridge',
+		$theme_uri . '/assets/js/category-fleet-bridge.js',
+		array( 'vip-fleet' ),
+		$bridge_ver,
+		array(
+			'in_footer' => true,
+			'strategy'  => 'defer',
+		)
+	);
+
+	wp_localize_script(
+		'vip-fleet',
+		'vipFleet',
+		array(
+			'ajaxUrl' => admin_url( 'admin-ajax.php' ),
+			'nonce'   => wp_create_nonce( 'vip_fleet_load_more' ),
+			'i18n'    => array(
+				'showing'  => __( 'Showing %1$s vehicles', 'tenku-child' ),
+				'loadMore' => __( 'Load more', 'tenku-child' ),
+			),
+		)
+	);
+}
+
 function vip_transits_enqueue_fleet_block_assets() {
-	$is_fleet_page = is_front_page() || is_post_type_archive( 'vip_vehicle' );
+	$is_fleet_page = is_front_page() || is_post_type_archive( 'vip_vehicle' ) || vip_transits_is_occasion_listing_page();
 	$is_single     = is_singular( 'vip_vehicle' );
 
 	if ( ! $is_fleet_page && ! $is_single ) {
@@ -195,34 +273,7 @@ function vip_transits_enqueue_fleet_block_assets() {
 	$assets    = vip_transits_fleet_block_assets();
 
 	if ( $is_fleet_page ) {
-		$bridge_js  = $theme_dir . '/assets/js/category-fleet-bridge.js';
-		$bridge_ver = file_exists( $bridge_js ) ? (string) filemtime( $bridge_js ) : $assets['script_version'];
-
-		wp_enqueue_style(
-			'vip-vehicle-fleet',
-			$assets['style'],
-			array( 'chld_thm_cfg_child', 'chld_thm_cfg_parent' ),
-			$assets['style_version']
-		);
-
-		wp_enqueue_script(
-			'vip-fleet',
-			$assets['script'],
-			array(),
-			$assets['script_version'],
-			true
-		);
-
-		wp_enqueue_script(
-			'vip-category-fleet-bridge',
-			$theme_uri . '/assets/js/category-fleet-bridge.js',
-			array( 'vip-fleet' ),
-			$bridge_ver,
-			array(
-				'in_footer' => true,
-				'strategy'  => 'defer',
-			)
-		);
+		vip_transits_enqueue_fleet_listing_assets();
 
 		if ( is_front_page() ) {
 			$hero_bridge_js  = $theme_dir . '/assets/js/hero-fleet-bridge.js';
@@ -239,19 +290,6 @@ function vip_transits_enqueue_fleet_block_assets() {
 				)
 			);
 		}
-
-		wp_localize_script(
-			'vip-fleet',
-			'vipFleet',
-			array(
-				'ajaxUrl' => admin_url( 'admin-ajax.php' ),
-				'nonce'   => wp_create_nonce( 'vip_fleet_load_more' ),
-				'i18n'    => array(
-					'showing'  => __( 'Showing %1$s vehicles', 'tenku-child' ),
-					'loadMore' => __( 'Load more', 'tenku-child' ),
-				),
-			)
-		);
 	}
 
 	if ( $is_single ) {

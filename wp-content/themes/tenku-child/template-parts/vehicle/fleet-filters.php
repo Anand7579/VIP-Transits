@@ -9,6 +9,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+$tpl_args    = get_query_var( 'vip_fleet_grid' );
+$filter_mode = ( is_array( $tpl_args ) && ! empty( $tpl_args['filter_mode'] ) ) ? (string) $tpl_args['filter_mode'] : 'fleet';
+$is_occasion = ( 'occasion' === $filter_mode );
+
+$role_filter_label = '';
+if ( $is_occasion && is_array( $tpl_args ) && ! empty( $tpl_args['role_filter_label'] ) ) {
+	$role_filter_label = (string) $tpl_args['role_filter_label'];
+} elseif ( $is_occasion ) {
+	$role_filter_label = __( 'Occasion role', 'tenku-child' );
+}
+
 $category_order = array(
 	'sports',
 	'convertible',
@@ -24,6 +35,10 @@ $brands = function_exists( 'vip_transits_get_fleet_brand_terms' )
 
 $seat_order = array( '2-seats', '4-seats', '5-seats', '7-seats' );
 $seats      = vip_transits_get_ordered_terms( 'vehicle_seat', $seat_order );
+
+$occasion_roles = $is_occasion && function_exists( 'vip_transits_get_fleet_occasion_role_terms' )
+	? vip_transits_get_fleet_occasion_role_terms()
+	: array();
 
 $price_bounds = function_exists( 'vip_transits_get_fleet_price_bounds' )
 	? vip_transits_get_fleet_price_bounds()
@@ -41,6 +56,23 @@ $price_max    = (int) $price_bounds['max'];
 			<?php esc_html_e( 'Reset', 'tenku-child' ); ?>
 		</button>
 	</div>
+
+	<?php if ( $is_occasion && $occasion_roles && $role_filter_label ) : ?>
+		<div class="vip-fleet__filter-group vip-fleet__filter-group--occasion-role">
+			<h3 class="vip-fleet__filter-label"><?php echo esc_html( $role_filter_label ); ?></h3>
+			<ul class="vip-fleet__filter-list">
+				<?php foreach ( $occasion_roles as $term ) : ?>
+					<li>
+						<label class="vip-fleet__check">
+							<input type="checkbox" name="role" value="<?php echo esc_attr( $term->slug ); ?>" data-vip-fleet-filter="role" />
+							<span class="vip-fleet__check-box" aria-hidden="true"></span>
+							<span class="vip-fleet__check-text"><?php echo esc_html( $term->name ); ?></span>
+						</label>
+					</li>
+				<?php endforeach; ?>
+			</ul>
+		</div>
+	<?php endif; ?>
 
 	<?php if ( $categories ) : ?>
 		<div class="vip-fleet__filter-group">
@@ -113,12 +145,9 @@ $price_max    = (int) $price_bounds['max'];
 		<label class="vip-fleet__toggle">
 			<span class="vip-fleet__toggle-text"><?php esc_html_e( 'Deliver To Hotel / Home', 'tenku-child' ); ?></span>
 			<span class="vip-fleet__toggle-control">
-				<input type="checkbox" data-vip-fleet-filter="delivery" class="vip-fleet__toggle-input" value="1" aria-describedby="vip-fleet-delivery-hint" />
+				<input type="checkbox" data-vip-fleet-filter="delivery" class="vip-fleet__toggle-input" value="1" />
 				<span class="vip-fleet__toggle-switch" aria-hidden="true"></span>
 			</span>
 		</label>
-		<p id="vip-fleet-delivery-hint" class="vip-fleet__filter-hint">
-			<?php esc_html_e( 'Off: show all vehicles. On: only vehicles with hotel / home delivery enabled in the editor.', 'tenku-child' ); ?>
-		</p>
 	</div>
 </aside>

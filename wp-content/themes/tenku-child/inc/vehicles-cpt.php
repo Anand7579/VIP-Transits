@@ -77,6 +77,23 @@ function vip_transits_register_vehicle_cpt() {
 	);
 
 	register_taxonomy(
+		'vehicle_occasion_role',
+		'vip_vehicle',
+		array(
+			'labels'            => array(
+				'name'          => __( 'Occasion roles', 'tenku-child' ),
+				'singular_name' => __( 'Occasion role', 'tenku-child' ),
+				'add_new_item'  => __( 'Add occasion role', 'tenku-child' ),
+			),
+			'hierarchical'      => false,
+			'public'            => true,
+			'show_admin_column' => true,
+			'rewrite'           => array( 'slug' => 'vehicle-occasion-role' ),
+			'show_in_rest'      => true,
+		)
+	);
+
+	register_taxonomy(
 		'vehicle_seat',
 		'vip_vehicle',
 		array(
@@ -237,6 +254,46 @@ function vip_transits_register_default_category_terms() {
 	}
 }
 add_action( 'init', 'vip_transits_register_default_category_terms', 12 );
+
+/**
+ * Default occasion role terms (wedding fleet filter).
+ */
+function vip_transits_register_default_occasion_role_terms() {
+	if ( ! taxonomy_exists( 'vehicle_occasion_role' ) ) {
+		return;
+	}
+
+	$defaults = array(
+		'bridal-car'         => __( 'Bridal car', 'tenku-child' ),
+		'groom-escort'       => __( 'Groom / escort', 'tenku-child' ),
+		'guest-suv'          => __( 'Guest SUV', 'tenku-child' ),
+		'entourage-convoy' => __( 'Entourage convoy', 'tenku-child' ),
+	);
+
+	foreach ( $defaults as $slug => $name ) {
+		if ( ! term_exists( $slug, 'vehicle_occasion_role' ) ) {
+			wp_insert_term( $name, 'vehicle_occasion_role', array( 'slug' => $slug ) );
+		}
+	}
+}
+add_action( 'init', 'vip_transits_register_default_occasion_role_terms', 12 );
+
+/**
+ * Ordered occasion role terms for fleet filters.
+ *
+ * @return WP_Term[]
+ */
+function vip_transits_get_fleet_occasion_role_terms() {
+	return vip_transits_get_ordered_terms(
+		'vehicle_occasion_role',
+		array(
+			'bridal-car',
+			'groom-escort',
+			'guest-suv',
+			'entourage-convoy',
+		)
+	);
+}
 
 /**
  * Default variant term (admin-only taxonomy; no front-end archive).
@@ -461,9 +518,16 @@ function vip_transits_render_fleet_archive_block() {
 /**
  * Render fleet grid template (WP core does not pass get_template_part $args into templates).
  *
- * @param array $args Keys: query (WP_Query), per_page, show_load_more, show_filters.
+ * @param array $args Keys: query (WP_Query), per_page, show_load_more, show_filters, filter_mode (fleet|occasion).
  */
 function vip_transits_render_fleet_grid( array $args ) {
+	$args = wp_parse_args(
+		$args,
+		array(
+			'filter_mode' => 'fleet',
+		)
+	);
+
 	set_query_var( 'vip_fleet_grid', $args );
 	get_template_part( 'template-parts/vehicle/fleet', 'grid' );
 }
@@ -488,20 +552,152 @@ function vip_transits_vehicle_query_args( $args = array() ) {
 }
 
 /**
+ * Parsed daily price (AED) for fleet filters and cards.
+ *
+ * @param int $post_id Post ID.
+ * @return int
+ */
+function vip_transits_vehicle_daily_price( $post_id ) {
+	$post_id = (int) $post_id;
+	if ( $post_id <= 0 ) {
+		return 0;
+	}
+
+	$raw = function_exists( 'get_field' ) ? get_field( 'daily_price', $post_id ) : get_post_meta( $post_id, 'daily_price', true );
+	if ( is_string( $raw ) ) {
+		$raw = preg_replace( '/[^\d.]/', '', $raw );
+	}
+
+	return max( 0, (int) round( (float) $raw ) );
+}
+
+/**
+ * Min/max daily price across published vehicles (for slider bounds).
+ *
+ * @return array{min:int,max:int}
+ */
+function vip_transits_get_vehicle_daily_price_range() {
+	static $range = null;
+
+	if ( null !== $range ) {
+		return $range;
+	}
+
+	$range = array(
+		'min' => 0,
+		'max' => 0,
+	);
+
+	$ids = get_posts(
+		array(
+			'post_type'              => 'vip_vehicle',
+			'post_status'            => 'publish',
+			'posts_per_page'         => -1,
+			'fields'                 => 'ids',
+			'no_found_rows'          => true,
+			'update_post_meta_cache' => false,
+			'update_post_term_cache' => false,
+		)
+	);
+
+	foreach ( $ids as $id ) {
+		$price = vip_transits_vehicle_daily_price( (int) $id );
+		if ( $price <= 0 ) {
+			continue;
+		}
+		if ( 0 === $range['min'] || $price < $range['min'] ) {
+			$range['min'] = $price;
+		}
+		if ( $price > $range['max'] ) {
+			$range['max'] = $price;
+		}
+	}
+
+	return $range;
+}
+
+/**
+ * Fleet price slider bounds (AED) from published vehicle daily rates.
+ *
+ * @return array{min:int,max:int}
+ */
+function vip_transits_get_fleet_price_bounds() {
+	$catalog = vip_transits_get_vehicle_daily_price_range();
+
+	if ( empty( $catalog['max'] ) || $catalog['max'] <= 0 ) {
+		return array(
+			'min' => 500,
+			'max' => 5000,
+		);
+	}
+
+	$min = max( 0, (int) ( floor( $catalog['min'] / 50 ) * 50 ) );
+	$max = (int) ( ceil( $catalog['max'] / 50 ) * 50 );
+
+	if ( $max <= $min ) {
+		$max = $min + 50;
+	}
+
+	return array(
+		'min' => $min,
+		'max' => $max,
+	);
+}
+
+/**
  * Whether a vehicle offers hotel / home delivery (ACF true_false).
  *
  * @param int $post_id Post ID.
  * @return bool
  */
 function vip_transits_vehicle_has_hotel_delivery( $post_id ) {
-	$value = get_field( 'delivery_hotel_home', $post_id );
-	if ( is_bool( $value ) ) {
-		return $value;
+	$post_id = (int) $post_id;
+	if ( $post_id <= 0 ) {
+		return false;
 	}
-	if ( is_numeric( $value ) ) {
-		return (int) $value === 1;
+
+	$raw = get_post_meta( $post_id, 'delivery_hotel_home', true );
+	if ( '' === $raw || null === $raw ) {
+		$raw = function_exists( 'get_field' ) ? get_field( 'delivery_hotel_home', $post_id, false ) : '';
 	}
-	return in_array( $value, array( '1', 'yes', 'true' ), true );
+
+	if ( is_bool( $raw ) ) {
+		return $raw;
+	}
+	if ( is_numeric( $raw ) ) {
+		return (int) $raw === 1;
+	}
+	if ( is_string( $raw ) ) {
+		$raw = strtolower( trim( $raw ) );
+		if ( in_array( $raw, array( '0', 'false', 'no', 'off', '' ), true ) ) {
+			return false;
+		}
+		return in_array( $raw, array( '1', 'true', 'yes', 'on' ), true );
+	}
+
+	return false;
+}
+
+/**
+ * Meta query: vehicles with hotel / home delivery enabled.
+ *
+ * @return array
+ */
+function vip_transits_vehicle_delivery_meta_query() {
+	return array(
+		'relation' => 'OR',
+		array(
+			'key'     => 'delivery_hotel_home',
+			'value'   => '1',
+			'compare' => '=',
+		),
+		array(
+			'key'     => 'delivery_hotel_home',
+			'value'   => 1,
+			'compare' => '=',
+			'type'    => 'NUMERIC',
+		),
+	);
 }
 
 /**
@@ -513,13 +709,7 @@ function vip_transits_vehicle_has_hotel_delivery( $post_id ) {
 function vip_transits_vehicle_delivery_query_args( $args = array() ) {
 	$args = vip_transits_vehicle_query_args( $args );
 
-	$args['meta_query'] = array(
-		array(
-			'key'     => 'delivery_hotel_home',
-			'value'   => '1',
-			'compare' => '=',
-		),
-	);
+	$args['meta_query'] = vip_transits_vehicle_delivery_meta_query();
 
 	return $args;
 }
@@ -554,6 +744,7 @@ function vip_transits_get_vehicle_card_data( $post_id = 0 ) {
 	$brands     = wp_get_post_terms( $post_id, 'vehicle_brand', array( 'fields' => 'slugs' ) );
 	$seats      = wp_get_post_terms( $post_id, 'vehicle_seat', array( 'fields' => 'slugs' ) );
 	$categories = wp_get_post_terms( $post_id, 'vehicle_category', array( 'fields' => 'slugs' ) );
+	$roles      = wp_get_post_terms( $post_id, 'vehicle_occasion_role', array( 'fields' => 'slugs' ) );
 
 	if ( is_wp_error( $brands ) ) {
 		$brands = array();
@@ -564,8 +755,17 @@ function vip_transits_get_vehicle_card_data( $post_id = 0 ) {
 	if ( is_wp_error( $categories ) ) {
 		$categories = array();
 	}
+	if ( is_wp_error( $roles ) ) {
+		$roles = array();
+	}
 
-	$price = (int) get_field( 'daily_price', $post_id );
+	$role_terms = wp_get_post_terms( $post_id, 'vehicle_occasion_role' );
+	$role_name  = '';
+	if ( ! is_wp_error( $role_terms ) && ! empty( $role_terms ) ) {
+		$role_name = $role_terms[0]->name;
+	}
+
+	$price = vip_transits_vehicle_daily_price( $post_id );
 
 	$brand_terms = wp_get_post_terms( $post_id, 'vehicle_brand' );
 	$brand_names = array();
@@ -593,9 +793,11 @@ function vip_transits_get_vehicle_card_data( $post_id = 0 ) {
 		'daily_price'  => $price,
 		'phone'        => (string) get_field( 'phone_number', $post_id ),
 		'delivery'     => vip_transits_vehicle_has_hotel_delivery( $post_id ),
-		'brands'       => $brands,
-		'seat_terms'   => $seats,
-		'categories'   => $categories,
+		'brands'         => $brands,
+		'seat_terms'     => $seats,
+		'categories'     => $categories,
+		'occasion_roles' => $roles,
+		'occasion_role'  => $role_name,
 	);
 }
 
@@ -854,6 +1056,161 @@ function vip_transits_vehicle_acf_rows( $field, $post_id, $sub_keys = array() ) 
 	}
 
 	return $rows;
+}
+
+/**
+ * Default Best routes card images (Sheikh Zayed, Palm, Marina).
+ *
+ * Uses local uploads when present; otherwise production media URLs.
+ *
+ * @return array<string, string> Keys: zayed, palm, marina.
+ */
+function vip_transits_driving_route_default_images() {
+	static $images = null;
+
+	if ( null !== $images ) {
+		return $images;
+	}
+
+	$remote_base = 'https://viptransits.com/wp-content/uploads/';
+	$files       = array(
+		'zayed'  => '2026/05/pexels-nelemson-29470840-1.png',
+		'palm'   => '2026/05/pexels-miketyurin-33996797-1.png',
+		'marina' => '2026/05/pexels-iamllwyd-35062992-1.png',
+	);
+
+	$images = array();
+	$upload = wp_upload_dir();
+
+	foreach ( $files as $key => $relative ) {
+		if ( empty( $upload['error'] ) ) {
+			$local_path = $upload['basedir'] . '/' . $relative;
+			if ( is_readable( $local_path ) ) {
+				$images[ $key ] = $upload['baseurl'] . '/' . $relative;
+				continue;
+			}
+		}
+		$images[ $key ] = $remote_base . $relative;
+	}
+
+	return $images;
+}
+
+/**
+ * Default image for a driving route card when no ACF image is set.
+ *
+ * @param string $title   Route title (matched to known Dubai routes).
+ * @param int    $post_id Vehicle post ID (hero thumbnail fallback).
+ * @return string
+ */
+function vip_transits_driving_route_image_url( $title, $post_id = 0 ) {
+	$title_l = strtolower( (string) $title );
+	$images  = vip_transits_driving_route_default_images();
+
+	$needles = array(
+		'zayed'  => 'zayed',
+		'palm'   => 'palm',
+		'marina' => 'marina',
+	);
+
+	foreach ( $needles as $needle => $key ) {
+		if ( str_contains( $title_l, $needle ) && ! empty( $images[ $key ] ) ) {
+			return $images[ $key ];
+		}
+	}
+
+	$post_id = (int) $post_id;
+	if ( $post_id > 0 ) {
+		$hero = get_the_post_thumbnail_url( $post_id, 'large' );
+		if ( $hero ) {
+			return $hero;
+		}
+	}
+
+	return $images['zayed'] ?? '';
+}
+
+/**
+ * Built-in driving routes when none are saved in ACF.
+ *
+ * @param int $post_id Vehicle post ID.
+ * @return array<int, array{title:string,description:string,image_url:string}>
+ */
+function vip_transits_vehicle_default_driving_routes( $post_id = 0 ) {
+	$images   = vip_transits_driving_route_default_images();
+	$defaults = array(
+		array(
+			'title'       => __( 'Sheikh Zayed Road', 'tenku-child' ),
+			'description' => __( '10-lane highway, perfect for acceleration runs', 'tenku-child' ),
+			'image_url'   => $images['zayed'] ?? '',
+		),
+		array(
+			'title'       => __( 'Palm Jumeirah', 'tenku-child' ),
+			'description' => __( 'The crescent road with sea views on both sides', 'tenku-child' ),
+			'image_url'   => $images['palm'] ?? '',
+		),
+		array(
+			'title'       => __( 'Dubai Marina Walk', 'tenku-child' ),
+			'description' => __( 'Low-speed cruising at its most glamorous', 'tenku-child' ),
+			'image_url'   => $images['marina'] ?? '',
+		),
+	);
+
+	return $defaults;
+}
+
+/**
+ * Driving routes for the vehicle detail page (ACF repeater + image URLs).
+ *
+ * @param int $post_id Vehicle post ID.
+ * @return array<int, array{title:string,description:string,image_url:string}>
+ */
+function vip_transits_vehicle_driving_routes( $post_id = 0 ) {
+	$post_id = $post_id ? (int) $post_id : (int) get_the_ID();
+	if ( $post_id <= 0 ) {
+		return array();
+	}
+
+	$routes = array();
+
+	if ( function_exists( 'get_field' ) ) {
+		$rows = get_field( 'driving_routes', $post_id, false );
+		if ( is_array( $rows ) ) {
+			foreach ( $rows as $item ) {
+				if ( ! is_array( $item ) ) {
+					continue;
+				}
+
+				$title = trim( vip_transits_acf_repeater_sub_value( $item, 'title' ) );
+				$desc  = trim( vip_transits_acf_repeater_sub_value( $item, 'description' ) );
+
+				$image_raw = null;
+				if ( array_key_exists( 'image', $item ) ) {
+					$image_raw = $item['image'];
+				} elseif ( array_key_exists( 'field_vipveh_route_image', $item ) ) {
+					$image_raw = $item['field_vipveh_route_image'];
+				}
+
+				$image_url = vip_transits_acf_image_url( $image_raw, 'large' );
+
+				if ( $title === '' && $desc === '' && $image_url === '' ) {
+					continue;
+				}
+
+				$routes[] = array(
+					'title'       => $title,
+					'description' => $desc,
+					'image_url'   => $image_url !== '' ? $image_url : vip_transits_driving_route_image_url( $title, $post_id ),
+				);
+			}
+		}
+	}
+
+	if ( $routes ) {
+		return $routes;
+	}
+
+	return vip_transits_vehicle_default_driving_routes( $post_id );
 }
 
 /**
@@ -1215,25 +1572,8 @@ function vip_transits_get_vehicle_single_data( $post_id = 0 ) {
 	$included = vip_transits_vehicle_included_items( $post_id );
 
 	$variants = vip_transits_get_vehicle_variants( $post_id );
-	$routes   = vip_transits_vehicle_acf_rows( 'driving_routes', $post_id, array( 'title', 'description' ) );
+	$routes   = vip_transits_vehicle_driving_routes( $post_id );
 	$faq      = vip_transits_vehicle_acf_rows( 'vehicle_faq', $post_id, array( 'question', 'answer' ) );
-
-	if ( empty( $routes ) ) {
-		$routes = array(
-			array(
-				'title'       => __( 'Sheikh Zayed Road', 'tenku-child' ),
-				'description' => __( '10-lane highway, perfect for acceleration runs', 'tenku-child' ),
-			),
-			array(
-				'title'       => __( 'Palm Jumeirah', 'tenku-child' ),
-				'description' => __( 'The crescent road with sea views on both sides', 'tenku-child' ),
-			),
-			array(
-				'title'       => __( 'Dubai Marina Walk', 'tenku-child' ),
-				'description' => __( 'Low-speed cruising at its most glamorous', 'tenku-child' ),
-			),
-		);
-	}
 
 	$weekly = (string) get_field( 'weekly_rate_label', $post_id );
 	if ( $weekly === '' ) {

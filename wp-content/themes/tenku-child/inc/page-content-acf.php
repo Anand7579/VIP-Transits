@@ -16,8 +16,9 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @return array
  */
 function vip_transits_register_page_templates( $templates ) {
-	$templates['templates/page-about.html']   = __( 'VIP About Us', 'tenku-child' );
-	$templates['templates/page-contact.html'] = __( 'VIP Contact Us', 'tenku-child' );
+	$templates['templates/page-about.html']    = __( 'VIP About Us', 'tenku-child' );
+	$templates['templates/page-contact.html']  = __( 'VIP Contact Us', 'tenku-child' );
+	$templates['templates/page-occasion.html'] = __( 'VIP Occasion detail', 'tenku-child' );
 
 	return $templates;
 }
@@ -37,14 +38,20 @@ function vip_transits_page_template_slug_groups() {
 		),
 		'contact' => array(
 			'page-contact',
+			'page-contact.html',
 			'templates/page-contact.html',
 			'templates/page-contact',
+		),
+		'occasion' => array(
+			'page-occasion',
+			'templates/page-occasion.html',
+			'templates/page-occasion',
 		),
 	);
 }
 
 /**
- * @param string $kind about|contact.
+ * @param string $kind about|contact|occasion.
  * @return string[]
  */
 function vip_transits_page_template_slugs_for( $kind ) {
@@ -56,7 +63,7 @@ function vip_transits_page_template_slugs_for( $kind ) {
  * Whether a page uses a VIP About or Contact template (any stored slug) or contains the matching block.
  *
  * @param int    $post_id Page ID.
- * @param string $kind    about|contact.
+ * @param string $kind    about|contact|occasion.
  * @return bool
  */
 function vip_transits_page_uses_vip_template( $post_id, $kind ) {
@@ -74,8 +81,32 @@ function vip_transits_page_uses_vip_template( $post_id, $kind ) {
 		return false;
 	}
 
-	$block = 'about' === $kind ? 'acf/vip-page-about' : 'acf/vip-page-contact';
-	return has_block( $block, $post_id );
+	$blocks = array(
+		'about'    => 'acf/vip-page-about',
+		'contact'  => 'acf/vip-page-contact',
+		'occasion' => 'acf/vip-occasion-listing',
+	);
+
+	if ( ! isset( $blocks[ $kind ] ) ) {
+		return false;
+	}
+
+	return has_block( $blocks[ $kind ], $post_id );
+}
+
+/**
+ * Whether the current request is the VIP Contact page.
+ *
+ * @param int $post_id Optional page ID.
+ * @return bool
+ */
+function vip_transits_is_contact_page( $post_id = 0 ) {
+	$post_id = $post_id ? (int) $post_id : (int) get_queried_object_id();
+	if ( $post_id <= 0 || ! is_page( $post_id ) ) {
+		return false;
+	}
+
+	return vip_transits_page_uses_vip_template( $post_id, 'contact' );
 }
 
 /**
@@ -113,6 +144,9 @@ function vip_transits_acf_match_page_template( $match, $rule, $screen ) {
 		if ( in_array( $wanted, vip_transits_page_template_slugs_for( 'about' ), true ) && has_block( 'acf/vip-page-about', $post_id ) ) {
 			return true;
 		}
+		if ( in_array( $wanted, vip_transits_page_template_slugs_for( 'occasion' ), true ) && has_block( 'acf/vip-occasion-listing', $post_id ) ) {
+			return true;
+		}
 	}
 
 	return $match;
@@ -123,8 +157,12 @@ add_filter( 'acf/location/rule_match/page_template', 'vip_transits_acf_match_pag
  * @return int
  */
 function vip_transits_page_content_post_id() {
+	if ( is_singular( 'vip_occasion' ) ) {
+		return 0;
+	}
+
 	$post_id = (int) get_queried_object_id();
-	return $post_id > 0 ? $post_id : 0;
+	return ( is_page() && $post_id > 0 ) ? $post_id : 0;
 }
 
 /**
@@ -181,6 +219,25 @@ function vip_transits_register_page_content_blocks() {
 			'icon'            => 'email',
 			'keywords'        => array( 'contact', 'form' ),
 			'render_template' => $dir . '/blocks/vip-page-contact/render.php',
+			'enqueue_style'   => $css['style'],
+			'mode'            => 'preview',
+			'supports'        => array(
+				'align'  => array( 'wide', 'full' ),
+				'anchor' => true,
+				'mode'   => false,
+			),
+		)
+	);
+
+	acf_register_block_type(
+		array(
+			'name'            => 'vip-occasion-listing',
+			'title'           => __( 'VIP Occasion detail', 'tenku-child' ),
+			'description'     => __( 'Occasion detail: hero, fleet, FAQ. Use on vip_occasion singles or legacy pages.', 'tenku-child' ),
+			'category'        => 'layout',
+			'icon'            => 'calendar-alt',
+			'keywords'        => array( 'occasion', 'wedding', 'fleet' ),
+			'render_template' => $dir . '/blocks/vip-occasion-listing/render.php',
 			'enqueue_style'   => $css['style'],
 			'mode'            => 'preview',
 			'supports'        => array(
@@ -538,12 +595,24 @@ function vip_transits_enqueue_page_content_assets() {
 		return;
 	}
 
-	$post_id = vip_transits_page_content_post_id();
-	if ( ! $post_id || ! is_page() ) {
-		return;
+	$load_styles = false;
+
+	if ( is_singular( 'vip_occasion' ) ) {
+		$load_styles = true;
 	}
 
-	if ( ! vip_transits_page_uses_vip_template( $post_id, 'about' ) && ! vip_transits_page_uses_vip_template( $post_id, 'contact' ) ) {
+	$post_id = vip_transits_page_content_post_id();
+	if ( $post_id && is_page() ) {
+		if (
+			vip_transits_page_uses_vip_template( $post_id, 'about' )
+			|| vip_transits_page_uses_vip_template( $post_id, 'contact' )
+			|| vip_transits_page_uses_vip_template( $post_id, 'occasion' )
+		) {
+			$load_styles = true;
+		}
+	}
+
+	if ( ! $load_styles ) {
 		return;
 	}
 
@@ -558,6 +627,22 @@ function vip_transits_enqueue_page_content_assets() {
 		array( 'chld_thm_cfg_child' ),
 		$assets['version']
 	);
+
+	if ( function_exists( 'vip_transits_is_occasion_detail' ) && vip_transits_is_occasion_detail() ) {
+		if ( function_exists( 'vip_transits_vehicle_single_assets' ) ) {
+			$vd_assets = vip_transits_vehicle_single_assets();
+			wp_enqueue_style(
+				'vip-vehicle-single',
+				$vd_assets['style'],
+				array( 'vip-pages', 'chld_thm_cfg_child', 'chld_thm_cfg_parent' ),
+				$vd_assets['version']
+			);
+		}
+
+		if ( function_exists( 'vip_transits_enqueue_faq_section_assets' ) ) {
+			vip_transits_enqueue_faq_section_assets();
+		}
+	}
 
 	if ( function_exists( 'wpcf7_enqueue_scripts' ) && vip_transits_page_uses_vip_template( $post_id, 'contact' ) ) {
 		wpcf7_enqueue_scripts();

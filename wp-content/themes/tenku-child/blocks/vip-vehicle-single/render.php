@@ -606,30 +606,15 @@ $seo_heading = sprintf(
 			<section class="vip-vdetail__routes" data-vip-section>
 				<h2 class="vip-vdetail__section-title"><?php echo esc_html( $routes_heading ); ?></h2>
 				<ul class="vip-vdetail__routes-grid">
-					<?php foreach ( $d['routes'] as $route ) : ?>
-						<?php
-						// Fetch matching routing card thumbnails
-						$route_img = $d['hero_image']; // Fallback
-						if ( stripos( $route['title'] ?? '', 'Zayed' ) !== false ) {
-							$route_img = get_stylesheet_directory_uri() . '/assets/images/sheikh-zayed-road.jpg';
-						} elseif ( stripos( $route['title'] ?? '', 'Palm' ) !== false ) {
-							$route_img = get_stylesheet_directory_uri() . '/assets/images/palm-jumeirah.jpg';
-						} elseif ( stripos( $route['title'] ?? '', 'Marina' ) !== false ) {
-							$route_img = get_stylesheet_directory_uri() . '/assets/images/dubai-marina.jpg';
-						}
-						?>
-						<li class="vip-vdetail__route-card">
-							<div class="vip-vdetail__route-media">
-								<img src="<?php echo esc_url( $route_img ); ?>" alt="<?php echo esc_attr( $route['title'] ?? '' ); ?>" loading="lazy" width="380" height="200" />
-								<div class="vip-vdetail__route-overlay">
-									<h3 class="vip-vdetail__route-title"><?php echo esc_html( $route['title'] ?? '' ); ?></h3>
-									<?php if ( ! empty( $route['description'] ) ) : ?>
-										<p class="vip-vdetail__route-text"><?php echo esc_html( $route['description'] ); ?></p>
-									<?php endif; ?>
-								</div>
-							</div>
-						</li>
-					<?php endforeach; ?>
+					<?php
+					foreach ( $d['routes'] as $route ) :
+						get_template_part(
+							'template-parts/vehicle/route',
+							'card',
+							array( 'route' => $route )
+						);
+					endforeach;
+					?>
 				</ul>
 			</section>
 		<?php endif; ?>

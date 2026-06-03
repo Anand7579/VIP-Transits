@@ -17,6 +17,10 @@ if ( empty( $data['id'] ) ) {
 $brand_slugs     = implode( ' ', array_map( 'sanitize_html_class', $data['brands'] ) );
 $seat_slugs      = implode( ' ', array_map( 'sanitize_html_class', $data['seat_terms'] ) );
 $category_slugs  = ! empty( $data['categories'] ) ? implode( ' ', array_map( 'sanitize_html_class', $data['categories'] ) ) : '';
+$role_slugs      = ! empty( $data['occasion_roles'] ) ? implode( ' ', array_map( 'sanitize_html_class', $data['occasion_roles'] ) ) : '';
+
+$is_occasion_fleet = function_exists( 'vip_transits_is_occasion_listing_page' ) && vip_transits_is_occasion_listing_page();
+
 $wa_href_attr = function_exists( 'vip_transits_vehicle_whatsapp_href_attr' ) ? vip_transits_vehicle_whatsapp_href_attr( $data['id'] ) : '';
 $phone_url   = $data['phone'] ? 'tel:' . preg_replace( '/[^\d+]/', '', $data['phone'] ) : '';
 $color_hex = $data['color_hex'] ? $data['color_hex'] : '#cccccc';
@@ -27,8 +31,9 @@ $color_hex = $data['color_hex'] ? $data['color_hex'] : '#cccccc';
 	data-brands="<?php echo esc_attr( $brand_slugs ); ?>"
 	data-seats="<?php echo esc_attr( $seat_slugs ); ?>"
 	data-categories="<?php echo esc_attr( $category_slugs ); ?>"
+	data-roles="<?php echo esc_attr( $role_slugs ); ?>"
 	data-price="<?php echo esc_attr( (string) $data['daily_price'] ); ?>"
-	data-delivery="<?php echo $data['delivery'] ? '1' : '0'; ?>"
+	data-delivery="<?php echo ! empty( $data['delivery'] ) ? '1' : '0'; ?>"
 >
 	<?php if ( $data['thumbnail'] ) : ?>
 		<a class="vip-fleet-card__media" href="<?php echo esc_url( $data['permalink'] ); ?>">
@@ -49,7 +54,7 @@ $color_hex = $data['color_hex'] ? $data['color_hex'] : '#cccccc';
 			<h3 class="vip-fleet-card__title">
 				<a href="<?php echo esc_url( $data['permalink'] ); ?>"><?php echo esc_html( $data['title'] ); ?></a>
 			</h3>
-			<?php if ( $data['color_name'] ) : ?>
+			<?php if ( ! $is_occasion_fleet && $data['color_name'] ) : ?>
 				<span class="vip-fleet-card__color">
 					<?php echo esc_html( $data['color_name'] ); ?>
 					<span class="vip-fleet-card__swatch" style="background-color: <?php echo esc_attr( $color_hex ); ?>;"></span>

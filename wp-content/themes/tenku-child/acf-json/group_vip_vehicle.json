@@ -571,6 +571,32 @@
                     "maxlength": "",
                     "placeholder": "",
                     "parent_repeater": "field_vipveh_routes"
+                },
+                {
+                    "key": "field_vipveh_route_image",
+                    "label": "Image",
+                    "name": "image",
+                    "aria-label": "",
+                    "type": "image",
+                    "instructions": "Route card background (recommended 760×400 or larger).",
+                    "required": false,
+                    "conditional_logic": false,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "return_format": "array",
+                    "preview_size": "medium",
+                    "library": "all",
+                    "min_width": "",
+                    "min_height": "",
+                    "min_size": "",
+                    "max_width": "",
+                    "max_height": "",
+                    "max_size": "",
+                    "mime_types": "",
+                    "parent_repeater": "field_vipveh_routes"
                 }
             ]
         },
@@ -681,5 +707,5 @@
     "display_title": "",
     "allow_ai_access": false,
     "ai_description": "",
-    "modified": 1780385800
+    "modified": 1748313600
 }

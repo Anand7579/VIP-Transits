@@ -38,6 +38,13 @@
 	background: var(--vip-page-surface);
 }
 
+/* Contact: footer may render after the ACF block inside main — keep full-width dark band visible */
+.vip-page-main .vip-site-footer {
+	width: 100%;
+	max-width: none;
+	margin-inline: 0;
+}
+
 /* Page masthead: full-width black band, square corners (not card-style radius). */
 .vip-bg-black-section--masthead {
 	border-radius: 0;
@@ -481,4 +488,264 @@ a.vip-page__contact-value:focus-visible {
 
 form.wpcf7-form p{
 	margin: 0;
+}
+
+/* —— Occasion listing page (v2) —— */
+.wp-block-acf-vip-occasion-listing {
+	width: 100%;
+	max-width: none;
+	margin: 0;
+	padding: 0;
+}
+
+.vip-occasion-page {
+	--vip-vd-ink: #0a0c0f;
+	--vip-vd-muted: #616161;
+	--vip-vd-font: var(--vip-nav-font, "Newsreader", "Times New Roman", Georgia, serif);
+	--vip-occasion-bg: #f5f5f5;
+	background: var(--vip-occasion-bg);
+}
+
+.vip-occasion-page .vip-landing-hero {
+	padding: clamp(3.5rem, 7vw, 5.5rem) 0;
+	background: var(--vip-occasion-bg);
+}
+
+.vip-occasion-page .vip-landing-hero__grid {
+	display: grid;
+	grid-template-columns: 1.2fr 0.8fr;
+	gap: clamp(2rem, 5vw, 4.5rem);
+	align-items: center;
+}
+
+.vip-occasion-page .vip-landing-hero__breadcrumb {
+	margin: 0 0 1.25rem;
+	font-size: 0.75rem;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+	color: var(--vip-page-muted);
+}
+
+.vip-occasion-page .vip-landing-hero__breadcrumb a {
+	color: var(--vip-page-muted);
+	text-decoration: none;
+}
+
+.vip-occasion-page .vip-landing-hero__breadcrumb a:hover {
+	color: var(--vip-page-text);
+}
+
+.vip-occasion-page .vip-landing-hero__title {
+	margin: 0 0 1.25rem;
+	font-size: clamp(2.25rem, 5.5vw, 3.5rem);
+	font-weight: 400;
+	line-height: 1.15;
+	letter-spacing: -0.02em;
+}
+
+.vip-occasion-page .vip-landing-hero__lead {
+	font-size: 1.0625rem;
+	line-height: 1.65;
+	color: var(--vip-page-muted);
+}
+
+.vip-occasion-page .vip-landing-hero__lead p:last-child {
+	margin-bottom: 0;
+}
+
+.vip-occasion-page .vip-landing-hero__media {
+	margin: 0;
+	aspect-ratio: 4 / 3;
+	overflow: hidden;
+	background: var(--vip-page-surface);
+}
+
+.vip-occasion-page .vip-landing-hero__media img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	display: block;
+}
+
+.vip-occasion-page__body {
+	padding: clamp(4rem, 8vw, 6rem) 0;
+	background: var(--vip-occasion-bg);
+	border-bottom: 1px solid var(--vip-page-line);
+}
+
+.vip-occasion-page__body > .vip-content-container {
+	width: 100%;
+	max-width: var(--vip-content-max, 1440px);
+	margin-inline: auto;
+	padding-inline: var(--vip-content-pad-x, clamp(1.25rem, 4vw, 3.5rem));
+	box-sizing: border-box;
+}
+
+.vip-occasion-page__body .main_content_wrap {
+	width: 100%;
+	align-items: center;
+}
+
+.vip-occasion-page__body .left_wrap,
+.vip-occasion-page__body .right_wrap {
+	align-self: center;
+}
+
+.vip-occasion-page__body .vip-vdetail__section-title {
+	border-bottom: 2px solid var(--vip-vd-ink);
+}
+
+.vip-occasion-page__body .vip-vdetail__related .vip-vdetail__section-title--rule-only {
+	margin-bottom: clamp(1.25rem, 2vw, 1.5rem);
+	padding-bottom: clamp(0.875rem, 1.5vw, 1.125rem);
+	border-bottom: 2px solid var(--vip-vd-ink);
+	font-size: 20px;
+	line-height: 1.2;
+}
+
+.vip-occasion-page__body .vip-vdetail__lead p,
+.vip-occasion-page__body .vip-vdetail__lead li,
+.vip-occasion-page__body .vip-vdetail__lead ul {
+	margin-top: 0;
+	margin-bottom: 1rem;
+}
+
+.vip-occasion-page__body .vip-vdetail__lead p:last-child,
+.vip-occasion-page__body .vip-vdetail__lead ul:last-child {
+	margin-bottom: 0;
+}
+
+.vip-occasion-page .vip-fleet--occasion {
+	padding: clamp(3.5rem, 7vw, 5.5rem) 0;
+	background: var(--vip-occasion-bg);
+}
+
+.vip-occasion-page .vip-faq {
+	padding: clamp(4rem, 8vw, 6rem) 0;
+	background: var(--vip-occasion-bg);
+	border-top: 1px solid var(--vip-page-line);
+}
+
+@media (max-width: 1024px) {
+	.vip-occasion-page__body .main_content_wrap {
+		align-items: stretch;
+	}
+
+	.vip-occasion-page__body .left_wrap,
+	.vip-occasion-page__body .right_wrap {
+		align-self: stretch;
+	}
+}
+
+@media (max-width: 900px) {
+	.vip-occasion-page .vip-landing-hero__grid {
+		grid-template-columns: 1fr;
+		gap: 2.5rem;
+	}
+
+	.vip-occasion-page .vip-landing-hero__media {
+		order: -1;
+	}
+}
+
+/* Occasions archive (/occasions/) */
+.vip-occasions-archive {
+	padding: clamp(2.5rem, 5vw, 4rem) 0 clamp(4rem, 8vw, 6rem);
+	background: #fff;
+}
+
+.vip-occasions-archive__title {
+	margin: 0 0 0.75rem;
+	font-family: var(--vip-page-serif, "Newsreader", Georgia, serif);
+	font-size: clamp(2rem, 4vw, 2.5rem);
+	font-weight: 500;
+	line-height: 1.15;
+}
+
+.vip-occasions-archive__lead {
+	margin: 0 0 1.5rem;
+	max-width: 42rem;
+	font-size: 1rem;
+	line-height: 1.5;
+	color: var(--vip-page-muted, #616161);
+}
+
+.vip-occasions-archive__rule {
+	margin: 0 0 clamp(2rem, 4vw, 3rem);
+	border: 0;
+	border-top: 3px solid #000;
+}
+
+.vip-occasions-archive__grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
+	gap: clamp(1.25rem, 3vw, 2rem);
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.vip-occasions-archive__item {
+	margin: 0;
+}
+
+.vip-occasions-archive__card-link {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	text-decoration: none;
+	color: inherit;
+	background: #f9f9f9;
+	border: 1px solid var(--vip-page-line, #e0e0e0);
+	overflow: hidden;
+	transition: box-shadow 0.2s ease;
+}
+
+.vip-occasions-archive__card-link:hover {
+	box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+.vip-occasions-archive__media {
+	margin: 0;
+	aspect-ratio: 16 / 10;
+	overflow: hidden;
+}
+
+.vip-occasions-archive__media img {
+	display: block;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.vip-occasions-archive__body {
+	padding: 1.25rem 1.25rem 1.5rem;
+}
+
+.vip-occasions-archive__card-title {
+	margin: 0 0 0.5rem;
+	font-family: var(--vip-page-serif, "Newsreader", Georgia, serif);
+	font-size: 1.25rem;
+	font-weight: 500;
+	line-height: 1.25;
+}
+
+.vip-occasions-archive__card-text {
+	margin: 0 0 1rem;
+	font-size: 0.875rem;
+	line-height: 1.45;
+	color: var(--vip-page-muted, #616161);
+}
+
+.vip-occasions-archive__card-cta {
+	font-size: 0.8125rem;
+	font-weight: 500;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+}
+
+.vip-occasions-archive__empty {
+	margin: 0;
+	color: var(--vip-page-muted, #616161);
 }

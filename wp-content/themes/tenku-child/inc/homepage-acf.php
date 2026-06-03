@@ -491,13 +491,9 @@ function vip_transits_should_enqueue_vip_home_assets() {
 }
 
 /**
- * Homepage section CSS (wp_enqueue_scripts — not enqueue_assets, which runs too late).
+ * FAQ accordion assets (homepage + occasion detail).
  */
-function vip_transits_enqueue_vip_home_assets() {
-	if ( ! vip_transits_should_enqueue_vip_home_assets() ) {
-		return;
-	}
-
+function vip_transits_enqueue_faq_section_assets() {
 	$dir  = get_stylesheet_directory() . '/blocks/vip-home';
 	$uri  = get_stylesheet_directory_uri() . '/blocks/vip-home';
 	$path = $dir . '/style.css';
@@ -520,6 +516,17 @@ function vip_transits_enqueue_vip_home_assets() {
 			'strategy'  => 'defer',
 		)
 	);
+}
+
+/**
+ * Homepage section CSS (wp_enqueue_scripts — not enqueue_assets, which runs too late).
+ */
+function vip_transits_enqueue_vip_home_assets() {
+	if ( ! vip_transits_should_enqueue_vip_home_assets() ) {
+		return;
+	}
+
+	vip_transits_enqueue_faq_section_assets();
 }
 add_action( 'wp_enqueue_scripts', 'vip_transits_enqueue_vip_home_assets', 20 );
 

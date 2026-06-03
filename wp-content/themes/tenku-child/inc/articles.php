@@ -486,6 +486,56 @@ function vip_transits_article_archive_posts_per_page( $query ) {
 add_action( 'pre_get_posts', 'vip_transits_article_archive_posts_per_page' );
 
 /**
+ * Related article post IDs for an occasion listing page.
+ *
+ * @param int $page_id Occasion page ID.
+ * @return int[]
+ */
+function vip_transits_get_occasion_related_article_ids( $page_id = 0 ) {
+	$page_id = $page_id ? (int) $page_id : ( function_exists( 'vip_transits_page_content_post_id' ) ? vip_transits_page_content_post_id() : 0 );
+	if ( $page_id <= 0 ) {
+		return array();
+	}
+
+	$ids = array();
+
+	if ( function_exists( 'get_field' ) ) {
+		$picked = get_field( 'related_articles', $page_id );
+		if ( is_array( $picked ) ) {
+			foreach ( $picked as $item ) {
+				$id = is_object( $item ) && isset( $item->ID ) ? (int) $item->ID : (int) $item;
+				if ( $id > 0 ) {
+					$ids[] = $id;
+				}
+			}
+		}
+	}
+
+	$ids = array_values( array_unique( array_filter( $ids ) ) );
+	$ids = array_filter(
+		$ids,
+		static function ( $id ) {
+			return 'post' === get_post_type( $id ) && 'publish' === get_post_status( $id );
+		}
+	);
+
+	if ( $ids ) {
+		return array_values( $ids );
+	}
+
+	$fallback = new WP_Query(
+		vip_transits_article_query_args(
+			array(
+				'posts_per_page' => 2,
+				'fields'         => 'ids',
+			)
+		)
+	);
+
+	return ! empty( $fallback->posts ) ? array_map( 'intval', $fallback->posts ) : array();
+}
+
+/**
  * Card data for article grid items.
  *
  * @param int $post_id Post ID.
