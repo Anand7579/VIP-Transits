@@ -1050,12 +1050,12 @@
 	background: #000;
 	color: #fff;
 	font-family: var(--vip-fleet-serif);
-	font-size: 0.75rem;
+	font-size: 12px;
 	font-weight: 600;
 	letter-spacing: 0.08em;
 	text-transform: uppercase;
 	cursor: pointer;
-	line-height: 1;
+	line-height: 12px;
 }
 
 .vip-fleet__load-more span {

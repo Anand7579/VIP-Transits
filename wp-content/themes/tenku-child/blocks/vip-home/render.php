@@ -32,7 +32,7 @@ if ( ! $home_id ) {
 	return;
 }
 ?>
-<section class="vip-home" <?php echo $anchor; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
+<div class="vip-home" <?php echo $anchor; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 	<?php
 	if ( have_rows( 'sections', $home_id ) ) :
 		while ( have_rows( 'sections', $home_id ) ) :
@@ -118,4 +118,4 @@ if ( ! $home_id ) {
 		}
 	endif;
 	?>
-</section>
+</div>

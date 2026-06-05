@@ -1,0 +1,389 @@
+{
+    "key": "group_vip_contact_content_page",
+    "title": "VIP Contact Us (Content)",
+    "fields": [
+        {
+            "key": "field_vipcontactc_tab_settings",
+            "label": "Settings",
+            "name": "",
+            "type": "tab",
+            "placement": "top"
+        },
+        {
+            "key": "field_vipcontactc_brand_name",
+            "label": "Brand name override",
+            "name": "contact_content_brand_name",
+            "type": "text",
+            "instructions": "Optional. Replaces [Brand Name] in section copy. Leave empty to use the site title.",
+            "placeholder": "VIP Transits"
+        },
+        {
+            "key": "field_vipcontactc_masthead_lead",
+            "label": "Banner subtitle",
+            "name": "contact_content_masthead_lead",
+            "type": "text",
+            "instructions": "Optional line under the page title when Page Banner → Show Banner is Yes."
+        },
+        {
+            "key": "field_vipcontactc_tab_sections",
+            "label": "Page sections",
+            "name": "",
+            "type": "tab",
+            "placement": "top"
+        },
+        {
+            "key": "field_vipcontactc_sections",
+            "label": "Sections",
+            "name": "contact_content_sections",
+            "type": "flexible_content",
+            "instructions": "Recommended order: Hero intro → Definition callout → Key takeaways → How to reach us → Contact details → FAQ. Uses the client content brief (LLM_09).",
+            "button_label": "Add section",
+            "layouts": {
+                "layout_vipcontactc_hero": {
+                    "key": "layout_vipcontactc_hero",
+                    "name": "hero_intro",
+                    "label": "1. Hero intro",
+                    "display": "block",
+                    "sub_fields": [
+                        {
+                            "key": "field_vipcontactc_hero_heading",
+                            "label": "Heading",
+                            "name": "heading",
+                            "type": "text",
+                            "default_value": "Contact [Brand Name] - Book a Luxury Car in Dubai via WhatsApp",
+                            "parent": "field_vipcontactc_sections"
+                        },
+                        {
+                            "key": "field_vipcontactc_hero_intro",
+                            "label": "Intro",
+                            "name": "intro",
+                            "type": "textarea",
+                            "rows": 3,
+                            "default_value": "One message. One fast reply. No forms, no queues. Tell us the car, the dates, and a Dubai address - we handle the rest.",
+                            "parent": "field_vipcontactc_sections"
+                        },
+                        {
+                            "key": "field_vipcontactc_hero_show_wa",
+                            "label": "Show WhatsApp button",
+                            "name": "show_whatsapp",
+                            "type": "true_false",
+                            "ui": 1,
+                            "default_value": 1,
+                            "parent": "field_vipcontactc_sections"
+                        },
+                        {
+                            "key": "field_vipcontactc_hero_wa_label",
+                            "label": "WhatsApp button label",
+                            "name": "whatsapp_label",
+                            "type": "text",
+                            "default_value": "WhatsApp Us Now",
+                            "parent": "field_vipcontactc_sections"
+                        },
+                        {
+                            "key": "field_vipcontactc_hero_wa_message",
+                            "label": "WhatsApp prefilled message",
+                            "name": "whatsapp_message",
+                            "type": "textarea",
+                            "rows": 2,
+                            "default_value": "Hi, I'd like to enquire about a luxury car rental",
+                            "instructions": "Uses the global number from Settings → VIP Transits.",
+                            "parent": "field_vipcontactc_sections"
+                        }
+                    ]
+                },
+                "layout_vipcontactc_definition": {
+                    "key": "layout_vipcontactc_definition",
+                    "name": "definition_callout",
+                    "label": "2. Definition callout",
+                    "display": "block",
+                    "sub_fields": [
+                        {
+                            "key": "field_vipcontactc_def_heading",
+                            "label": "Heading",
+                            "name": "heading",
+                            "type": "text",
+                            "default_value": "How do I contact [Brand Name] in Dubai?",
+                            "parent": "field_vipcontactc_sections"
+                        },
+                        {
+                            "key": "field_vipcontactc_def_content",
+                            "label": "Content",
+                            "name": "content",
+                            "type": "textarea",
+                            "rows": 4,
+                            "default_value": "You contact [Brand Name] through WhatsApp. Send your preferred car, pickup date, and Dubai delivery address, and the team confirms availability within 15 minutes during operating hours. There are no online forms or email queues - every enquiry is answered by a real person on WhatsApp.",
+                            "parent": "field_vipcontactc_sections"
+                        }
+                    ]
+                },
+                "layout_vipcontactc_takeaways": {
+                    "key": "layout_vipcontactc_takeaways",
+                    "name": "key_takeaways",
+                    "label": "3. Key takeaways",
+                    "display": "block",
+                    "sub_fields": [
+                        {
+                            "key": "field_vipcontactc_takeaways_heading",
+                            "label": "Heading",
+                            "name": "heading",
+                            "type": "text",
+                            "default_value": "Key Takeaways",
+                            "parent": "field_vipcontactc_sections"
+                        },
+                        {
+                            "key": "field_vipcontactc_takeaways_items",
+                            "label": "Bullet points",
+                            "name": "items",
+                            "type": "repeater",
+                            "layout": "table",
+                            "button_label": "Add point",
+                            "sub_fields": [
+                                {
+                                    "key": "field_vipcontactc_takeaways_text",
+                                    "label": "Text",
+                                    "name": "text",
+                                    "type": "text",
+                                    "parent": "field_vipcontactc_takeaways_items"
+                                }
+                            ],
+                            "parent": "field_vipcontactc_sections"
+                        },
+                        {
+                            "key": "field_vipcontactc_takeaways_summary",
+                            "label": "AI speakable summary (optional)",
+                            "name": "summary",
+                            "type": "textarea",
+                            "rows": 3,
+                            "instructions": "Optional paragraph below the bullets (e.g. speakable summary for voice search).",
+                            "parent": "field_vipcontactc_sections"
+                        }
+                    ]
+                },
+                "layout_vipcontactc_how_to_reach": {
+                    "key": "layout_vipcontactc_how_to_reach",
+                    "name": "how_to_reach",
+                    "label": "4. How to reach us",
+                    "display": "block",
+                    "sub_fields": [
+                        {
+                            "key": "field_vipcontactc_reach_heading",
+                            "label": "Heading",
+                            "name": "heading",
+                            "type": "text",
+                            "default_value": "How to Reach [Brand Name]",
+                            "parent": "field_vipcontactc_sections"
+                        },
+                        {
+                            "key": "field_vipcontactc_reach_steps",
+                            "label": "Steps",
+                            "name": "steps",
+                            "type": "repeater",
+                            "layout": "block",
+                            "button_label": "Add step",
+                            "sub_fields": [
+                                {
+                                    "key": "field_vipcontactc_reach_step_title",
+                                    "label": "Step title",
+                                    "name": "title",
+                                    "type": "text",
+                                    "parent": "field_vipcontactc_reach_steps"
+                                },
+                                {
+                                    "key": "field_vipcontactc_reach_step_text",
+                                    "label": "Step text",
+                                    "name": "text",
+                                    "type": "textarea",
+                                    "rows": 3,
+                                    "parent": "field_vipcontactc_reach_steps"
+                                }
+                            ],
+                            "parent": "field_vipcontactc_sections"
+                        },
+                        {
+                            "key": "field_vipcontactc_reach_show_wa",
+                            "label": "Show WhatsApp button",
+                            "name": "show_whatsapp",
+                            "type": "true_false",
+                            "ui": 1,
+                            "default_value": 1,
+                            "parent": "field_vipcontactc_sections"
+                        },
+                        {
+                            "key": "field_vipcontactc_reach_wa_label",
+                            "label": "WhatsApp button label",
+                            "name": "whatsapp_label",
+                            "type": "text",
+                            "default_value": "WhatsApp to Book",
+                            "parent": "field_vipcontactc_sections"
+                        },
+                        {
+                            "key": "field_vipcontactc_reach_wa_message",
+                            "label": "WhatsApp prefilled message",
+                            "name": "whatsapp_message",
+                            "type": "textarea",
+                            "rows": 2,
+                            "default_value": "Hi, I'd like to enquire about a luxury car rental",
+                            "parent": "field_vipcontactc_sections"
+                        }
+                    ]
+                },
+                "layout_vipcontactc_details": {
+                    "key": "layout_vipcontactc_details",
+                    "name": "contact_details",
+                    "label": "5. Contact details",
+                    "display": "block",
+                    "sub_fields": [
+                        {
+                            "key": "field_vipcontactc_details_heading",
+                            "label": "Heading",
+                            "name": "heading",
+                            "type": "text",
+                            "default_value": "Contact Details",
+                            "parent": "field_vipcontactc_sections"
+                        },
+                        {
+                            "key": "field_vipcontactc_details_rows",
+                            "label": "Details",
+                            "name": "details",
+                            "type": "repeater",
+                            "layout": "table",
+                            "button_label": "Add row",
+                            "sub_fields": [
+                                {
+                                    "key": "field_vipcontactc_details_label",
+                                    "label": "Label",
+                                    "name": "label",
+                                    "type": "text",
+                                    "parent": "field_vipcontactc_details_rows"
+                                },
+                                {
+                                    "key": "field_vipcontactc_details_value",
+                                    "label": "Value",
+                                    "name": "value",
+                                    "type": "text",
+                                    "parent": "field_vipcontactc_details_rows"
+                                },
+                                {
+                                    "key": "field_vipcontactc_details_type",
+                                    "label": "Type",
+                                    "name": "type",
+                                    "type": "select",
+                                    "choices": {
+                                        "text": "Text",
+                                        "phone": "Phone",
+                                        "email": "Email",
+                                        "url": "URL"
+                                    },
+                                    "default_value": "text",
+                                    "parent": "field_vipcontactc_details_rows"
+                                },
+                                {
+                                    "key": "field_vipcontactc_details_link",
+                                    "label": "Link (optional)",
+                                    "name": "link",
+                                    "type": "text",
+                                    "instructions": "Leave empty to auto-link phone/email. Or paste https://…",
+                                    "parent": "field_vipcontactc_details_rows"
+                                }
+                            ],
+                            "parent": "field_vipcontactc_sections"
+                        }
+                    ]
+                },
+                "layout_vipcontactc_faq": {
+                    "key": "layout_vipcontactc_faq",
+                    "name": "faq",
+                    "label": "6. FAQ",
+                    "display": "block",
+                    "sub_fields": [
+                        {
+                            "key": "field_vipcontactc_faq_heading",
+                            "label": "Heading",
+                            "name": "heading",
+                            "type": "text",
+                            "default_value": "Frequently Asked Questions - Contacting [Brand Name]",
+                            "parent": "field_vipcontactc_sections"
+                        },
+                        {
+                            "key": "field_vipcontactc_faq_intro",
+                            "label": "Intro (optional)",
+                            "name": "intro",
+                            "type": "textarea",
+                            "rows": 2,
+                            "parent": "field_vipcontactc_sections"
+                        },
+                        {
+                            "key": "field_vipcontactc_faq_image",
+                            "label": "Image (optional)",
+                            "name": "image",
+                            "type": "image",
+                            "return_format": "array",
+                            "preview_size": "medium",
+                            "parent": "field_vipcontactc_sections"
+                        },
+                        {
+                            "key": "field_vipcontactc_faq_items",
+                            "label": "Questions",
+                            "name": "faqs",
+                            "type": "repeater",
+                            "layout": "block",
+                            "button_label": "Add question",
+                            "sub_fields": [
+                                {
+                                    "key": "field_vipcontactc_faq_q",
+                                    "label": "Question",
+                                    "name": "question",
+                                    "type": "text",
+                                    "parent": "field_vipcontactc_faq_items"
+                                },
+                                {
+                                    "key": "field_vipcontactc_faq_a",
+                                    "label": "Answer",
+                                    "name": "answer",
+                                    "type": "wysiwyg",
+                                    "tabs": "visual",
+                                    "toolbar": "basic",
+                                    "media_upload": 0,
+                                    "parent": "field_vipcontactc_faq_items"
+                                }
+                            ],
+                            "parent": "field_vipcontactc_sections"
+                        }
+                    ]
+                }
+            }
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "page_template",
+                "operator": "==",
+                "value": "templates/page-contact-content.html"
+            }
+        ],
+        [
+            {
+                "param": "page_template",
+                "operator": "==",
+                "value": "page-contact-content"
+            }
+        ],
+        [
+            {
+                "param": "block",
+                "operator": "==",
+                "value": "acf/vip-page-contact-content"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "active": true,
+    "description": "Client SEO content brief for the Contact Us (Content) page template. Existing VIP Contact Us template is unchanged.",
+    "show_in_rest": 1,
+    "modified": 1780510800
+}

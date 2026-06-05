@@ -171,7 +171,7 @@ function vip_transits_create_enquiry_record( array $data ) {
 		array(
 			'post_type'   => 'vip_enquiry',
 			'post_status' => 'publish',
-			'post_title'  => implode( ' — ', $title_bits ),
+			'post_title'  => implode( ' - ', $title_bits ),
 		),
 		true
 	);
@@ -323,6 +323,41 @@ function vip_transits_enqueue_whatsapp_enquiry_tracker() {
 add_action( 'wp_enqueue_scripts', 'vip_transits_enqueue_whatsapp_enquiry_tracker', 25 );
 
 /**
+ * Placeholder for empty enquiry admin values.
+ *
+ * @param string $value Raw value.
+ * @return string
+ */
+function vip_transits_enquiry_admin_empty_label( $value ) {
+	$value = trim( (string) $value );
+	return $value !== '' ? $value : '-';
+}
+
+/**
+ * Human-readable label for enquiry source slugs stored by the tracker.
+ *
+ * @param string $source Raw source slug.
+ * @return string
+ */
+function vip_transits_enquiry_source_label( $source ) {
+	$source = trim( (string) $source );
+	if ( $source === '' ) {
+		return '';
+	}
+
+	$labels = array(
+		'fleet-card'     => __( 'Fleet card', 'tenku-child' ),
+		'vehicle-detail' => __( 'Vehicle detail page', 'tenku-child' ),
+		'sticky-widget'  => __( 'Speak to concierge (sticky)', 'tenku-child' ),
+		'contact-page'   => __( 'Contact page', 'tenku-child' ),
+		'cta-band'       => __( 'WhatsApp CTA band', 'tenku-child' ),
+		'whatsapp'       => __( 'WhatsApp (other)', 'tenku-child' ),
+	);
+
+	return $labels[ $source ] ?? $source;
+}
+
+/**
  * Admin list columns.
  *
  * @param array $columns Columns.
@@ -334,9 +369,10 @@ function vip_transits_enquiry_admin_columns( $columns ) {
 		$new[ $key ] = $label;
 		if ( 'title' === $key ) {
 			$new['enquiry_reference'] = __( 'Reference', 'tenku-child' );
-			$new['enquiry_vehicle']   = __( 'Vehicle', 'tenku-child' );
+			$new['enquiry_vehicle']   = __( 'Fleet', 'tenku-child' );
 			$new['enquiry_source']    = __( 'Source', 'tenku-child' );
 			$new['enquiry_date']      = __( 'Date', 'tenku-child' );
+			$new['enquiry_remark']    = __( 'Remark', 'tenku-child' );
 		}
 	}
 	return $new;
@@ -358,14 +394,23 @@ function vip_transits_enquiry_admin_column_content( $column, $post_id ) {
 			if ( $url ) {
 				printf( '<a href="%1$s">%2$s</a>', esc_url( $url ), esc_html( $name ? $name : $url ) );
 			} else {
-				echo esc_html( $name ? $name : '—' );
+				echo esc_html( vip_transits_enquiry_admin_empty_label( $name ) );
 			}
 			break;
 		case 'enquiry_source':
-			echo esc_html( (string) get_post_meta( $post_id, 'enquiry_source', true ) );
+			$source = (string) get_post_meta( $post_id, 'enquiry_source', true );
+			echo esc_html( vip_transits_enquiry_admin_empty_label( vip_transits_enquiry_source_label( $source ) ) );
 			break;
 		case 'enquiry_date':
-			echo esc_html( (string) get_post_meta( $post_id, 'enquiry_created_at', true ) );
+			echo esc_html( vip_transits_enquiry_admin_empty_label( (string) get_post_meta( $post_id, 'enquiry_created_at', true ) ) );
+			break;
+		case 'enquiry_remark':
+			$remark = trim( (string) get_post_meta( $post_id, 'enquiry_admin_remark', true ) );
+			if ( $remark === '' ) {
+				echo '<span aria-hidden="true">-</span><span class="screen-reader-text">' . esc_html__( 'No remark', 'tenku-child' ) . '</span>';
+			} else {
+				echo esc_html( wp_trim_words( $remark, 12, '...' ) );
+			}
 			break;
 	}
 }
@@ -383,6 +428,15 @@ function vip_transits_enquiry_meta_boxes() {
 		'normal',
 		'high'
 	);
+
+	add_meta_box(
+		'vip-enquiry-remark',
+		__( 'Internal remark', 'tenku-child' ),
+		'vip_transits_render_enquiry_remark_meta_box',
+		'vip_enquiry',
+		'normal',
+		'default'
+	);
 }
 add_action( 'add_meta_boxes', 'vip_transits_enquiry_meta_boxes' );
 
@@ -392,8 +446,8 @@ add_action( 'add_meta_boxes', 'vip_transits_enquiry_meta_boxes' );
 function vip_transits_render_enquiry_meta_box( $post ) {
 	$fields = array(
 		'enquiry_reference'    => __( 'Reference', 'tenku-child' ),
-		'enquiry_vehicle_name' => __( 'Vehicle name', 'tenku-child' ),
-		'enquiry_vehicle_url'  => __( 'Vehicle URL', 'tenku-child' ),
+		'enquiry_vehicle_name' => __( 'Fleet name', 'tenku-child' ),
+		'enquiry_vehicle_url'  => __( 'Fleet URL', 'tenku-child' ),
 		'enquiry_message'      => __( 'WhatsApp message', 'tenku-child' ),
 		'enquiry_source'       => __( 'Source', 'tenku-child' ),
 		'enquiry_page_url'     => __( 'Page URL', 'tenku-child' ),
@@ -408,10 +462,65 @@ function vip_transits_render_enquiry_meta_box( $post ) {
 			printf( '<a href="%1$s">%2$s</a>', esc_url( $value ), esc_html( $value ) );
 		} elseif ( 'enquiry_message' === $key ) {
 			echo '<textarea readonly rows="6" class="large-text">' . esc_textarea( $value ) . '</textarea>';
+		} elseif ( 'enquiry_source' === $key ) {
+			echo esc_html( vip_transits_enquiry_admin_empty_label( vip_transits_enquiry_source_label( $value ) ) );
 		} else {
-			echo esc_html( $value ? $value : '—' );
+			echo esc_html( vip_transits_enquiry_admin_empty_label( $value ) );
 		}
 		echo '</td></tr>';
 	}
 	echo '</tbody></table>';
 }
+
+/**
+ * Internal admin remark (not shown on the front end).
+ *
+ * @param WP_Post $post Post.
+ */
+function vip_transits_render_enquiry_remark_meta_box( $post ) {
+	wp_nonce_field( 'vip_enquiry_remark_save', 'vip_enquiry_remark_nonce' );
+	$remark = (string) get_post_meta( $post->ID, 'enquiry_admin_remark', true );
+	?>
+	<p class="description">
+		<?php esc_html_e( 'Internal notes for your team only. Shown in the enquiries list after Date.', 'tenku-child' ); ?>
+	</p>
+	<textarea
+		id="vip-enquiry-admin-remark"
+		name="enquiry_admin_remark"
+		class="large-text"
+		rows="5"
+		placeholder="<?php esc_attr_e( 'e.g. Called back, booked for Friday, waiting on deposit...', 'tenku-child' ); ?>"
+	><?php echo esc_textarea( $remark ); ?></textarea>
+	<?php
+}
+
+/**
+ * Save internal enquiry remark.
+ *
+ * @param int $post_id Post ID.
+ */
+function vip_transits_save_enquiry_admin_remark( $post_id ) {
+	if ( ! isset( $_POST['vip_enquiry_remark_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( (string) $_POST['vip_enquiry_remark_nonce'] ) ), 'vip_enquiry_remark_save' ) ) {
+		return;
+	}
+
+	if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
+		return;
+	}
+
+	if ( ! current_user_can( 'edit_post', $post_id ) ) {
+		return;
+	}
+
+	if ( get_post_type( $post_id ) !== 'vip_enquiry' ) {
+		return;
+	}
+
+	if ( ! isset( $_POST['enquiry_admin_remark'] ) ) {
+		return;
+	}
+
+	$remark = sanitize_textarea_field( wp_unslash( (string) $_POST['enquiry_admin_remark'] ) );
+	update_post_meta( $post_id, 'enquiry_admin_remark', $remark );
+}
+add_action( 'save_post_vip_enquiry', 'vip_transits_save_enquiry_admin_remark' );

@@ -14,8 +14,8 @@
 }
 
 .vip-border-section--surface {
-	background: #f7f7f7;
-	padding: clamp(1.5rem, 3vw, 2rem) 0;
+	background: #f9f9f9;
+	padding: clamp(1rem, 3vw, 2rem) 0;
 }
 
 .vip-border-section__frame {

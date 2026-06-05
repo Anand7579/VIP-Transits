@@ -17,7 +17,6 @@ if ( empty( $data['id'] ) ) {
 $brand_slugs     = implode( ' ', array_map( 'sanitize_html_class', $data['brands'] ) );
 $seat_slugs      = implode( ' ', array_map( 'sanitize_html_class', $data['seat_terms'] ) );
 $category_slugs  = ! empty( $data['categories'] ) ? implode( ' ', array_map( 'sanitize_html_class', $data['categories'] ) ) : '';
-$role_slugs      = ! empty( $data['occasion_roles'] ) ? implode( ' ', array_map( 'sanitize_html_class', $data['occasion_roles'] ) ) : '';
 $occasion_slugs  = ! empty( $data['occasions'] ) ? implode( ' ', array_map( 'sanitize_html_class', $data['occasions'] ) ) : '';
 $link_target     = function_exists( 'vip_transits_link_target_attr' ) ? vip_transits_link_target_attr() : '';
 
@@ -34,7 +33,6 @@ $color_hex = $data['color_hex'] ? $data['color_hex'] : '#cccccc';
 	data-brands="<?php echo esc_attr( $brand_slugs ); ?>"
 	data-seats="<?php echo esc_attr( $seat_slugs ); ?>"
 	data-categories="<?php echo esc_attr( $category_slugs ); ?>"
-	data-roles="<?php echo esc_attr( $role_slugs ); ?>"
 	data-occasions="<?php echo esc_attr( $occasion_slugs ); ?>"
 	data-price="<?php echo esc_attr( (string) $data['daily_price'] ); ?>"
 	data-delivery="<?php echo ! empty( $data['delivery'] ) ? '1' : '0'; ?>"

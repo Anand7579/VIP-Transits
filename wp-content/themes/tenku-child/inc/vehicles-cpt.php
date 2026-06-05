@@ -85,27 +85,10 @@ function vip_transits_register_vehicle_cpt() {
 				'singular_name' => __( 'Occasion', 'tenku-child' ),
 				'add_new_item'  => __( 'Add occasion', 'tenku-child' ),
 			),
-			'hierarchical'      => false,
+			'hierarchical'      => true,
 			'public'            => true,
 			'show_admin_column' => true,
 			'rewrite'           => array( 'slug' => 'vehicle-occasion' ),
-			'show_in_rest'      => true,
-		)
-	);
-
-	register_taxonomy(
-		'vehicle_occasion_role',
-		'vip_vehicle',
-		array(
-			'labels'            => array(
-				'name'          => __( 'Occasion roles', 'tenku-child' ),
-				'singular_name' => __( 'Occasion role', 'tenku-child' ),
-				'add_new_item'  => __( 'Add occasion role', 'tenku-child' ),
-			),
-			'hierarchical'      => false,
-			'public'            => true,
-			'show_admin_column' => true,
-			'rewrite'           => array( 'slug' => 'vehicle-occasion-role' ),
 			'show_in_rest'      => true,
 		)
 	);
@@ -273,29 +256,6 @@ function vip_transits_register_default_category_terms() {
 add_action( 'init', 'vip_transits_register_default_category_terms', 12 );
 
 /**
- * Default occasion role terms (wedding fleet filter).
- */
-function vip_transits_register_default_occasion_role_terms() {
-	if ( ! taxonomy_exists( 'vehicle_occasion_role' ) ) {
-		return;
-	}
-
-	$defaults = array(
-		'bridal-car'         => __( 'Bridal car', 'tenku-child' ),
-		'groom-escort'       => __( 'Groom / escort', 'tenku-child' ),
-		'guest-suv'          => __( 'Guest SUV', 'tenku-child' ),
-		'entourage-convoy' => __( 'Entourage convoy', 'tenku-child' ),
-	);
-
-	foreach ( $defaults as $slug => $name ) {
-		if ( ! term_exists( $slug, 'vehicle_occasion_role' ) ) {
-			wp_insert_term( $name, 'vehicle_occasion_role', array( 'slug' => $slug ) );
-		}
-	}
-}
-add_action( 'init', 'vip_transits_register_default_occasion_role_terms', 12 );
-
-/**
  * Sync vehicle_occasion taxonomy terms from published occasion pages.
  */
 function vip_transits_sync_vehicle_occasion_terms() {
@@ -373,23 +333,6 @@ function vip_transits_get_fleet_occasion_terms() {
 	}
 
 	return $terms;
-}
-
-/**
- * Ordered occasion role terms for fleet filters.
- *
- * @return WP_Term[]
- */
-function vip_transits_get_fleet_occasion_role_terms() {
-	return vip_transits_get_ordered_terms(
-		'vehicle_occasion_role',
-		array(
-			'bridal-car',
-			'groom-escort',
-			'guest-suv',
-			'entourage-convoy',
-		)
-	);
 }
 
 /**
@@ -671,6 +614,10 @@ function vip_transits_get_acf_option_field( $field_name ) {
  * @return bool
  */
 function vip_transits_fleet_archive_show_banner() {
+	if ( function_exists( 'vip_transits_fleet_archive_banner_enabled' ) ) {
+		return vip_transits_fleet_archive_banner_enabled();
+	}
+
 	$show = (string) vip_transits_get_acf_option_field( 'feleet_archive_banner' );
 	return in_array( strtolower( $show ), array( 'yes', 'y', '1' ), true );
 }
@@ -683,6 +630,10 @@ function vip_transits_fleet_archive_show_banner() {
  * @return string
  */
 function vip_transits_get_fleet_archive_banner_description() {
+	if ( function_exists( 'vip_transits_get_fleet_archive_banner_description_option' ) ) {
+		return trim( vip_transits_get_fleet_archive_banner_description_option() );
+	}
+
 	$value = vip_transits_get_acf_option_field( 'feet_archive_description' );
 	return trim( (string) ( null !== $value ? $value : '' ) );
 }
@@ -967,7 +918,6 @@ function vip_transits_get_vehicle_card_data( $post_id = 0 ) {
 	$brands     = wp_get_post_terms( $post_id, 'vehicle_brand', array( 'fields' => 'slugs' ) );
 	$seats      = wp_get_post_terms( $post_id, 'vehicle_seat', array( 'fields' => 'slugs' ) );
 	$categories = wp_get_post_terms( $post_id, 'vehicle_category', array( 'fields' => 'slugs' ) );
-	$roles      = wp_get_post_terms( $post_id, 'vehicle_occasion_role', array( 'fields' => 'slugs' ) );
 	$occasions  = wp_get_post_terms( $post_id, 'vehicle_occasion', array( 'fields' => 'slugs' ) );
 
 	if ( is_wp_error( $brands ) ) {
@@ -979,17 +929,8 @@ function vip_transits_get_vehicle_card_data( $post_id = 0 ) {
 	if ( is_wp_error( $categories ) ) {
 		$categories = array();
 	}
-	if ( is_wp_error( $roles ) ) {
-		$roles = array();
-	}
 	if ( is_wp_error( $occasions ) ) {
 		$occasions = array();
-	}
-
-	$role_terms = wp_get_post_terms( $post_id, 'vehicle_occasion_role' );
-	$role_name  = '';
-	if ( ! is_wp_error( $role_terms ) && ! empty( $role_terms ) ) {
-		$role_name = $role_terms[0]->name;
 	}
 
 	$price = vip_transits_vehicle_daily_price( $post_id );
@@ -1023,8 +964,6 @@ function vip_transits_get_vehicle_card_data( $post_id = 0 ) {
 		'brands'         => $brands,
 		'seat_terms'     => $seats,
 		'categories'     => $categories,
-		'occasion_roles' => $roles,
-		'occasion_role'  => $role_name,
 		'occasions'      => $occasions,
 	);
 }

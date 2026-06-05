@@ -101,7 +101,8 @@
 }
 
 .vip-page .vip-border-section--map {
-	padding-bottom: clamp(2rem, 4vw, 3rem);
+	padding-bottom: clamp(2rem, 4vw, 2rem);
+	padding-top: 3.5rem;
 }
 
 .vip-page__section-title {
@@ -257,7 +258,7 @@
 .vip-page__btn--whatsapp {
 	width: 100%;
 	max-width: 20rem;
-	margin-top: 1.5rem;
+	margin-top: 0;
 	background: #25d366;
 	color: #fff;
 	border: none;
@@ -273,7 +274,7 @@
 	display: grid;
 	grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
 	gap: clamp(2rem, 5vw, 4rem);
-	align-items: start;
+	align-items: stretch;
 }
 
 .vip-page__contact-form-col {
@@ -282,14 +283,34 @@
 	border: 1px solid var(--vip-page-line);
 }
 
+/* Stretch to full form column height so sticky aside can pin until the section ends. */
+.vip-page__contact-aside-wrap {
+	align-self: stretch;
+	min-width: 0;
+	min-height: 0;
+	overflow: visible;
+}
+
 .vip-page__contact-aside {
 	position: sticky;
 	top: clamp(1rem, 3vw, 1.5rem);
-	align-self: start;
-	max-height: calc(100vh - clamp(2rem, 5vw, 3rem));
+	overflow: visible;
 	padding: clamp(0.5rem, 2vw, 1rem) 0;
-	overflow-y: auto;
-	-webkit-overflow-scrolling: touch;
+}
+
+body.admin-bar .vip-page__contact-aside {
+	top: calc(clamp(1rem, 3vw, 1.5rem) + 32px);
+}
+
+@media screen and (max-width: 782px) {
+	body.admin-bar .vip-page__contact-aside {
+		top: calc(clamp(1rem, 3vw, 1.5rem) + 46px);
+	}
+}
+
+.vip-page--contact .vip-page__contact-grid,
+.vip-page--contact .vip-contact-form-section {
+	overflow: visible;
 }
 
 .vip-page__contact-list {
@@ -475,6 +496,235 @@ a.vip-page__contact-value:focus-visible {
 	font-size: 0.9375rem;
 }
 
+/* Contact page — section title + divider (fleet / occasion pattern) */
+.vip-page--contact .vip-fleet__title {
+	margin: 0 0 0.5rem;
+	font-family: var(--vip-page-font);
+	font-weight: 500;
+	font-size: 32px;
+	line-height: 1;
+	letter-spacing: 0;
+	color: var(--vip-page-text);
+}
+
+.vip-page--contact .vip-fleet__rule {
+	margin: 0 0 var(--vip-section-gap, 50px);
+	border: 0;
+	border-top: 3px solid #000;
+}
+
+.vip-page--contact .vip-contact-form-section {
+	position: relative;
+}
+
+/* Contact page — homepage vip-cta black band */
+.vip-page--contact .vip-cta {
+	--vip-cta-font: var(--vip-page-font);
+	background: #000;
+	color: #fff;
+	padding: 45px 0;
+	font-family: var(--vip-cta-font);
+	border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.vip-page--contact .vip-cta__container.vip-content-container {
+	max-width: var(--vip-content-max, 1440px);
+}
+
+.vip-page--contact .vip-cta__inner {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: clamp(1.5rem, 4vw, 3rem);
+}
+
+.vip-page--contact .vip-cta__copy {
+	flex: 1 1 280px;
+	max-width: 42rem;
+	min-width: 0;
+}
+
+.vip-page--contact .vip-cta__heading {
+	margin: 0 0 0.65rem;
+	font-family: inherit;
+	font-weight: 500;
+	font-size: 36px;
+	line-height: 24px;
+	letter-spacing: -0.01em;
+	color: #fff;
+}
+
+.vip-page--contact .vip-cta__text {
+	margin: 0;
+	font-family: inherit;
+	font-weight: 400;
+	font-size: 16px;
+	line-height: 16px;
+	letter-spacing: -0.01em;
+	color: #fff;
+}
+
+.vip-page--contact .vip-cta__wa {
+	display: inline-flex;
+	flex-shrink: 0;
+	align-items: stretch;
+	text-decoration: none;
+	border-radius: 0;
+	overflow: hidden;
+}
+
+.vip-page--contact .vip-cta__wa-label {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 52px;
+	padding: 0 clamp(1.25rem, 2.5vw, 1.75rem);
+	background: #f5f5f5;
+	color: #000;
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+	font-size: 12px;
+	font-weight: 600;
+	line-height: 12px;
+	letter-spacing: -0.01em;
+	text-transform: uppercase;
+	white-space: nowrap;
+}
+
+.vip-page--contact .vip-cta__wa-icon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex: 0 0 52px;
+	width: 52px;
+	min-height: 52px;
+	background: #25d366;
+}
+
+.vip-page--contact .vip-cta__wa-icon svg {
+	display: block;
+	width: 26px;
+	height: 26px;
+}
+
+.vip-page--contact .vip-cta__wa:hover .vip-cta__wa-label,
+.vip-page--contact .vip-cta__wa:focus-visible .vip-cta__wa-label {
+	background: #e8e8e8;
+}
+
+.vip-page--contact .vip-cta__wa:hover .vip-cta__wa-icon,
+.vip-page--contact .vip-cta__wa:focus-visible .vip-cta__wa-icon {
+	background: #20bd5a;
+}
+
+/* Contact page — key takeaways */
+.vip-page--contact .vip-contact-takeaways {
+	margin: 0;
+}
+
+.vip-page--contact .vip-contact-takeaways__grid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: clamp(1rem, 2vw, 1.25rem);
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.vip-page--contact .vip-contact-takeaways__item {
+	display: flex;
+	gap: 0.85rem;
+	align-items: flex-start;
+	padding: clamp(1.25rem, 2.5vw, 1.5rem);
+	background: #fff;
+	border: 1px solid var(--vip-page-line);
+}
+
+.vip-page--contact .vip-contact-takeaways__icon {
+	flex: 0 0 1.5rem;
+	width: 1.5rem;
+	height: 1.5rem;
+	margin-top: 0.15rem;
+	color: var(--vip-page-text);
+}
+
+.vip-page--contact .vip-contact-takeaways__text {
+	margin: 0;
+	font-family: var(--vip-page-font);
+	font-size: 1rem;
+	line-height: 1.55;
+	letter-spacing: -0.01em;
+}
+
+.vip-page--contact .vip-contact-takeaways__summary {
+	margin: clamp(1.5rem, 3vw, 2rem) 0 0;
+	max-width: 52rem;
+	font-family: var(--vip-page-font);
+	font-size: 1rem;
+	line-height: 1.65;
+	color: var(--vip-page-muted);
+}
+
+/* Contact page — how to contact VIP */
+.vip-page--contact .vip-contact-how {
+	margin: 0;
+	padding: clamp(2.5rem, 5vw, 3.5rem) 0;
+	padding-top: 1.5rem;
+}
+
+.vip-page--contact .vip-contact-how__steps {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: clamp(1.5rem, 3vw, 2.5rem);
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.vip-page--contact .vip-contact-how__item {
+	display: flex;
+	flex-direction: column;
+	gap: 0.85rem;
+	margin: 0;
+	padding: clamp(1.5rem, 3vw, 2rem);
+	background: #fff;
+	border: 1px solid var(--vip-page-line);
+}
+
+.vip-page--contact .vip-contact-how__number {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 2.75rem;
+	height: 2.75rem;
+	font-family: var(--vip-page-font);
+	font-size: 1.125rem;
+	font-weight: 500;
+	line-height: 1;
+	color: #fff;
+	background: var(--vip-page-text);
+}
+
+.vip-page--contact .vip-contact-how__item-title {
+	margin: 0;
+	font-family: var(--vip-page-font);
+	font-size: 1.125rem;
+	font-weight: 500;
+	line-height: 1.3;
+}
+
+.vip-page--contact .vip-contact-how__item-title::before {
+	content: none;
+}
+
+.vip-page--contact .vip-contact-how__item-text {
+	margin: 0;
+	font-family: var(--vip-page-font);
+	font-size: 0.9375rem;
+	line-height: 1.6;
+	color: var(--vip-page-muted);
+}
+
 /* Map */
 .vip-page__map-embed {
 	position: relative;
@@ -496,15 +746,31 @@ a.vip-page__contact-value:focus-visible {
 
 @media (max-width: 900px) {
 	.vip-page__intro-grid,
-	.vip-page__contact-grid {
+	.vip-page__contact-grid,
+	.vip-page--contact .vip-contact-how__steps {
 		grid-template-columns: 1fr;
+	}
+
+	.vip-page--contact .vip-contact-takeaways__grid {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.vip-page--contact .vip-cta__inner {
+		flex-direction: column;
+		align-items: flex-start;
+	}
+
+	.vip-page--contact .vip-cta__copy {
+		max-width: none;
+	}
+
+	.vip-page--contact .vip-cta__wa {
+		width: 100%;
+		max-width: 22rem;
 	}
 
 	.vip-page__contact-aside {
 		position: static;
-		top: auto;
-		max-height: none;
-		overflow-y: visible;
 	}
 
 	.vip-page__intro-media {

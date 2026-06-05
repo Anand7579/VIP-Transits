@@ -29,7 +29,7 @@
                     "label": "Intro text",
                     "name": "content",
                     "type": "wysiwyg",
-                    "instructions": "Shown beside the hero image. Page title is used as the main H1.",
+                    "instructions": "Shown in the black masthead under the title (fallback when Page Banner → Description is empty).",
                     "tabs": "visual",
                     "toolbar": "basic",
                     "media_upload": 0,

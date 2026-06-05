@@ -10,6 +10,33 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
+ * Disable Jetpack Share + Like buttons on single blog posts.
+ *
+ * Article content runs through `the_content`, which Jetpack hooks at priority 19/30.
+ */
+function vip_transits_disable_jetpack_sharing_on_articles( $show, $post ) {
+	if ( is_singular( 'post' ) && $post instanceof WP_Post && 'post' === $post->post_type ) {
+		return false;
+	}
+
+	return $show;
+}
+add_filter( 'sharing_show', 'vip_transits_disable_jetpack_sharing_on_articles', 10, 2 );
+
+/**
+ * @param bool $enabled Whether Jetpack likes are enabled for the current view.
+ * @return bool
+ */
+function vip_transits_disable_jetpack_likes_on_articles( $enabled ) {
+	if ( is_singular( 'post' ) ) {
+		return false;
+	}
+
+	return $enabled;
+}
+add_filter( 'wpl_is_likes_visible', 'vip_transits_disable_jetpack_likes_on_articles' );
+
+/**
  * Default query args for article listings.
  *
  * @param array $overrides WP_Query overrides.

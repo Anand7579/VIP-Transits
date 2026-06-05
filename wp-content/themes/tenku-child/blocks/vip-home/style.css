@@ -22,7 +22,7 @@
  /* —— Hero (Figma: transparent header, video/image, search) —— */
  .vip-hero {
 	 --vip-hero-font: "Newsreader", "Times New Roman", Georgia, serif;
-	 --vip-hero-min-h: clamp(500px, 72vh, 680px);
+	 --vip-hero-min-h: 450px;
 	 position: relative;
 	 min-height: var(--vip-hero-min-h);
 	 color: #fff;
@@ -445,7 +445,7 @@
  /* FAQ */
  .vip-faq {
 	 background: #f9f9f9;
-	 padding: clamp(2.5rem, 5vw, 4rem) 0;
+	 padding: clamp(2.5rem, 5vw, 1.5rem) 0;
 	 color: #0a0c0f;
 	 font-family: var(--vip-hero-font, "Newsreader", "Times New Roman", Georgia, serif);
 	 /* Isolate layout so height changes don’t repaint the whole page */
@@ -778,7 +778,7 @@
 	 --vip-occ-gap: clamp(1.125rem, 2vw, 1.75rem);
 	 background: var(--vip-occ-bg);
 	 color: var(--vip-occ-ink);
-	 padding: clamp(2.75rem, 5vw, 4.5rem) 0;
+	 padding: clamp(2.75rem, 5vw, 3.5rem) 0;
  }
  
  .vip-occasions__container {
@@ -1209,7 +1209,7 @@
 	 width: 100%;
 	 background: #f9f9f9;
 	 color: var(--vip-why-ink);
-	 padding: clamp(2.75rem, 5vw, 4.5rem) 0;
+	 padding: clamp(2.75rem, 5vw, 3.5rem) 0;
 	 font-family: var(--vip-why-font);
  }
  
@@ -1434,7 +1434,7 @@
 	 width: 100%;
 	 background: var(--vip-delivery-bg);
 	 color: var(--vip-delivery-title-color);
-	 padding: clamp(3rem, 5.5vw, 4.75rem) 0;
+	 padding: clamp(2.50rem, 5vw, 3.50rem) 0;
 	 font-family: var(--vip-delivery-font);
  }
  

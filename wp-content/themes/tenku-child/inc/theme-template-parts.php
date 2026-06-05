@@ -294,8 +294,9 @@ function vip_transits_restore_page_contact_template() {
 
 	$theme_slug = get_stylesheet();
 	$pairs      = array(
-		'page-contact'       => 'page-contact.html',
-		'page-contact-clean' => 'page-contact-clean.html',
+		'page-contact'         => 'page-contact.html',
+		'page-contact-clean'   => 'page-contact-clean.html',
+		'page-contact-content' => 'page-contact-content.html',
 	);
 
 	foreach ( $pairs as $slug => $filename ) {
@@ -344,6 +345,7 @@ function vip_transits_ensure_vip_page_templates_footer() {
 		'page-about',
 		'page-contact',
 		'page-contact-clean',
+		'page-contact-content',
 		'page-occasion',
 		'single-vip_occasion',
 	);
@@ -360,7 +362,7 @@ function vip_transits_ensure_vip_page_templates_footer() {
 			continue;
 		}
 
-		$tag_name     = in_array( $template_slug, array( 'page-contact', 'page-contact-clean' ), true ) ? 'div' : 'footer';
+		$tag_name     = in_array( $template_slug, array( 'page-contact', 'page-contact-clean', 'page-contact-content' ), true ) ? 'div' : 'footer';
 		$footer_block = '<!-- wp:template-part {"slug":"footer","theme":"tenku-child","tagName":"' . $tag_name . '"} /-->';
 
 		if ( ! str_contains( $content, '"slug":"footer"' ) ) {

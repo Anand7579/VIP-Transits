@@ -23,6 +23,12 @@ define( 'VIP_TRANSITS_INSTAGRAM_URL_OPTION', 'vip_transits_instagram_url' );
 /** @var string Open site links in a new browser tab (1 = on, 0 = off). */
 define( 'VIP_TRANSITS_OPEN_LINKS_NEW_TAB_OPTION', 'vip_transits_open_links_new_tab' );
 
+/** @var string Show black banner on /fleet/ archive (1 = on, 0 = off). */
+define( 'VIP_TRANSITS_FLEET_ARCHIVE_BANNER_OPTION', 'vip_transits_fleet_archive_banner' );
+
+/** @var string Fleet archive banner HTML (title + subtitle). */
+define( 'VIP_TRANSITS_FLEET_ARCHIVE_DESCRIPTION_OPTION', 'vip_transits_fleet_archive_description' );
+
 /**
  * Register settings page under Settings.
  */
@@ -131,6 +137,55 @@ function vip_transits_register_whatsapp_settings() {
 			'label_for' => 'vip_transits_instagram_url',
 		)
 	);
+
+	register_setting(
+		'vip_transits_settings',
+		VIP_TRANSITS_FLEET_ARCHIVE_BANNER_OPTION,
+		array(
+			'type'              => 'string',
+			'sanitize_callback' => 'vip_transits_sanitize_fleet_archive_banner',
+			'default'           => '0',
+		)
+	);
+
+	register_setting(
+		'vip_transits_settings',
+		VIP_TRANSITS_FLEET_ARCHIVE_DESCRIPTION_OPTION,
+		array(
+			'type'              => 'string',
+			'sanitize_callback' => 'vip_transits_sanitize_fleet_archive_description',
+			'default'           => '',
+		)
+	);
+
+	add_settings_section(
+		'vip_transits_fleet_section',
+		__( 'Fleet archive', 'tenku-child' ),
+		'vip_transits_fleet_section_cb',
+		'vip-transits-settings'
+	);
+
+	add_settings_field(
+		VIP_TRANSITS_FLEET_ARCHIVE_BANNER_OPTION,
+		__( 'Show banner', 'tenku-child' ),
+		'vip_transits_fleet_archive_banner_field_cb',
+		'vip-transits-settings',
+		'vip_transits_fleet_section',
+		array(
+			'label_for' => 'vip_transits_fleet_archive_banner',
+		)
+	);
+
+	add_settings_field(
+		VIP_TRANSITS_FLEET_ARCHIVE_DESCRIPTION_OPTION,
+		__( 'Banner content', 'tenku-child' ),
+		'vip_transits_fleet_archive_description_field_cb',
+		'vip-transits-settings',
+		'vip_transits_fleet_section',
+		array(
+			'label_for' => 'vip_transits_fleet_archive_description',
+		)
+	);
 }
 add_action( 'admin_init', 'vip_transits_register_whatsapp_settings' );
 
@@ -195,6 +250,108 @@ function vip_transits_whatsapp_number_field_cb() {
 		<?php esc_html_e( 'International format without + or spaces (e.g. 971501234567 for UAE).', 'tenku-child' ); ?>
 	</p>
 	<?php
+}
+
+/**
+ * @param mixed $value Submitted value.
+ * @return string '1' or '0'.
+ */
+function vip_transits_sanitize_fleet_archive_banner( $value ) {
+	return ! empty( $value ) && '0' !== (string) $value ? '1' : '0';
+}
+
+/**
+ * @param mixed $value Submitted value.
+ * @return string
+ */
+function vip_transits_sanitize_fleet_archive_description( $value ) {
+	return wp_kses_post( (string) $value );
+}
+
+/**
+ * Fleet archive section description.
+ */
+function vip_transits_fleet_section_cb() {
+	echo '<p>' . esc_html__( 'Black masthead at the top of the vehicle fleet listing (/fleet/).', 'tenku-child' ) . '</p>';
+}
+
+/**
+ * Fleet archive banner toggle.
+ */
+function vip_transits_fleet_archive_banner_field_cb() {
+	$enabled = vip_transits_fleet_archive_banner_enabled();
+	?>
+	<input type="hidden" name="<?php echo esc_attr( VIP_TRANSITS_FLEET_ARCHIVE_BANNER_OPTION ); ?>" value="0" />
+	<label for="vip_transits_fleet_archive_banner">
+		<input
+			type="checkbox"
+			name="<?php echo esc_attr( VIP_TRANSITS_FLEET_ARCHIVE_BANNER_OPTION ); ?>"
+			id="vip_transits_fleet_archive_banner"
+			value="1"
+			<?php checked( $enabled ); ?>
+		/>
+		<?php esc_html_e( 'Show black banner on the fleet archive page', 'tenku-child' ); ?>
+	</label>
+	<?php
+}
+
+/**
+ * Fleet archive banner WYSIWYG-style HTML (title + subtitle).
+ */
+function vip_transits_fleet_archive_description_field_cb() {
+	$value = vip_transits_get_fleet_archive_banner_description_option();
+	?>
+	<textarea
+		id="vip_transits_fleet_archive_description"
+		name="<?php echo esc_attr( VIP_TRANSITS_FLEET_ARCHIVE_DESCRIPTION_OPTION ); ?>"
+		class="large-text code"
+		rows="8"
+	><?php echo esc_textarea( $value ); ?></textarea>
+	<p class="description">
+		<?php
+		esc_html_e(
+			'Use HTML: H1 for the main heading (e.g. Our Fleet) and a paragraph for the subtitle. Example:',
+			'tenku-child'
+		);
+		?>
+		<br />
+		<code>&lt;h1&gt;Our Fleet&lt;/h1&gt;&lt;p&gt;Browse supercars, Rolls-Royce, and SUVs — delivered free across Dubai.&lt;/p&gt;</code>
+	</p>
+	<?php
+}
+
+/**
+ * @return bool
+ */
+function vip_transits_fleet_archive_banner_enabled() {
+	if ( get_option( VIP_TRANSITS_FLEET_ARCHIVE_BANNER_OPTION, null ) !== null ) {
+		return get_option( VIP_TRANSITS_FLEET_ARCHIVE_BANNER_OPTION, '0' ) === '1';
+	}
+
+	if ( function_exists( 'vip_transits_get_acf_option_field' ) ) {
+		$show = strtolower( (string) vip_transits_get_acf_option_field( 'feleet_archive_banner' ) );
+		return in_array( $show, array( 'yes', 'y', '1' ), true );
+	}
+
+	return false;
+}
+
+/**
+ * Banner HTML stored in VIP Transits settings (falls back to legacy ACF options).
+ *
+ * @return string
+ */
+function vip_transits_get_fleet_archive_banner_description_option() {
+	$value = get_option( VIP_TRANSITS_FLEET_ARCHIVE_DESCRIPTION_OPTION, null );
+	if ( is_string( $value ) ) {
+		return $value;
+	}
+
+	if ( function_exists( 'vip_transits_get_acf_option_field' ) ) {
+		return trim( (string) vip_transits_get_acf_option_field( 'feet_archive_description' ) );
+	}
+
+	return '';
 }
 
 /**
@@ -305,6 +462,11 @@ function vip_transits_add_link_targets_to_html( $html ) {
 		static function ( $matches ) {
 			$href = (string) $matches[3];
 			if ( preg_match( '/^(#|mailto:|tel:|javascript:)/i', $href ) ) {
+				return $matches[0];
+			}
+
+			$attrs = $matches[1] . $matches[4];
+			if ( preg_match( '/\bvip-article__back\b/i', $attrs ) ) {
 				return $matches[0];
 			}
 

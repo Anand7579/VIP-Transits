@@ -78,6 +78,7 @@
             "type": "repeater",
             "layout": "table",
             "button_label": "Add line",
+            "instructions": "Add phone, email, address, website (URL type), service area (Text), and any other lines. Operating hours can use the block below or a line here.",
             "sub_fields": [
                 {
                     "key": "field_vipcontact_detail_type",
@@ -88,6 +89,7 @@
                         "phone": "Phone",
                         "email": "Email",
                         "address": "Address",
+                        "url": "URL",
                         "text": "Other"
                     },
                     "default_value": "text",
@@ -125,6 +127,7 @@
             "type": "repeater",
             "layout": "table",
             "button_label": "Add row",
+            "instructions": "Shown in the right column under contact lines (e.g. Mon – Sun / 9:00 AM – 10:00 PM GST).",
             "sub_fields": [
                 {
                     "key": "field_vipcontact_hours_day",
@@ -141,6 +144,83 @@
                     "type": "text",
                     "placeholder": "24 \/ 7",
                     "parent": "field_vipcontact_hours"
+                }
+            ]
+        },
+        {
+            "key": "field_vipcontact_tab_takeaways",
+            "label": "Key takeaways",
+            "name": "",
+            "type": "tab",
+            "placement": "top"
+        },
+        {
+            "key": "field_vipcontact_takeaways_heading",
+            "label": "Heading",
+            "name": "contact_takeaways_heading",
+            "type": "text",
+            "default_value": "Key Takeaways"
+        },
+        {
+            "key": "field_vipcontact_takeaways_items",
+            "label": "Bullet points",
+            "name": "contact_takeaways_items",
+            "type": "repeater",
+            "layout": "table",
+            "button_label": "Add point",
+            "sub_fields": [
+                {
+                    "key": "field_vipcontact_takeaways_text",
+                    "label": "Text",
+                    "name": "text",
+                    "type": "text",
+                    "parent": "field_vipcontact_takeaways_items"
+                }
+            ]
+        },
+        {
+            "key": "field_vipcontact_takeaways_summary",
+            "label": "Summary (optional)",
+            "name": "contact_takeaways_summary",
+            "type": "textarea",
+            "rows": 3
+        },
+        {
+            "key": "field_vipcontact_tab_how",
+            "label": "How to contact VIP",
+            "name": "",
+            "type": "tab",
+            "placement": "top"
+        },
+        {
+            "key": "field_vipcontact_how_heading",
+            "label": "Heading",
+            "name": "contact_how_heading",
+            "type": "text",
+            "default_value": "How to Contact VIP Transits"
+        },
+        {
+            "key": "field_vipcontact_how_steps",
+            "label": "Steps",
+            "name": "contact_how_steps",
+            "type": "repeater",
+            "layout": "block",
+            "button_label": "Add step",
+            "sub_fields": [
+                {
+                    "key": "field_vipcontact_how_step_title",
+                    "label": "Step title",
+                    "name": "title",
+                    "type": "text",
+                    "parent": "field_vipcontact_how_steps"
+                },
+                {
+                    "key": "field_vipcontact_how_step_text",
+                    "label": "Step text",
+                    "name": "text",
+                    "type": "textarea",
+                    "rows": 3,
+                    "parent": "field_vipcontact_how_steps"
                 }
             ]
         },
@@ -194,6 +274,23 @@
             ]
         },
         {
+            "key": "field_vipcontact_whatsapp_band_copy",
+            "label": "Band text (optional)",
+            "name": "contact_whatsapp_band_copy",
+            "type": "text",
+            "default_value": "Ready to book? Message us on WhatsApp and we will confirm your car within minutes.",
+            "instructions": "Short line shown beside the WhatsApp button in the black band.",
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_vipcontact_show_whatsapp",
+                        "operator": "==",
+                        "value": "1"
+                    }
+                ]
+            ]
+        },
+        {
             "key": "field_vipcontact_tab_map",
             "label": "Map",
             "name": "",
@@ -224,6 +321,62 @@
                         "value": "1"
                     }
                 ]
+            ]
+        },
+        {
+            "key": "field_vipcontact_tab_faq",
+            "label": "FAQ",
+            "name": "",
+            "type": "tab",
+            "placement": "top"
+        },
+        {
+            "key": "field_vipcontact_faq_heading",
+            "label": "Heading",
+            "name": "contact_faq_heading",
+            "type": "text",
+            "default_value": "Frequently Asked Questions"
+        },
+        {
+            "key": "field_vipcontact_faq_intro",
+            "label": "Intro (optional)",
+            "name": "contact_faq_intro",
+            "type": "textarea",
+            "rows": 2
+        },
+        {
+            "key": "field_vipcontact_faq_image",
+            "label": "Image (optional)",
+            "name": "contact_faq_image",
+            "type": "image",
+            "return_format": "array",
+            "preview_size": "medium"
+        },
+        {
+            "key": "field_vipcontact_faq_items",
+            "label": "Questions",
+            "name": "contact_faq_items",
+            "type": "repeater",
+            "layout": "block",
+            "button_label": "Add question",
+            "sub_fields": [
+                {
+                    "key": "field_vipcontact_faq_q",
+                    "label": "Question",
+                    "name": "question",
+                    "type": "text",
+                    "parent": "field_vipcontact_faq_items"
+                },
+                {
+                    "key": "field_vipcontact_faq_a",
+                    "label": "Answer",
+                    "name": "answer",
+                    "type": "wysiwyg",
+                    "tabs": "visual",
+                    "toolbar": "basic",
+                    "media_upload": 0,
+                    "parent": "field_vipcontact_faq_items"
+                }
             ]
         }
     ],
@@ -265,5 +418,5 @@
     "active": true,
     "description": "Content for the VIP Contact Us page template (Contact Form 7 shortcode in WYSIWYG).",
     "show_in_rest": 1,
-    "modified": 1780472200
+    "modified": 1780518000
 }

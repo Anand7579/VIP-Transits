@@ -93,8 +93,10 @@ $toc      = ! empty( $d['toc'] ) && is_array( $d['toc'] ) ? $d['toc'] : array();
 					</div>
 				<?php endif; ?>
 
-				<footer>
-					<a href="<?php echo esc_url( $blog_url ); ?>"><?php esc_html_e( '← Back to articles', 'tenku-child' ); ?></a>
+				<footer class="vip-article__footer">
+					<a class="vip-article__back" href="<?php echo esc_url( $blog_url ); ?>">
+						<?php esc_html_e( 'Back to articles', 'tenku-child' ); ?>
+					</a>
 				</footer>
 			</div>
 

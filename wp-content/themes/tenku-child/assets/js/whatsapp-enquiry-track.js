@@ -38,8 +38,12 @@
 			source = 'fleet-card';
 		} else if (anchor.classList.contains('vip-vdetail__pricing-wa') || anchor.classList.contains('vip-vdetail__masthead-wa')) {
 			source = 'vehicle-detail';
-		} else if (anchor.classList.contains('vip-whatsapp-sticky__link')) {
+		} else if (anchor.classList.contains('vip-wa-sticky')) {
 			source = 'sticky-widget';
+		} else if (anchor.classList.contains('vip-page__btn--whatsapp')) {
+			source = 'contact-page';
+		} else if (anchor.classList.contains('vip-cta__wa')) {
+			source = 'cta-band';
 		}
 
 		if (card) {

@@ -17,8 +17,9 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 function vip_transits_register_page_templates( $templates ) {
 	$templates['templates/page-about.html']         = __( 'VIP About Us', 'tenku-child' );
-	$templates['templates/page-contact.html']       = __( 'VIP Contact Us', 'tenku-child' );
-	$templates['templates/page-contact-clean.html'] = __( 'VIP Contact Us (Clean)', 'tenku-child' );
+	$templates['templates/page-contact.html']         = __( 'VIP Contact Us', 'tenku-child' );
+	$templates['templates/page-contact-clean.html']   = __( 'VIP Contact Us (Clean)', 'tenku-child' );
+	$templates['templates/page-contact-content.html'] = __( 'VIP Contact Us (Content)', 'tenku-child' );
 	$templates['templates/page-occasion.html'] = __( 'VIP Occasion detail', 'tenku-child' );
 
 	return $templates;
@@ -47,6 +48,12 @@ function vip_transits_page_template_slug_groups() {
 			'templates/page-contact',
 			'templates/page-contact-clean',
 		),
+		'contact_content' => array(
+			'page-contact-content',
+			'page-contact-content.html',
+			'templates/page-contact-content.html',
+			'templates/page-contact-content',
+		),
 		'occasion' => array(
 			'page-occasion',
 			'templates/page-occasion.html',
@@ -56,7 +63,7 @@ function vip_transits_page_template_slug_groups() {
 }
 
 /**
- * @param string $kind about|contact|occasion.
+ * @param string $kind about|contact|contact_content|occasion.
  * @return string[]
  */
 function vip_transits_page_template_slugs_for( $kind ) {
@@ -87,9 +94,10 @@ function vip_transits_page_uses_vip_template( $post_id, $kind ) {
 	}
 
 	$blocks = array(
-		'about'    => 'acf/vip-page-about',
-		'contact'  => 'acf/vip-page-contact',
-		'occasion' => 'acf/vip-occasion-listing',
+		'about'           => 'acf/vip-page-about',
+		'contact'         => 'acf/vip-page-contact',
+		'contact_content' => 'acf/vip-page-contact-content',
+		'occasion'        => 'acf/vip-occasion-listing',
 	);
 
 	if ( ! isset( $blocks[ $kind ] ) ) {
@@ -115,6 +123,61 @@ function vip_transits_is_contact_page( $post_id = 0 ) {
 }
 
 /**
+ * Resolved VIP contact template kind for a page (form vs content brief).
+ *
+ * @param int $post_id Page ID.
+ * @return string contact|contact_content|''
+ */
+function vip_transits_page_resolved_contact_kind( $post_id ) {
+	$post_id = (int) $post_id;
+	if ( $post_id <= 0 ) {
+		return '';
+	}
+
+	if ( vip_transits_page_uses_vip_template( $post_id, 'contact_content' ) ) {
+		return 'contact_content';
+	}
+
+	if ( vip_transits_page_uses_vip_template( $post_id, 'contact' ) ) {
+		return 'contact';
+	}
+
+	return '';
+}
+
+/**
+ * Whether an ACF location rule targets the other VIP Contact field group.
+ *
+ * @param int    $post_id Page ID.
+ * @param string $rule_value Rule value (template slug or block name).
+ * @param string $param      page_template|block.
+ * @return bool
+ */
+function vip_transits_acf_contact_location_conflicts( $post_id, $rule_value, $param ) {
+	$page_kind = vip_transits_page_resolved_contact_kind( $post_id );
+	if ( $page_kind === '' ) {
+		return false;
+	}
+
+	$rule_kind = '';
+	if ( 'page_template' === $param ) {
+		if ( in_array( $rule_value, vip_transits_page_template_slugs_for( 'contact' ), true ) ) {
+			$rule_kind = 'contact';
+		} elseif ( in_array( $rule_value, vip_transits_page_template_slugs_for( 'contact_content' ), true ) ) {
+			$rule_kind = 'contact_content';
+		}
+	} elseif ( 'block' === $param ) {
+		if ( 'acf/vip-page-contact' === $rule_value ) {
+			$rule_kind = 'contact';
+		} elseif ( 'acf/vip-page-contact-content' === $rule_value ) {
+			$rule_kind = 'contact_content';
+		}
+	}
+
+	return $rule_kind !== '' && $rule_kind !== $page_kind;
+}
+
+/**
  * ACF location: match page template across block-theme and classic slug formats.
  *
  * @param bool  $match  Whether the rule matched.
@@ -131,20 +194,33 @@ function vip_transits_acf_match_page_template( $match, $rule, $screen ) {
 		return $match;
 	}
 
-	$wanted = (string) $rule['value'];
-	$actual = (string) get_page_template_slug( (int) $screen['post_id'] );
+	$post_id = (int) $screen['post_id'];
+	$wanted  = (string) $rule['value'];
+	$actual  = (string) get_page_template_slug( $post_id );
 
+	if ( vip_transits_acf_contact_location_conflicts( $post_id, $wanted, 'page_template' ) ) {
+		return false;
+	}
+
+	$alias_match = false;
 	foreach ( vip_transits_page_template_slug_groups() as $aliases ) {
 		if ( in_array( $wanted, $aliases, true ) && in_array( $actual, $aliases, true ) ) {
-			return true;
+			$alias_match = true;
+			break;
 		}
+	}
+
+	if ( $alias_match ) {
+		return true;
 	}
 
 	// Template meta empty but VIP block is in page content (e.g. default template + block only).
 	if ( ! $match && $actual === '' && function_exists( 'has_block' ) ) {
-		$post_id = (int) $screen['post_id'];
 		if ( in_array( $wanted, vip_transits_page_template_slugs_for( 'contact' ), true ) && has_block( 'acf/vip-page-contact', $post_id ) ) {
-			return true;
+			return ! vip_transits_acf_contact_location_conflicts( $post_id, $wanted, 'page_template' );
+		}
+		if ( in_array( $wanted, vip_transits_page_template_slugs_for( 'contact_content' ), true ) && has_block( 'acf/vip-page-contact-content', $post_id ) ) {
+			return ! vip_transits_acf_contact_location_conflicts( $post_id, $wanted, 'page_template' );
 		}
 		if ( in_array( $wanted, vip_transits_page_template_slugs_for( 'about' ), true ) && has_block( 'acf/vip-page-about', $post_id ) ) {
 			return true;
@@ -157,6 +233,32 @@ function vip_transits_acf_match_page_template( $match, $rule, $screen ) {
 	return $match;
 }
 add_filter( 'acf/location/rule_match/page_template', 'vip_transits_acf_match_page_template', 10, 3 );
+
+/**
+ * Keep VIP Contact Us (form) and VIP Contact Us (Content) field groups mutually exclusive.
+ *
+ * @param bool  $match  Whether the rule matched.
+ * @param array $rule   Location rule.
+ * @param array $screen Screen args.
+ * @return bool
+ */
+function vip_transits_acf_match_contact_block_location( $match, $rule, $screen ) {
+	if ( 'block' !== $rule['param'] || '==' !== $rule['operator'] || ! $match ) {
+		return $match;
+	}
+
+	if ( empty( $screen['post_id'] ) ) {
+		return $match;
+	}
+
+	$post_id = (int) $screen['post_id'];
+	if ( vip_transits_acf_contact_location_conflicts( $post_id, (string) $rule['value'], 'block' ) ) {
+		return false;
+	}
+
+	return $match;
+}
+add_filter( 'acf/location/rule_match/block', 'vip_transits_acf_match_contact_block_location', 10, 3 );
 
 /**
  * @return int
@@ -309,6 +411,237 @@ function vip_transits_output_about_faq_schema() {
 	echo '<script type="application/ld+json">' . wp_json_encode( $schema, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES ) . '</script>' . "\n";
 }
 add_action( 'wp_head', 'vip_transits_output_about_faq_schema', 20 );
+
+/**
+ * Brand name for Contact Us (Content) copy ([Brand Name] replacement).
+ *
+ * @param int $post_id Page ID.
+ * @return string
+ */
+function vip_transits_contact_content_brand_name( $post_id = 0 ) {
+	$post_id = (int) ( $post_id ? $post_id : vip_transits_page_content_post_id() );
+	if ( $post_id <= 0 || ! function_exists( 'get_field' ) ) {
+		return get_bloginfo( 'name' );
+	}
+
+	$custom = trim( (string) get_field( 'contact_content_brand_name', $post_id ) );
+	return $custom !== '' ? $custom : get_bloginfo( 'name' );
+}
+
+/**
+ * Replace [Brand Name] placeholders in client brief copy.
+ *
+ * @param string $text  Source text.
+ * @param string $brand Brand display name.
+ * @return string
+ */
+function vip_transits_contact_content_replace_brand( $text, $brand ) {
+	$text  = (string) $text;
+	$brand = trim( (string) $brand );
+	if ( $text === '' || $brand === '' ) {
+		return $text;
+	}
+
+	return str_replace( '[Brand Name]', $brand, $text );
+}
+
+/**
+ * Contact content flexible layout slug → template part suffix.
+ *
+ * @return array<string, string>
+ */
+function vip_transits_contact_content_section_layout_templates() {
+	return array(
+		'hero_intro'         => 'hero-intro',
+		'definition_callout' => 'definition-callout',
+		'key_takeaways'      => 'key-takeaways',
+		'how_to_reach'       => 'how-to-reach',
+		'contact_details'    => 'contact-details',
+		'faq'                => 'faq',
+	);
+}
+
+/**
+ * Render Contact Us (Content) flexible sections.
+ *
+ * @param int  $post_id Page ID.
+ * @param bool $preview Show editor hint when empty.
+ * @return bool True if any section rendered.
+ */
+function vip_transits_render_contact_content_sections( $post_id, $preview = false ) {
+	$post_id = (int) $post_id;
+	if ( $post_id <= 0 || ! function_exists( 'have_rows' ) ) {
+		return false;
+	}
+
+	$layouts  = vip_transits_contact_content_section_layout_templates();
+	$rendered = false;
+
+	if ( have_rows( 'contact_content_sections', $post_id ) ) {
+		while ( have_rows( 'contact_content_sections', $post_id ) ) {
+			the_row();
+			$layout = get_row_layout();
+			if ( ! isset( $layouts[ $layout ] ) ) {
+				continue;
+			}
+			get_template_part( 'template-parts/contact/section', $layouts[ $layout ] );
+			$rendered = true;
+		}
+	}
+
+	if ( ! $rendered && $preview ) {
+		echo '<p class="vip-page vip-page--contact-content-empty">';
+		echo esc_html__( 'Add sections under Page sections → Sections (Hero intro, Definition callout, Key takeaways, How to reach us, Contact details, FAQ).', 'tenku-child' );
+		echo '</p>';
+	}
+
+	return $rendered;
+}
+
+/**
+ * FAQPage schema entities from Contact content FAQ rows.
+ *
+ * @param int $post_id Page ID.
+ * @return array<int, array<string, mixed>>
+ */
+function vip_transits_contact_content_faq_schema_entities( $post_id ) {
+	$post_id = (int) $post_id;
+	if ( $post_id <= 0 || ! function_exists( 'get_field' ) ) {
+		return array();
+	}
+
+	$sections = get_field( 'contact_content_sections', $post_id );
+	if ( ! is_array( $sections ) ) {
+		return array();
+	}
+
+	$entities = array();
+
+	foreach ( $sections as $row ) {
+		if ( ! is_array( $row ) || empty( $row['acf_fc_layout'] ) || 'faq' !== $row['acf_fc_layout'] ) {
+			continue;
+		}
+
+		$faqs = isset( $row['faqs'] ) && is_array( $row['faqs'] ) ? $row['faqs'] : array();
+		foreach ( $faqs as $faq_row ) {
+			if ( ! is_array( $faq_row ) ) {
+				continue;
+			}
+			$question = isset( $faq_row['question'] ) ? trim( (string) $faq_row['question'] ) : '';
+			$answer   = isset( $faq_row['answer'] ) ? trim( wp_strip_all_tags( (string) $faq_row['answer'] ) ) : '';
+			if ( $question === '' || $answer === '' ) {
+				continue;
+			}
+			$entities[] = array(
+				'@type'          => 'Question',
+				'name'           => $question,
+				'acceptedAnswer' => array(
+					'@type' => 'Answer',
+					'text'  => $answer,
+				),
+			);
+		}
+	}
+
+	return $entities;
+}
+
+/**
+ * Output FAQPage JSON-LD on the Contact Us (Content) template.
+ */
+function vip_transits_output_contact_content_faq_schema() {
+	if ( is_admin() || ! is_page() ) {
+		return;
+	}
+
+	$post_id = vip_transits_page_content_post_id();
+	if ( ! $post_id || ! vip_transits_page_uses_vip_template( $post_id, 'contact_content' ) ) {
+		return;
+	}
+
+	$entities = vip_transits_contact_content_faq_schema_entities( $post_id );
+	if ( ! $entities ) {
+		return;
+	}
+
+	$schema = array(
+		'@context'   => 'https://schema.org',
+		'@type'      => 'FAQPage',
+		'mainEntity' => $entities,
+	);
+
+	echo '<script type="application/ld+json">' . wp_json_encode( $schema, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES ) . '</script>' . "\n";
+}
+add_action( 'wp_head', 'vip_transits_output_contact_content_faq_schema', 20 );
+
+/**
+ * FAQPage schema entities from Contact page FAQ rows.
+ *
+ * @param int $post_id Page ID.
+ * @return array<int, array<string, mixed>>
+ */
+function vip_transits_contact_faq_schema_entities( $post_id ) {
+	$post_id = (int) $post_id;
+	if ( $post_id <= 0 || ! function_exists( 'get_field' ) ) {
+		return array();
+	}
+
+	$faqs = get_field( 'contact_faq_items', $post_id );
+	if ( ! is_array( $faqs ) ) {
+		return array();
+	}
+
+	$entities = array();
+
+	foreach ( $faqs as $faq_row ) {
+		if ( ! is_array( $faq_row ) ) {
+			continue;
+		}
+		$question = isset( $faq_row['question'] ) ? trim( (string) $faq_row['question'] ) : '';
+		$answer   = isset( $faq_row['answer'] ) ? trim( wp_strip_all_tags( (string) $faq_row['answer'] ) ) : '';
+		if ( $question === '' || $answer === '' ) {
+			continue;
+		}
+		$entities[] = array(
+			'@type'          => 'Question',
+			'name'           => $question,
+			'acceptedAnswer' => array(
+				'@type' => 'Answer',
+				'text'  => $answer,
+			),
+		);
+	}
+
+	return $entities;
+}
+
+/**
+ * Output FAQPage JSON-LD on the Contact Us template when FAQ rows exist.
+ */
+function vip_transits_output_contact_faq_schema() {
+	if ( is_admin() || ! is_page() ) {
+		return;
+	}
+
+	$post_id = vip_transits_page_content_post_id();
+	if ( ! $post_id || ! vip_transits_page_uses_vip_template( $post_id, 'contact' ) ) {
+		return;
+	}
+
+	$entities = vip_transits_contact_faq_schema_entities( $post_id );
+	if ( ! $entities ) {
+		return;
+	}
+
+	$schema = array(
+		'@context'   => 'https://schema.org',
+		'@type'      => 'FAQPage',
+		'mainEntity' => $entities,
+	);
+
+	echo '<script type="application/ld+json">' . wp_json_encode( $schema, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES ) . '</script>' . "\n";
+}
+add_action( 'wp_head', 'vip_transits_output_contact_faq_schema', 20 );
 
 /**
  * Whether legacy About fields (pre–flexible content) have any data.
@@ -578,16 +911,23 @@ function vip_transits_get_page_banner_description( $post_id = 0 ) {
 	}
 
 	$description = trim( (string) get_field( 'description', $post_id ) );
-	if ( $description !== '' ) {
+	if ( $description !== '' && wp_strip_all_tags( $description ) !== '' ) {
 		return $description;
 	}
 
 	if ( vip_transits_page_uses_vip_template( $post_id, 'about' ) ) {
-		return trim( (string) get_field( 'about_masthead_lead', $post_id ) );
+		$lead = trim( (string) get_field( 'about_masthead_lead', $post_id ) );
+		return $lead;
 	}
 
 	if ( vip_transits_page_uses_vip_template( $post_id, 'contact' ) ) {
-		return trim( (string) get_field( 'contact_masthead_lead', $post_id ) );
+		$lead = trim( (string) get_field( 'contact_masthead_lead', $post_id ) );
+		return $lead;
+	}
+
+	if ( vip_transits_page_uses_vip_template( $post_id, 'contact_content' ) ) {
+		$lead = trim( (string) get_field( 'contact_content_masthead_lead', $post_id ) );
+		return $lead;
 	}
 
 	return '';
@@ -608,6 +948,7 @@ function vip_transits_page_uses_vip_content_block( $post_id = 0 ) {
 	$blocks = array(
 		'acf/vip-page-about',
 		'acf/vip-page-contact',
+		'acf/vip-page-contact-content',
 		'acf/vip-occasion-listing',
 	);
 
@@ -758,6 +1099,25 @@ function vip_transits_register_page_content_blocks() {
 
 	acf_register_block_type(
 		array(
+			'name'            => 'vip-page-contact-content',
+			'title'           => __( 'VIP Contact Us (Content)', 'tenku-child' ),
+			'description'     => __( 'Client SEO content brief: WhatsApp-first contact page (no form).', 'tenku-child' ),
+			'category'        => 'layout',
+			'icon'            => 'phone',
+			'keywords'        => array( 'contact', 'whatsapp', 'seo' ),
+			'render_template' => $dir . '/blocks/vip-page-contact-content/render.php',
+			'enqueue_style'   => $css['style'],
+			'mode'            => 'preview',
+			'supports'        => array(
+				'align'  => array( 'wide', 'full' ),
+				'anchor' => true,
+				'mode'   => false,
+			),
+		)
+	);
+
+	acf_register_block_type(
+		array(
 			'name'            => 'vip-occasion-listing',
 			'title'           => __( 'VIP Occasion detail', 'tenku-child' ),
 			'description'     => __( 'Occasion detail: hero, fleet, FAQ. Use on vip_occasion singles or legacy pages.', 'tenku-child' ),
@@ -837,6 +1197,13 @@ function vip_transits_normalize_contact_detail_href( $link, $type, $value ) {
 
 	if ( 'email' === $type || is_email( $value ) ) {
 		return 'mailto:' . sanitize_email( $value );
+	}
+
+	if ( 'url' === $type ) {
+		if ( preg_match( '#^https?://#i', $value ) ) {
+			return (string) esc_url( $value );
+		}
+		return (string) esc_url( 'https://' . ltrim( $value, '/' ) );
 	}
 
 	return '';
@@ -1206,6 +1573,7 @@ function vip_transits_enqueue_page_content_assets() {
 		if (
 			vip_transits_page_uses_vip_template( $post_id, 'about' )
 			|| vip_transits_page_uses_vip_template( $post_id, 'contact' )
+			|| vip_transits_page_uses_vip_template( $post_id, 'contact_content' )
 			|| vip_transits_page_uses_vip_template( $post_id, 'occasion' )
 			|| vip_transits_page_show_banner( $post_id )
 		) {
@@ -1241,6 +1609,32 @@ function vip_transits_enqueue_page_content_assets() {
 		}
 	}
 
+	if ( $post_id && vip_transits_page_uses_vip_template( $post_id, 'contact_content' ) ) {
+		$about_css = get_stylesheet_directory() . '/assets/css/vip-about.css';
+		if ( file_exists( $about_css ) ) {
+			wp_enqueue_style(
+				'vip-about',
+				get_stylesheet_directory_uri() . '/assets/css/vip-about.css',
+				array( 'vip-pages', 'chld_thm_cfg_child' ),
+				(string) filemtime( $about_css )
+			);
+		}
+
+		$contact_content_css = get_stylesheet_directory() . '/assets/css/vip-contact-content.css';
+		if ( file_exists( $contact_content_css ) ) {
+			wp_enqueue_style(
+				'vip-contact-content',
+				get_stylesheet_directory_uri() . '/assets/css/vip-contact-content.css',
+				array( 'vip-pages', 'vip-about', 'chld_thm_cfg_child' ),
+				(string) filemtime( $contact_content_css )
+			);
+		}
+
+		if ( function_exists( 'vip_transits_enqueue_faq_section_assets' ) ) {
+			vip_transits_enqueue_faq_section_assets();
+		}
+	}
+
 	if ( function_exists( 'vip_transits_is_occasion_detail' ) && vip_transits_is_occasion_detail() ) {
 		if ( function_exists( 'vip_transits_vehicle_single_assets' ) ) {
 			$vd_assets = vip_transits_vehicle_single_assets();
@@ -1262,6 +1656,14 @@ function vip_transits_enqueue_page_content_assets() {
 		&& vip_transits_page_uses_vip_template( $post_id, 'about' )
 		&& function_exists( 'vip_transits_about_page_has_faq_section' )
 		&& vip_transits_about_page_has_faq_section( $post_id )
+		&& function_exists( 'vip_transits_enqueue_faq_section_assets' )
+	) {
+		vip_transits_enqueue_faq_section_assets();
+	}
+
+	if (
+		$post_id
+		&& vip_transits_page_uses_vip_template( $post_id, 'contact' )
 		&& function_exists( 'vip_transits_enqueue_faq_section_assets' )
 	) {
 		vip_transits_enqueue_faq_section_assets();

@@ -104,7 +104,6 @@
 			var categories = root.querySelectorAll('[data-vip-fleet-filter="category"]:checked');
 			var brands = root.querySelectorAll('[data-vip-fleet-filter="brand"]:checked');
 			var seats = root.querySelectorAll('[data-vip-fleet-filter="seat"]:checked');
-			var roles = root.querySelectorAll('[data-vip-fleet-filter="role"]:checked');
 			var delivery = root.querySelector('[data-vip-fleet-filter="delivery"]');
 			var minR = root.querySelector('[data-vip-fleet-price-min]');
 			var maxR = root.querySelector('[data-vip-fleet-price-max]');
@@ -112,25 +111,11 @@
 			var categorySlugs = (card.getAttribute('data-categories') || '').split(/\s+/).filter(Boolean);
 			var brandSlugs = (card.getAttribute('data-brands') || '').split(/\s+/).filter(Boolean);
 			var seatSlugs = (card.getAttribute('data-seats') || '').split(/\s+/).filter(Boolean);
-			var roleSlugs = (card.getAttribute('data-roles') || '').split(/\s+/).filter(Boolean);
 			var price = parseInt(card.getAttribute('data-price') || '0', 10);
 			var deliveryAttr = (card.getAttribute('data-delivery') || '').trim();
 			var hasDelivery = deliveryAttr === '1' || deliveryAttr === 'true';
 
 			var i;
-			if (roles.length) {
-				var roleOk = false;
-				for (i = 0; i < roles.length; i++) {
-					if (roleSlugs.indexOf(roles[i].value) !== -1) {
-						roleOk = true;
-						break;
-					}
-				}
-				if (!roleOk) {
-					return false;
-				}
-			}
-
 			if (categories.length) {
 				var categoryOk = false;
 				for (i = 0; i < categories.length; i++) {
@@ -202,7 +187,7 @@
 		function countActiveFilters() {
 			var count = 0;
 			var checked = root.querySelectorAll(
-				'[data-vip-fleet-filter="category"]:checked, [data-vip-fleet-filter="brand"]:checked, [data-vip-fleet-filter="seat"]:checked, [data-vip-fleet-filter="role"]:checked'
+				'[data-vip-fleet-filter="category"]:checked, [data-vip-fleet-filter="brand"]:checked, [data-vip-fleet-filter="seat"]:checked'
 			);
 			count += checked.length;
 

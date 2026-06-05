@@ -489,25 +489,6 @@ function vip_transits_get_occasion_short_name( $post_id = 0 ) {
 }
 
 /**
- * Label for the occasion-only fleet role filter group.
- *
- * @param int $post_id Occasion post ID.
- * @return string
- */
-function vip_transits_get_occasion_role_filter_label( $post_id = 0 ) {
-	$short = vip_transits_get_occasion_short_name( $post_id );
-	if ( $short === '' ) {
-		return __( 'Car role for occasion', 'tenku-child' );
-	}
-
-	return sprintf(
-		/* translators: %s: occasion short name, e.g. wedding */
-		__( 'Car role for %s', 'tenku-child' ),
-		$short
-	);
-}
-
-/**
  * ACF field helper for the current occasion (CPT or legacy page).
  *
  * @param string $field   Field name.
@@ -526,23 +507,65 @@ function vip_transits_get_occasion_field( $field, $default = null, $post_id = 0 
 }
 
 /**
- * Whether the occasion Page Banner fields should output (show_banner = Yes).
+ * Whether this occasion uses the black masthead + full-width hero image layout.
+ *
+ * @param int $post_id Occasion post ID.
+ * @return bool
+ */
+function vip_transits_occasion_uses_banner_layout( $post_id = 0 ) {
+	$post_id = $post_id ? (int) $post_id : vip_transits_occasion_post_id();
+	if ( $post_id <= 0 ) {
+		return false;
+	}
+
+	if ( 'vip_occasion' === get_post_type( $post_id ) ) {
+		return true;
+	}
+
+	return function_exists( 'vip_transits_page_uses_vip_template' )
+		&& vip_transits_page_uses_vip_template( $post_id, 'occasion' );
+}
+
+/**
+ * Whether the occasion Page Banner masthead should output.
+ *
+ * Defaults to Yes for all occasion detail pages; set Page Banner → Show Banner = No to opt out.
  *
  * @param int $post_id Occasion post ID.
  * @return bool
  */
 function vip_transits_occasion_show_banner( $post_id = 0 ) {
 	$post_id = $post_id ? (int) $post_id : vip_transits_occasion_post_id();
-	if ( $post_id <= 0 ) {
+	if ( $post_id <= 0 || ! vip_transits_occasion_uses_banner_layout( $post_id ) ) {
 		return false;
 	}
 
-	$show = (string) vip_transits_get_occasion_field( 'show_banner', 'No', $post_id );
-	return in_array( strtolower( $show ), array( 'yes', 'y', '1' ), true );
+	$show = (string) vip_transits_get_occasion_field( 'show_banner', 'Yes', $post_id );
+	return ! in_array( strtolower( $show ), array( 'no', 'n', '0' ), true );
 }
 
 /**
- * Occasion banner WYSIWYG (field: description).
+ * Masthead H1 for occasion detail (hero heading override or post title).
+ *
+ * @param int $post_id Occasion post ID.
+ * @return string
+ */
+function vip_transits_get_occasion_masthead_title( $post_id = 0 ) {
+	$post_id = $post_id ? (int) $post_id : vip_transits_occasion_post_id();
+	if ( $post_id <= 0 ) {
+		return '';
+	}
+
+	$text_image = vip_transits_get_occasion_field( 'text_image_section', array(), $post_id );
+	$heading    = is_array( $text_image ) && ! empty( $text_image['heading'] )
+		? trim( (string) $text_image['heading'] )
+		: '';
+
+	return $heading !== '' ? $heading : get_the_title( $post_id );
+}
+
+/**
+ * Occasion masthead description (Page Banner → Description, with hero/excerpt fallbacks).
  *
  * @param int $post_id Occasion post ID.
  * @return string
@@ -553,7 +576,22 @@ function vip_transits_get_occasion_banner_description( $post_id = 0 ) {
 		return '';
 	}
 
-	return trim( (string) vip_transits_get_occasion_field( 'description', '', $post_id ) );
+	$description = trim( (string) vip_transits_get_occasion_field( 'description', '', $post_id ) );
+	if ( $description !== '' ) {
+		return $description;
+	}
+
+	$text_image = vip_transits_get_occasion_field( 'text_image_section', array(), $post_id );
+	if ( is_array( $text_image ) && ! empty( $text_image['content'] ) ) {
+		return trim( (string) $text_image['content'] );
+	}
+
+	$excerpt = trim( (string) get_post_field( 'post_excerpt', $post_id ) );
+	if ( $excerpt !== '' ) {
+		return '<p>' . esc_html( $excerpt ) . '</p>';
+	}
+
+	return '';
 }
 
 /**
@@ -568,7 +606,7 @@ function vip_transits_render_occasion_banner( $post_id = 0 ) {
 		return false;
 	}
 
-	$title = get_the_title( $post_id );
+	$title = vip_transits_get_occasion_masthead_title( $post_id );
 	$lead  = vip_transits_get_occasion_banner_description( $post_id );
 	if ( $title === '' && $lead === '' ) {
 		return false;
@@ -594,7 +632,7 @@ function vip_transits_render_occasion_banner( $post_id = 0 ) {
 }
 
 /**
- * Enqueue banner styles on occasion singles when Page Banner is enabled.
+ * Enqueue banner layout styles on all occasion detail singles.
  */
 function vip_transits_enqueue_occasion_banner_assets() {
 	if ( is_admin() || ! is_singular( 'vip_occasion' ) ) {
@@ -602,7 +640,7 @@ function vip_transits_enqueue_occasion_banner_assets() {
 	}
 
 	$post_id = (int) get_queried_object_id();
-	if ( $post_id <= 0 || ! vip_transits_occasion_show_banner( $post_id ) ) {
+	if ( $post_id <= 0 || ! vip_transits_occasion_uses_banner_layout( $post_id ) ) {
 		return;
 	}
 
