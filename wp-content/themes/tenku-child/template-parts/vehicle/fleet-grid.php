@@ -20,7 +20,8 @@ if ( ! is_array( $tpl_args ) ) {
 $query          = ( isset( $tpl_args['query'] ) && $tpl_args['query'] instanceof WP_Query ) ? $tpl_args['query'] : null;
 $per_page       = isset( $tpl_args['per_page'] ) ? (int) $tpl_args['per_page'] : 9;
 $show_load_more = ! empty( $tpl_args['show_load_more'] );
-$show_filters   = ! empty( $tpl_args['show_filters'] );
+$show_filters    = ! empty( $tpl_args['show_filters'] );
+$occasion_slug   = ! empty( $tpl_args['occasion_slug'] ) ? sanitize_title( (string) $tpl_args['occasion_slug'] ) : '';
 
 if ( ! $query instanceof WP_Query ) {
 	return;
@@ -30,7 +31,7 @@ $found           = (int) $query->found_posts;
 $max             = (int) $query->max_num_pages;
 $delivery_total  = function_exists( 'vip_transits_count_delivery_vehicles' ) ? vip_transits_count_delivery_vehicles() : 0;
 ?>
-<div class="vip-fleet__layout<?php echo $show_filters ? '' : ' vip-fleet__layout--no-sidebar'; ?>" data-vip-fleet data-per-page="<?php echo esc_attr( (string) $per_page ); ?>" data-max-pages="<?php echo esc_attr( (string) $max ); ?>" data-delivery-total="<?php echo esc_attr( (string) $delivery_total ); ?>">
+<div class="vip-fleet__layout<?php echo $show_filters ? '' : ' vip-fleet__layout--no-sidebar'; ?>" data-vip-fleet data-per-page="<?php echo esc_attr( (string) $per_page ); ?>" data-max-pages="<?php echo esc_attr( (string) $max ); ?>" data-delivery-total="<?php echo esc_attr( (string) $delivery_total ); ?>"<?php echo $occasion_slug ? ' data-occasion-slug="' . esc_attr( $occasion_slug ) . '"' : ''; ?>>
 	<?php if ( $show_filters ) : ?>
 		<?php get_template_part( 'template-parts/vehicle/fleet', 'filters' ); ?>
 	<?php endif; ?>

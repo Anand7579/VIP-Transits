@@ -16,8 +16,9 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @return array
  */
 function vip_transits_register_page_templates( $templates ) {
-	$templates['templates/page-about.html']    = __( 'VIP About Us', 'tenku-child' );
-	$templates['templates/page-contact.html']  = __( 'VIP Contact Us', 'tenku-child' );
+	$templates['templates/page-about.html']         = __( 'VIP About Us', 'tenku-child' );
+	$templates['templates/page-contact.html']       = __( 'VIP Contact Us', 'tenku-child' );
+	$templates['templates/page-contact-clean.html'] = __( 'VIP Contact Us (Clean)', 'tenku-child' );
 	$templates['templates/page-occasion.html'] = __( 'VIP Occasion detail', 'tenku-child' );
 
 	return $templates;
@@ -38,9 +39,13 @@ function vip_transits_page_template_slug_groups() {
 		),
 		'contact' => array(
 			'page-contact',
+			'page-contact-clean',
 			'page-contact.html',
+			'page-contact-clean.html',
 			'templates/page-contact.html',
+			'templates/page-contact-clean.html',
 			'templates/page-contact',
+			'templates/page-contact-clean',
 		),
 		'occasion' => array(
 			'page-occasion',
@@ -179,6 +184,528 @@ function vip_transits_get_page_field( $field, $default = null ) {
 	$value = get_field( $field, $post_id );
 	return null !== $value && '' !== $value && array() !== $value ? $value : $default;
 }
+
+/**
+ * Flexible About layout slug → template part suffix.
+ *
+ * @return array<string, string>
+ */
+function vip_transits_about_section_layout_templates() {
+	return array(
+		'hero_intro'          => 'hero-intro',
+		'definition_callout'  => 'definition-callout',
+		'key_takeaways'       => 'key-takeaways',
+		'our_story'           => 'our-story',
+		'fleet_table'         => 'fleet-table',
+		'why_choose'          => 'why-choose',
+		'cta'                 => 'cta',
+		'faq'                 => 'faq',
+		'content'             => 'content',
+		// Legacy flexible layouts (pre–content-brief).
+		'intro_media'         => 'intro-media',
+		'trust_stats'         => 'trust-stats',
+		'prose_center'        => 'prose-center',
+	);
+}
+
+/**
+ * Whether the About page flexible content includes a FAQ layout.
+ *
+ * @param int $post_id Page ID.
+ * @return bool
+ */
+function vip_transits_about_page_has_faq_section( $post_id ) {
+	$post_id = (int) $post_id;
+	if ( $post_id <= 0 || ! function_exists( 'get_field' ) ) {
+		return false;
+	}
+
+	$sections = get_field( 'about_sections', $post_id );
+	if ( ! is_array( $sections ) || ! $sections ) {
+		return false;
+	}
+
+	foreach ( $sections as $row ) {
+		if ( is_array( $row ) && isset( $row['acf_fc_layout'] ) && 'faq' === $row['acf_fc_layout'] ) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+/**
+ * FAQPage schema entities from About flexible FAQ rows.
+ *
+ * @param int $post_id Page ID.
+ * @return array<int, array<string, mixed>>
+ */
+function vip_transits_about_faq_schema_entities( $post_id ) {
+	$post_id = (int) $post_id;
+	if ( $post_id <= 0 || ! function_exists( 'get_field' ) ) {
+		return array();
+	}
+
+	$sections = get_field( 'about_sections', $post_id );
+	if ( ! is_array( $sections ) ) {
+		return array();
+	}
+
+	$entities = array();
+
+	foreach ( $sections as $row ) {
+		if ( ! is_array( $row ) || empty( $row['acf_fc_layout'] ) || 'faq' !== $row['acf_fc_layout'] ) {
+			continue;
+		}
+
+		$faqs = isset( $row['faqs'] ) && is_array( $row['faqs'] ) ? $row['faqs'] : array();
+		foreach ( $faqs as $faq_row ) {
+			if ( ! is_array( $faq_row ) ) {
+				continue;
+			}
+			$question = isset( $faq_row['question'] ) ? trim( (string) $faq_row['question'] ) : '';
+			$answer   = isset( $faq_row['answer'] ) ? trim( wp_strip_all_tags( (string) $faq_row['answer'] ) ) : '';
+			if ( $question === '' || $answer === '' ) {
+				continue;
+			}
+			$entities[] = array(
+				'@type'          => 'Question',
+				'name'           => $question,
+				'acceptedAnswer' => array(
+					'@type' => 'Answer',
+					'text'  => $answer,
+				),
+			);
+		}
+	}
+
+	return $entities;
+}
+
+/**
+ * Output FAQPage JSON-LD on the About template when FAQ section exists.
+ */
+function vip_transits_output_about_faq_schema() {
+	if ( is_admin() || ! is_page() ) {
+		return;
+	}
+
+	$post_id = vip_transits_page_content_post_id();
+	if ( ! $post_id || ! vip_transits_page_uses_vip_template( $post_id, 'about' ) ) {
+		return;
+	}
+
+	$entities = vip_transits_about_faq_schema_entities( $post_id );
+	if ( ! $entities ) {
+		return;
+	}
+
+	$schema = array(
+		'@context'   => 'https://schema.org',
+		'@type'      => 'FAQPage',
+		'mainEntity' => $entities,
+	);
+
+	echo '<script type="application/ld+json">' . wp_json_encode( $schema, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES ) . '</script>' . "\n";
+}
+add_action( 'wp_head', 'vip_transits_output_about_faq_schema', 20 );
+
+/**
+ * Whether legacy About fields (pre–flexible content) have any data.
+ *
+ * @param int $post_id Page ID.
+ * @return bool
+ */
+function vip_transits_about_has_legacy_sections( $post_id ) {
+	$post_id = (int) $post_id;
+	if ( $post_id <= 0 ) {
+		return false;
+	}
+
+	$intro_heading = trim( (string) get_field( 'about_intro_heading', $post_id ) );
+	$intro_content = trim( (string) get_field( 'about_intro_content', $post_id ) );
+	$intro_image   = get_field( 'about_intro_image', $post_id );
+	$trust_stats   = get_field( 'about_trust_stats', $post_id );
+	$blocks        = get_field( 'about_content_blocks', $post_id );
+	$show_cta      = (bool) get_field( 'about_show_cta', $post_id );
+
+	if ( $intro_heading || $intro_content || ( is_array( $intro_image ) && ! empty( $intro_image['url'] ) ) ) {
+		return true;
+	}
+
+	if ( is_array( $trust_stats ) && $trust_stats ) {
+		return true;
+	}
+
+	if ( is_array( $blocks ) && $blocks ) {
+		return true;
+	}
+
+	if ( $show_cta ) {
+		return true;
+	}
+
+	return false;
+}
+
+/**
+ * Render legacy About sections (fixed field order) when flexible content is empty.
+ *
+ * @param int $post_id Page ID.
+ */
+function vip_transits_render_about_legacy_sections( $post_id ) {
+	$post_id = (int) $post_id;
+	if ( $post_id <= 0 ) {
+		return;
+	}
+
+	$intro_heading = (string) get_field( 'about_intro_heading', $post_id );
+	$intro_content = (string) get_field( 'about_intro_content', $post_id );
+	$intro_image   = get_field( 'about_intro_image', $post_id );
+
+	if ( $intro_heading || $intro_content || ( is_array( $intro_image ) && ! empty( $intro_image['url'] ) ) ) {
+		?>
+		<section class="vip-border-section vip-border-section--surface vip-border-section--plain-panel vip-about-section vip-about-section--intro-media">
+			<div class="vip-content-container vip-page__intro-grid">
+				<div class="vip-page__intro-copy">
+					<?php if ( $intro_heading ) : ?>
+						<h2 class="vip-page__section-title"><?php echo esc_html( $intro_heading ); ?></h2>
+					<?php endif; ?>
+					<?php if ( $intro_content ) : ?>
+						<div class="vip-page__prose"><?php echo wp_kses_post( $intro_content ); ?></div>
+					<?php endif; ?>
+				</div>
+				<?php if ( is_array( $intro_image ) && ! empty( $intro_image['url'] ) ) : ?>
+					<figure class="vip-page__intro-media">
+						<img
+							src="<?php echo esc_url( $intro_image['url'] ); ?>"
+							alt="<?php echo esc_attr( $intro_image['alt'] ?? $intro_heading ); ?>"
+							loading="lazy"
+							decoding="async"
+						/>
+					</figure>
+				<?php endif; ?>
+			</div>
+		</section>
+		<?php
+	}
+
+	$trust_stats = get_field( 'about_trust_stats', $post_id );
+	if ( is_array( $trust_stats ) && $trust_stats ) {
+		?>
+		<section class="vip-border-section vip-border-section--surface vip-border-section--plain-panel vip-about-section vip-about-section--trust-stats" aria-label="<?php esc_attr_e( 'Company highlights', 'tenku-child' ); ?>">
+			<div class="vip-content-container">
+				<ul class="vip-page__stats-grid">
+					<?php foreach ( $trust_stats as $stat ) : ?>
+						<?php
+						$value = isset( $stat['stat_value'] ) ? (string) $stat['stat_value'] : '';
+						$label = isset( $stat['stat_label'] ) ? (string) $stat['stat_label'] : '';
+						if ( ! $value && ! $label ) {
+							continue;
+						}
+						?>
+						<li class="vip-page__stat">
+							<?php if ( $value ) : ?>
+								<p class="vip-page__stat-value"><?php echo esc_html( $value ); ?></p>
+							<?php endif; ?>
+							<?php if ( $label ) : ?>
+								<p class="vip-page__stat-label"><?php echo esc_html( $label ); ?></p>
+							<?php endif; ?>
+						</li>
+					<?php endforeach; ?>
+				</ul>
+			</div>
+		</section>
+		<?php
+	}
+
+	$content_blocks = get_field( 'about_content_blocks', $post_id );
+	if ( is_array( $content_blocks ) && $content_blocks ) {
+		foreach ( $content_blocks as $block ) {
+			$heading = isset( $block['heading'] ) ? (string) $block['heading'] : '';
+			$content = isset( $block['content'] ) ? (string) $block['content'] : '';
+			if ( ! $heading && ! $content ) {
+				continue;
+			}
+			?>
+			<section class="vip-border-section vip-border-section--plain-panel vip-about-section vip-about-section--content">
+				<div class="vip-content-container vip-page__block-inner">
+					<?php if ( $heading ) : ?>
+						<h2 class="vip-page__section-title"><?php echo esc_html( $heading ); ?></h2>
+					<?php endif; ?>
+					<?php if ( $content ) : ?>
+						<div class="vip-page__prose"><?php echo wp_kses_post( $content ); ?></div>
+					<?php endif; ?>
+				</div>
+			</section>
+			<?php
+		}
+	}
+
+	if ( (bool) get_field( 'about_show_cta', $post_id ) ) {
+		$cta_heading = (string) get_field( 'about_cta_heading', $post_id );
+		$cta_text    = (string) get_field( 'about_cta_text', $post_id );
+		$cta_label   = (string) get_field( 'about_cta_button_label', $post_id );
+		$fleet_url   = get_post_type_archive_link( 'vip_vehicle' );
+		$wa_href     = function_exists( 'vip_transits_whatsapp_href_attr' ) ? vip_transits_whatsapp_href_attr() : '';
+		$cta_label   = $cta_label ? $cta_label : __( 'Speak to concierge', 'tenku-child' );
+
+		if ( $cta_heading || $cta_text || $wa_href || $fleet_url ) {
+			?>
+			<section class="vip-bg-black-section vip-bg-black-section--cta vip-about-section vip-about-section--cta">
+				<div class="vip-bg-black-section__inner vip-content-container vip-page__cta-inner">
+					<?php if ( $cta_heading ) : ?>
+						<h2 class="vip-page__cta-title"><?php echo esc_html( $cta_heading ); ?></h2>
+					<?php endif; ?>
+					<?php if ( $cta_text ) : ?>
+						<p class="vip-page__cta-text"><?php echo esc_html( $cta_text ); ?></p>
+					<?php endif; ?>
+					<div class="vip-page__cta-actions">
+						<?php if ( $wa_href ) : ?>
+							<a class="vip-page__btn vip-page__btn--primary" href="<?php echo esc_url( $wa_href ); ?>" target="_blank" rel="noopener noreferrer">
+								<?php echo esc_html( $cta_label ); ?>
+							</a>
+						<?php endif; ?>
+						<?php if ( $fleet_url ) : ?>
+							<a class="vip-page__btn vip-page__btn--ghost" href="<?php echo esc_url( $fleet_url ); ?>">
+								<?php esc_html_e( 'View our fleet', 'tenku-child' ); ?>
+							</a>
+						<?php endif; ?>
+					</div>
+				</div>
+			</section>
+			<?php
+		}
+	}
+}
+
+/**
+ * Render About page body sections (ACF flexible content).
+ *
+ * @param int  $post_id Page ID.
+ * @param bool $preview Show editor hint when empty.
+ * @return bool True if any section output was rendered.
+ */
+function vip_transits_render_about_sections( $post_id, $preview = false ) {
+	$post_id = (int) $post_id;
+	if ( $post_id <= 0 || ! function_exists( 'have_rows' ) ) {
+		return false;
+	}
+
+	$rendered = false;
+	$layouts  = vip_transits_about_section_layout_templates();
+
+	if ( have_rows( 'about_sections', $post_id ) ) {
+		while ( have_rows( 'about_sections', $post_id ) ) {
+			the_row();
+			$layout = get_row_layout();
+			if ( ! isset( $layouts[ $layout ] ) ) {
+				continue;
+			}
+			get_template_part( 'template-parts/about/section', $layouts[ $layout ] );
+			$rendered = true;
+		}
+		return $rendered;
+	}
+
+	if ( vip_transits_about_has_legacy_sections( $post_id ) ) {
+		vip_transits_render_about_legacy_sections( $post_id );
+		return true;
+	}
+
+	if ( $preview ) {
+		echo '<p class="vip-page vip-page--about-empty">';
+		echo esc_html__( 'Add About sections under Page sections → Sections (Hero intro, Definition callout, Key takeaways, Our story, Fleet table, Why choose us, CTA, FAQ). See docs/ABOUT-PAGE.md.', 'tenku-child' );
+		echo '</p>';
+	}
+
+	return false;
+}
+
+/**
+ * Whether the page is the static front page (no banner).
+ *
+ * @param int $post_id Page ID.
+ * @return bool
+ */
+function vip_transits_is_home_page_id( $post_id ) {
+	$post_id = (int) $post_id;
+	if ( $post_id <= 0 ) {
+		return false;
+	}
+
+	if ( (int) get_option( 'page_on_front' ) === $post_id ) {
+		return true;
+	}
+
+	if ( function_exists( 'vip_transits_home_page_id' ) && $post_id === (int) vip_transits_home_page_id() ) {
+		return true;
+	}
+
+	return false;
+}
+
+/**
+ * Whether the Page Banner ACF group should output on this page.
+ *
+ * @param int $post_id Optional page ID.
+ * @return bool
+ */
+function vip_transits_page_show_banner( $post_id = 0 ) {
+	$post_id = $post_id ? (int) $post_id : vip_transits_page_content_post_id();
+	if ( $post_id <= 0 || ! is_page( $post_id ) ) {
+		return false;
+	}
+
+	if ( vip_transits_is_home_page_id( $post_id ) ) {
+		return false;
+	}
+
+	$show = (string) vip_transits_get_page_field( 'show_banner', 'No' );
+	return in_array( strtolower( $show ), array( 'yes', 'y', '1' ), true );
+}
+
+/**
+ * Banner description (WYSIWYG), with legacy About/Contact masthead fallbacks.
+ *
+ * @param int $post_id Optional page ID.
+ * @return string
+ */
+function vip_transits_get_page_banner_description( $post_id = 0 ) {
+	$post_id = $post_id ? (int) $post_id : vip_transits_page_content_post_id();
+	if ( $post_id <= 0 || ! function_exists( 'get_field' ) ) {
+		return '';
+	}
+
+	$description = trim( (string) get_field( 'description', $post_id ) );
+	if ( $description !== '' ) {
+		return $description;
+	}
+
+	if ( vip_transits_page_uses_vip_template( $post_id, 'about' ) ) {
+		return trim( (string) get_field( 'about_masthead_lead', $post_id ) );
+	}
+
+	if ( vip_transits_page_uses_vip_template( $post_id, 'contact' ) ) {
+		return trim( (string) get_field( 'contact_masthead_lead', $post_id ) );
+	}
+
+	return '';
+}
+
+/**
+ * Whether the page renders body content via a VIP ACF block (banner is output there).
+ *
+ * @param int $post_id Page ID.
+ * @return bool
+ */
+function vip_transits_page_uses_vip_content_block( $post_id = 0 ) {
+	$post_id = (int) ( $post_id ? $post_id : get_queried_object_id() );
+	if ( $post_id <= 0 || ! function_exists( 'has_block' ) ) {
+		return false;
+	}
+
+	$blocks = array(
+		'acf/vip-page-about',
+		'acf/vip-page-contact',
+		'acf/vip-occasion-listing',
+	);
+
+	foreach ( $blocks as $block_name ) {
+		if ( has_block( $block_name, $post_id ) ) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+/**
+ * Black banner with optional title + WYSIWYG body (fleet archive, occasions, etc.).
+ *
+ * @param string $lead             HTML from ACF description.
+ * @param string $modifier_class   Extra BEM modifier on the header.
+ * @param string $title            Optional H1 above the description.
+ */
+function vip_transits_render_black_banner_lead( $lead, $modifier_class = '', $title = '' ) {
+	$lead  = trim( (string) $lead );
+	$title = trim( (string) $title );
+	if ( $lead === '' && $title === '' ) {
+		return;
+	}
+
+	$modifier_class = trim( (string) $modifier_class );
+	$class          = 'vip-bg-black-section vip-bg-black-section--masthead';
+	if ( $title === '' ) {
+		$class .= ' vip-bg-black-section--masthead-no-title';
+	}
+	if ( $modifier_class !== '' ) {
+		$class .= ' ' . sanitize_html_class( $modifier_class );
+	}
+	?>
+	<header class="<?php echo esc_attr( $class ); ?>">
+		<div class="vip-bg-black-section__inner vip-content-container">
+			<?php if ( $title !== '' ) : ?>
+				<h1 class="vip-page__masthead-title"><?php echo esc_html( $title ); ?></h1>
+			<?php endif; ?>
+			<?php if ( $lead !== '' ) : ?>
+				<div class="vip-page__masthead-lead"><?php echo wp_kses_post( $lead ); ?></div>
+			<?php endif; ?>
+		</div>
+	</header>
+	<?php
+}
+
+/**
+ * Output the black page masthead when Show Banner is Yes.
+ *
+ * @param int $post_id Optional page ID.
+ */
+function vip_transits_render_page_banner( $post_id = 0 ) {
+	$post_id = $post_id ? (int) $post_id : vip_transits_page_content_post_id();
+	if ( ! vip_transits_page_show_banner( $post_id ) ) {
+		return;
+	}
+
+	set_query_var( 'vip_masthead_active', true );
+	set_query_var( 'vip_masthead_title', get_the_title( $post_id ) );
+	set_query_var( 'vip_masthead_lead', vip_transits_get_page_banner_description( $post_id ) );
+	set_query_var( 'vip_masthead_hide_title_fallback', false );
+	get_template_part( 'template-parts/page/masthead' );
+}
+
+/**
+ * Prepend the page banner before generic page post content.
+ *
+ * @param string $block_content Block HTML.
+ * @param array  $block         Block data.
+ * @return string
+ */
+function vip_transits_prepend_page_banner_to_post_content( $block_content, $block ) {
+	if ( ! is_array( $block ) || empty( $block['blockName'] ) || 'core/post-content' !== $block['blockName'] ) {
+		return $block_content;
+	}
+
+	if ( ! is_page() || is_front_page() ) {
+		return $block_content;
+	}
+
+	$post_id = vip_transits_page_content_post_id();
+	if ( $post_id <= 0 || vip_transits_page_uses_vip_content_block( $post_id ) ) {
+		return $block_content;
+	}
+
+	if ( ! vip_transits_page_show_banner( $post_id ) ) {
+		return $block_content;
+	}
+
+	ob_start();
+	vip_transits_render_page_banner( $post_id );
+	$banner = (string) ob_get_clean();
+
+	return $banner . $block_content;
+}
+add_filter( 'render_block', 'vip_transits_prepend_page_banner_to_post_content', 9, 2 );
 
 /**
  * Register ACF blocks.
@@ -340,6 +867,57 @@ function vip_transits_build_tel_href( $raw ) {
 }
 
 /**
+ * Extract iframe src from pasted HTML (handles truncated / unclosed iframe tags).
+ *
+ * @param string $html Raw iframe HTML or fragment.
+ * @return string
+ */
+function vip_transits_extract_iframe_src( $html ) {
+	$html = (string) $html;
+	if ( $html === '' || stripos( $html, '<iframe' ) === false ) {
+		return '';
+	}
+
+	if ( preg_match( '/\bsrc\s*=\s*"([^"]*)"/is', $html, $match ) ) {
+		return trim( $match[1] );
+	}
+
+	if ( preg_match( "/\bsrc\s*=\s*'([^']*)'/is", $html, $match ) ) {
+		return trim( $match[1] );
+	}
+
+	// Truncated paste: src="https://... with no closing quote or >.
+	if ( preg_match( '/\bsrc\s*=\s*"([^"]+)/is', $html, $match ) ) {
+		return trim( $match[1] );
+	}
+
+	if ( preg_match( "/\bsrc\s*=\s*'([^']+)/is", $html, $match ) ) {
+		return trim( $match[1] );
+	}
+
+	return '';
+}
+
+/**
+ * Build a valid, closed map iframe (never output a broken opening tag).
+ *
+ * @param string $src Iframe src URL.
+ * @return string
+ */
+function vip_transits_build_map_iframe( $src ) {
+	$src = esc_url( trim( (string) $src ) );
+	if ( $src === '' ) {
+		return '';
+	}
+
+	return sprintf(
+		'<iframe src="%s" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="%s"></iframe>',
+		$src,
+		esc_attr__( 'Location map', 'tenku-child' )
+	);
+}
+
+/**
  * Render map field (iframe HTML, oEmbed, or Google Maps share / short links).
  *
  * @param string $raw ACF oembed / text value.
@@ -367,10 +945,16 @@ function vip_transits_render_contact_map_embed( $raw ) {
 	);
 
 	if ( stripos( $raw, '<iframe' ) !== false ) {
-		if ( preg_match( '/<iframe\b[^>]*\/?>/is', $raw, $match ) ) {
+		$src = vip_transits_extract_iframe_src( $raw );
+		if ( $src !== '' ) {
+			return vip_transits_build_map_iframe( $src );
+		}
+
+		if ( preg_match( '/<iframe\b[^>]*>/is', $raw, $match ) ) {
 			return (string) wp_kses( $match[0], $allowed_iframe );
 		}
-		return (string) wp_kses( $raw, $allowed_iframe );
+
+		return '';
 	}
 
 	$url = wp_strip_all_tags( $raw );
@@ -380,6 +964,10 @@ function vip_transits_render_contact_map_embed( $raw ) {
 
 	$embed = wp_oembed_get( $url, array( 'width' => 1200 ) );
 	if ( $embed ) {
+		$embed_src = vip_transits_extract_iframe_src( $embed );
+		if ( $embed_src !== '' ) {
+			return vip_transits_build_map_iframe( $embed_src );
+		}
 		return (string) wp_kses( $embed, $allowed_iframe );
 	}
 
@@ -387,6 +975,10 @@ function vip_transits_render_contact_map_embed( $raw ) {
 	if ( $resolved !== $url ) {
 		$embed = wp_oembed_get( $resolved, array( 'width' => 1200 ) );
 		if ( $embed ) {
+			$embed_src = vip_transits_extract_iframe_src( $embed );
+			if ( $embed_src !== '' ) {
+				return vip_transits_build_map_iframe( $embed_src );
+			}
 			return (string) wp_kses( $embed, $allowed_iframe );
 		}
 		$url = $resolved;
@@ -394,11 +986,7 @@ function vip_transits_render_contact_map_embed( $raw ) {
 
 	$iframe_src = vip_transits_google_maps_embed_src( $url );
 	if ( $iframe_src ) {
-		return sprintf(
-			'<iframe src="%s" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="%s"></iframe>',
-			esc_url( $iframe_src ),
-			esc_attr__( 'Location map', 'tenku-child' )
-		);
+		return vip_transits_build_map_iframe( $iframe_src );
 	}
 
 	return '';
@@ -480,8 +1068,11 @@ function vip_transits_normalize_map_embed_raw( $raw ) {
 		return '';
 	}
 
-	if ( preg_match( '/<iframe\b[^>]*\/?>/is', $raw, $match ) ) {
-		return trim( $match[0] );
+	if ( stripos( $raw, '<iframe' ) !== false ) {
+		$src = vip_transits_extract_iframe_src( $raw );
+		if ( $src !== '' ) {
+			return vip_transits_build_map_iframe( $src );
+		}
 	}
 
 	if ( preg_match( '#https?://[^\s<>"\']+#i', $raw, $match ) ) {
@@ -495,10 +1086,19 @@ function vip_transits_normalize_map_embed_raw( $raw ) {
  * @param string $url Starting URL.
  * @return string Final URL after redirects.
  */
-function vip_transits_resolve_redirect_url( $url ) {
+function vip_transits_resolve_redirect_url( $url, $follow_remote = null ) {
 	$url = esc_url_raw( $url );
 	if ( ! $url ) {
 		return '';
+	}
+
+	// Avoid HTTP during front-end block render (map field); slow redirects can
+	// exceed max execution time and abort the page before the footer runs.
+	if ( null === $follow_remote ) {
+		$follow_remote = is_admin() || wp_doing_cron();
+	}
+	if ( ! $follow_remote ) {
+		return $url;
 	}
 
 	for ( $i = 0; $i < 5; $i++ ) {
@@ -607,6 +1207,7 @@ function vip_transits_enqueue_page_content_assets() {
 			vip_transits_page_uses_vip_template( $post_id, 'about' )
 			|| vip_transits_page_uses_vip_template( $post_id, 'contact' )
 			|| vip_transits_page_uses_vip_template( $post_id, 'occasion' )
+			|| vip_transits_page_show_banner( $post_id )
 		) {
 			$load_styles = true;
 		}
@@ -628,6 +1229,18 @@ function vip_transits_enqueue_page_content_assets() {
 		$assets['version']
 	);
 
+	if ( $post_id && vip_transits_page_uses_vip_template( $post_id, 'about' ) ) {
+		$about_css = get_stylesheet_directory() . '/assets/css/vip-about.css';
+		if ( file_exists( $about_css ) ) {
+			wp_enqueue_style(
+				'vip-about',
+				get_stylesheet_directory_uri() . '/assets/css/vip-about.css',
+				array( 'vip-pages', 'chld_thm_cfg_child' ),
+				(string) filemtime( $about_css )
+			);
+		}
+	}
+
 	if ( function_exists( 'vip_transits_is_occasion_detail' ) && vip_transits_is_occasion_detail() ) {
 		if ( function_exists( 'vip_transits_vehicle_single_assets' ) ) {
 			$vd_assets = vip_transits_vehicle_single_assets();
@@ -642,6 +1255,16 @@ function vip_transits_enqueue_page_content_assets() {
 		if ( function_exists( 'vip_transits_enqueue_faq_section_assets' ) ) {
 			vip_transits_enqueue_faq_section_assets();
 		}
+	}
+
+	if (
+		$post_id
+		&& vip_transits_page_uses_vip_template( $post_id, 'about' )
+		&& function_exists( 'vip_transits_about_page_has_faq_section' )
+		&& vip_transits_about_page_has_faq_section( $post_id )
+		&& function_exists( 'vip_transits_enqueue_faq_section_assets' )
+	) {
+		vip_transits_enqueue_faq_section_assets();
 	}
 
 	if ( function_exists( 'wpcf7_enqueue_scripts' ) && vip_transits_page_uses_vip_template( $post_id, 'contact' ) ) {

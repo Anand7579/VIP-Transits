@@ -48,6 +48,49 @@
             ]
         },
         {
+            "key": "field_vipocc_tab_homepage",
+            "label": "Homepage card",
+            "name": "",
+            "type": "tab",
+            "placement": "top"
+        },
+        {
+            "key": "field_vipocc_homepage_help",
+            "label": "",
+            "name": "",
+            "type": "message",
+            "message": "Homepage Rent by occasion section: title = post title, image = featured image (or Hero image), intro = excerpt (or Hero intro if excerpt is empty). Set menu order under Page attributes to control position; enable Featured for the large left card (one occasion).",
+            "new_lines": "wpautop",
+            "esc_html": 0
+        },
+        {
+            "key": "field_vipocc_show_on_homepage",
+            "label": "Show on homepage",
+            "name": "show_on_homepage",
+            "type": "true_false",
+            "default_value": 1,
+            "ui": 1,
+            "ui_on_text": "Yes",
+            "ui_off_text": "No"
+        },
+        {
+            "key": "field_vipocc_homepage_featured",
+            "label": "Featured on homepage (left column)",
+            "name": "homepage_featured",
+            "type": "true_false",
+            "default_value": 0,
+            "ui": 1,
+            "instructions": "Turn on for one occasion (e.g. Wedding). If none is selected, the first visible occasion by menu order is used."
+        },
+        {
+            "key": "field_vipocc_homepage_btn",
+            "label": "Homepage button label",
+            "name": "homepage_button_label",
+            "type": "text",
+            "instructions": "Homepage card CTA — links to this occasion detail page (e.g. PLAN YOUR WEDDING CAR or BOOK A BIRTHDAY SURPRISE).",
+            "placeholder": "PLAN YOUR WEDDING CAR"
+        },
+        {
             "key": "field_vipocc_tab_editorial",
             "label": "Why rent",
             "name": "",

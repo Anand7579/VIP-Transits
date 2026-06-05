@@ -34,6 +34,11 @@
 			"name": "page-contact",
 			"title": "VIP Contact Us",
 			"postTypes": [ "page" ]
+		},
+		{
+			"name": "page-contact-clean",
+			"title": "VIP Contact Us (Clean)",
+			"postTypes": [ "page" ]
 		}
 	]
 }

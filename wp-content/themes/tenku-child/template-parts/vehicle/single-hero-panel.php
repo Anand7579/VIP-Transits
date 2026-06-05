@@ -27,9 +27,31 @@ if ( empty( $gallery ) && ! empty( $d['hero_image'] ) ) {
 	);
 }
 
-$delivery_label = ! empty( $d['delivery'] )
-	? __( 'Free - Anywhere Dubai', 'tenku-child' )
-	: __( 'Ask on WhatsApp', 'tenku-child' );
+$price_suffix = ! empty( $d['price_suffix'] ) ? (string) $d['price_suffix'] : '';
+$pricing_deposit_text  = function_exists( 'vip_transits_vehicle_pricing_deposit_text' )
+	? vip_transits_vehicle_pricing_deposit_text( $d )
+	: sprintf( __( 'AED %s (refundable)', 'tenku-child' ), $deposit_fmt );
+$pricing_deposit_label = function_exists( 'vip_transits_vehicle_pricing_deposit_heading' )
+	? vip_transits_vehicle_pricing_deposit_heading( $d )
+	: __( 'Deposit:', 'tenku-child' );
+$pricing_security_label = function_exists( 'vip_transits_vehicle_pricing_security_deposit_label' )
+	? vip_transits_vehicle_pricing_security_deposit_label( $d )
+	: __( 'Security deposit', 'tenku-child' );
+$pricing_insurance_label = function_exists( 'vip_transits_vehicle_pricing_insurance_label' )
+	? vip_transits_vehicle_pricing_insurance_label( $d )
+	: __( 'Insurance', 'tenku-child' );
+$pricing_insurance_value = function_exists( 'vip_transits_vehicle_pricing_insurance_value' )
+	? vip_transits_vehicle_pricing_insurance_value( $d )
+	: __( 'Included', 'tenku-child' );
+$pricing_delivery_label = function_exists( 'vip_transits_vehicle_pricing_delivery_label' )
+	? vip_transits_vehicle_pricing_delivery_label( $d )
+	: __( 'Delivery', 'tenku-child' );
+$pricing_delivery_value = function_exists( 'vip_transits_vehicle_pricing_delivery_value' )
+	? vip_transits_vehicle_pricing_delivery_value( $d )
+	: ( ! empty( $d['delivery'] ) ? __( 'Free - Anywhere Dubai', 'tenku-child' ) : __( 'Ask on WhatsApp', 'tenku-child' ) );
+$pricing_daily_rate_text = function_exists( 'vip_transits_vehicle_pricing_daily_rate_text' )
+	? vip_transits_vehicle_pricing_daily_rate_text( $d, $price_fmt )
+	: ( $price_fmt ? sprintf( 'AED %s', $price_fmt ) : '—' );
 
 $main_image = ! empty( $gallery[0] ) ? $gallery[0] : null;
 ?>
@@ -69,13 +91,13 @@ $main_image = ! empty( $gallery[0] ) ? $gallery[0] : null;
 					<span class="vip-vdetail__pricing-from"><?php esc_html_e( 'From', 'tenku-child' ); ?></span>
 					<?php if ( $price_fmt ) : ?>
 						<p class="vip-vdetail__pricing-rate">
-							<span class="vip-vdetail__pricing-amount"><?php echo esc_html( sprintf( 'AED %s', $price_fmt ) ); ?></span><span class="vip-vdetail__pricing-unit">/day</span>
+							<span class="vip-vdetail__pricing-amount"><?php echo esc_html( sprintf( 'AED %s', $price_fmt ) ); ?></span><span class="vip-vdetail__pricing-unit">/day<?php echo $price_suffix ? ' ' . esc_html( $price_suffix ) : ''; ?></span>
 						</p>
 					<?php endif; ?>
 				</div>
 				<p class="vip-vdetail__pricing-deposit-hd">
-					<?php esc_html_e( 'Deposit:', 'tenku-child' ); ?>
-					<span><?php echo esc_html( sprintf( 'AED %s', $deposit_fmt ) ); ?></span>
+					<?php echo esc_html( $pricing_deposit_label ); ?>
+					<span><?php echo esc_html( $pricing_deposit_text ); ?></span>
 				</p>
 			</div>
 
@@ -83,19 +105,19 @@ $main_image = ! empty( $gallery[0] ) ? $gallery[0] : null;
 				<dl class="vip-vdetail__pricing-rows">
 					<div class="vip-vdetail__pricing-row">
 						<dt><?php esc_html_e( 'Daily rate', 'tenku-child' ); ?></dt>
-						<dd><?php echo $price_fmt ? esc_html( sprintf( 'AED %s', $price_fmt ) ) : '—'; ?></dd>
+						<dd><?php echo esc_html( $pricing_daily_rate_text ); ?></dd>
 					</div>
 					<div class="vip-vdetail__pricing-row">
-						<dt><?php esc_html_e( 'Security deposit', 'tenku-child' ); ?></dt>
-						<dd><?php echo esc_html( sprintf( 'AED %s (refundable)', $deposit_fmt ) ); ?></dd>
+						<dt><?php echo esc_html( $pricing_security_label ); ?></dt>
+						<dd><?php echo esc_html( $pricing_deposit_text ); ?></dd>
 					</div>
 					<div class="vip-vdetail__pricing-row">
-						<dt><?php esc_html_e( 'Insurance', 'tenku-child' ); ?></dt>
-						<dd><?php esc_html_e( 'Included', 'tenku-child' ); ?></dd>
+						<dt><?php echo esc_html( $pricing_insurance_label ); ?></dt>
+						<dd><?php echo esc_html( $pricing_insurance_value ); ?></dd>
 					</div>
 					<div class="vip-vdetail__pricing-row">
-						<dt><?php esc_html_e( 'Delivery', 'tenku-child' ); ?></dt>
-						<dd><?php echo esc_html( $delivery_label ); ?></dd>
+						<dt><?php echo esc_html( $pricing_delivery_label ); ?></dt>
+						<dd><?php echo esc_html( $pricing_delivery_value ); ?></dd>
 					</div>
 					<div class="vip-vdetail__pricing-row">
 						<dt><?php esc_html_e( 'Weekly rate', 'tenku-child' ); ?></dt>

@@ -851,6 +851,8 @@
 	 display: flex;
 	 flex-direction: column;
 	 min-width: 0;
+	 width: 100%;
+	 max-width: 100%;
  }
  
  @media (min-width: 900px) {
@@ -922,6 +924,29 @@
 	 }
  }
  
+ .vip-occasions-card__media-link {
+	 display: block;
+	 width: 100%;
+	 max-width: 100%;
+	 color: inherit;
+	 text-decoration: none;
+ }
+
+ .vip-occasions-card__media-link:focus-visible {
+	 outline: 2px solid var(--vip-occ-ink);
+	 outline-offset: 2px;
+ }
+
+ .vip-occasions-card__title-link {
+	 color: inherit;
+	 text-decoration: none;
+ }
+
+ .vip-occasions-card__title-link:hover,
+ .vip-occasions-card__title-link:focus-visible {
+	 text-decoration: underline;
+ }
+
  .vip-occasions-card__media {
 	 width: 100%;
 	 overflow: hidden;
@@ -973,6 +998,13 @@
 	 min-width: 0;
 	 width: 100%;
  }
+
+ /* Grid cards: body grows when row stretches; clamp lives on inner span so flex cannot squash -webkit-box. */
+ .vip-occasions__card .vip-occasions-card__body {
+	 flex: 1 1 auto;
+	 min-height: 0;
+	 overflow: visible;
+ }
  
  .vip-occasions-card__img {
 	 display: block;
@@ -995,9 +1027,14 @@
 	 font-family: var(--vip-occ-serif);
 	 font-weight: 500;
 	 font-size: 18px;
-	 line-height: 18px;
+	 line-height: 1.2;
 	 letter-spacing: -0.015em;
 	 color: var(--vip-occ-ink);
+	 width: 100%;
+	 max-width: 100%;
+	 min-width: 0;
+	 overflow-wrap: break-word;
+	 box-sizing: border-box;
  }
  
  .vip-occasions__feat-body .vip-occasions-card__title {
@@ -1006,14 +1043,20 @@
 	 line-height: 24px;
  }
 
-.vip-occasions__feat-body .vip-occasions-card__text{
+.vip-occasions__feat-body .vip-occasions-card__text {
 	margin: 0 0 1.25rem;
 	font-family: var(--vip-occ-serif);
 	font-weight: 400;
 	font-size: 18px;
-	line-height: 26px;
+	line-height: 1.44;
 	letter-spacing: -0.01em;
 	color: #000000;
+	width: 100%;
+	max-width: 100%;
+	min-width: 0;
+	overflow-wrap: break-word;
+	word-break: break-word;
+	box-sizing: border-box;
 }
  
  .vip-occasions-card__text {
@@ -1021,14 +1064,44 @@
 	 font-family: var(--vip-occ-serif);
 	 font-weight: 400;
 	 font-size: 14px;
-	 line-height: 20px;
+	 line-height: 1.43;
 	 letter-spacing: -0.01em;
 	 color: #000000;
+	 width: 100%;
+	 max-width: 100%;
+	 min-width: 0;
+	 overflow-wrap: break-word;
+	 word-break: break-word;
+	 box-sizing: border-box;
+ }
+
+ /* 2×2 grid cards: max 3 lines of intro, then ellipsis (inherits word-break from .vip-occasions-card__text) */
+ .vip-occasions__card .vip-occasions-card__text {
+	 flex: 0 0 auto;
+	 margin: 0 0 1.25rem;
+	 overflow: visible;
+ }
+
+ .vip-occasions__card .vip-occasions-card__text-inner {
+	 display: -webkit-box;
+	 -webkit-box-orient: vertical;
+	 -webkit-line-clamp: 3;
+	 line-clamp: 3;
+	 overflow: hidden;
+	 text-overflow: ellipsis;
+	 line-height: 1.43;
+	 /* 14px × 1.43 × 3 lines — fixed block so flex/grid stretch cannot collapse clamp */
+	 min-height: 4.29em;
+	 height: 4.29em;
+	 max-height: 4.29em;
+	 width: 100%;
+	 box-sizing: border-box;
  }
  
  @media (min-width: 900px) {
 	 .vip-occasions__card .vip-occasions-card__text {
-		 flex: 0 1 auto;
+		 flex: 0 0 auto;
+		 min-width: 0;
 	 }
  
 	 .vip-occasions__feat-body .vip-occasions-card__body {

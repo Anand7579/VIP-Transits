@@ -14,175 +14,461 @@
             "label": "Subtitle",
             "name": "about_masthead_lead",
             "type": "text",
-            "instructions": "Optional line under the page title (black masthead).",
+            "instructions": "Optional line under the page title in the black banner. For a full WYSIWYG lead, use Page Banner → Description (Show Banner = Yes). See docs/ABOUT-PAGE.md in the theme.",
             "placeholder": "Luxury car rental in Dubai — trusted by discerning clients."
         },
         {
-            "key": "field_vipabout_tab_intro",
-            "label": "Introduction",
+            "key": "field_vipabout_tab_sections",
+            "label": "Page sections",
             "name": "",
             "type": "tab",
             "placement": "top"
         },
         {
-            "key": "field_vipabout_intro_heading",
-            "label": "Intro heading",
-            "name": "about_intro_heading",
-            "type": "text",
-            "default_value": "About VIP Transits"
-        },
-        {
-            "key": "field_vipabout_intro_content",
-            "label": "Intro content",
-            "name": "about_intro_content",
-            "type": "wysiwyg",
-            "tabs": "visual",
-            "toolbar": "basic",
-            "media_upload": 0,
-            "instructions": "Brand overview and business details."
-        },
-        {
-            "key": "field_vipabout_intro_image",
-            "label": "Intro image",
-            "name": "about_intro_image",
-            "type": "image",
-            "return_format": "array",
-            "preview_size": "medium",
-            "library": "all"
-        },
-        {
-            "key": "field_vipabout_tab_trust",
-            "label": "Trust highlights",
-            "name": "",
-            "type": "tab",
-            "placement": "top"
-        },
-        {
-            "key": "field_vipabout_trust_stats",
-            "label": "Stats",
-            "name": "about_trust_stats",
-            "type": "repeater",
-            "instructions": "Years of experience, fleet size, locations, etc.",
-            "layout": "table",
-            "button_label": "Add stat",
-            "min": 0,
-            "max": 6,
-            "sub_fields": [
-                {
-                    "key": "field_vipabout_stat_value",
-                    "label": "Value",
-                    "name": "stat_value",
-                    "type": "text",
-                    "placeholder": "10+",
-                    "parent": "field_vipabout_trust_stats"
-                },
-                {
-                    "key": "field_vipabout_stat_label",
-                    "label": "Label",
-                    "name": "stat_label",
-                    "type": "text",
-                    "placeholder": "Years of experience",
-                    "parent": "field_vipabout_trust_stats"
-                }
-            ]
-        },
-        {
-            "key": "field_vipabout_tab_blocks",
-            "label": "Content sections",
-            "name": "",
-            "type": "tab",
-            "placement": "top"
-        },
-        {
-            "key": "field_vipabout_content_blocks",
+            "key": "field_vipabout_sections",
             "label": "Sections",
-            "name": "about_content_blocks",
-            "type": "repeater",
-            "layout": "row",
+            "name": "about_sections",
+            "type": "flexible_content",
+            "instructions": "Recommended order: Hero intro → Definition callout → Key takeaways → Our story → Fleet table → Why choose us → CTA → FAQ. See docs/ABOUT-PAGE.md.",
             "button_label": "Add section",
-            "sub_fields": [
-                {
-                    "key": "field_vipabout_block_heading",
-                    "label": "Heading",
-                    "name": "heading",
-                    "type": "text",
-                    "parent": "field_vipabout_content_blocks"
+            "layouts": {
+                "layout_vipabout_hero_intro": {
+                    "key": "layout_vipabout_hero_intro",
+                    "name": "hero_intro",
+                    "label": "1. Hero intro",
+                    "display": "block",
+                    "sub_fields": [
+                        {
+                            "key": "field_vipabout_fc_hero_heading",
+                            "label": "Heading",
+                            "name": "heading",
+                            "type": "text",
+                            "parent": "field_vipabout_sections"
+                        },
+                        {
+                            "key": "field_vipabout_fc_hero_intro",
+                            "label": "Intro",
+                            "name": "intro",
+                            "type": "wysiwyg",
+                            "tabs": "visual",
+                            "toolbar": "basic",
+                            "media_upload": 0,
+                            "parent": "field_vipabout_sections"
+                        },
+                        {
+                            "key": "field_vipabout_fc_hero_image",
+                            "label": "Image",
+                            "name": "image",
+                            "type": "image",
+                            "return_format": "array",
+                            "preview_size": "medium",
+                            "parent": "field_vipabout_sections"
+                        },
+                        {
+                            "key": "field_vipabout_fc_hero_show_wa",
+                            "label": "Show WhatsApp button",
+                            "name": "show_whatsapp",
+                            "type": "true_false",
+                            "ui": 1,
+                            "default_value": 1,
+                            "parent": "field_vipabout_sections"
+                        },
+                        {
+                            "key": "field_vipabout_fc_hero_wa_label",
+                            "label": "WhatsApp button label",
+                            "name": "whatsapp_label",
+                            "type": "text",
+                            "default_value": "WhatsApp Us Now",
+                            "parent": "field_vipabout_sections"
+                        },
+                        {
+                            "key": "field_vipabout_fc_hero_show_fleet",
+                            "label": "Show fleet link",
+                            "name": "show_fleet_link",
+                            "type": "true_false",
+                            "ui": 1,
+                            "default_value": 1,
+                            "parent": "field_vipabout_sections"
+                        },
+                        {
+                            "key": "field_vipabout_fc_hero_fleet_label",
+                            "label": "Fleet link label",
+                            "name": "fleet_label",
+                            "type": "text",
+                            "default_value": "Browse our Fleet",
+                            "parent": "field_vipabout_sections"
+                        }
+                    ],
+                    "min": "",
+                    "max": ""
                 },
-                {
-                    "key": "field_vipabout_block_content",
-                    "label": "Content",
+                "layout_vipabout_definition_callout": {
+                    "key": "layout_vipabout_definition_callout",
+                    "name": "definition_callout",
+                    "label": "2. Definition callout",
+                    "display": "block",
+                    "sub_fields": [
+                        {
+                            "key": "field_vipabout_fc_def_heading",
+                            "label": "Heading",
+                            "name": "heading",
+                            "type": "text",
+                            "parent": "field_vipabout_sections"
+                        },
+                        {
+                            "key": "field_vipabout_fc_def_content",
+                            "label": "Content",
+                            "name": "content",
+                            "type": "wysiwyg",
+                            "tabs": "visual",
+                            "toolbar": "basic",
+                            "media_upload": 0,
+                            "parent": "field_vipabout_sections"
+                        }
+                    ],
+                    "min": "",
+                    "max": ""
+                },
+                "layout_vipabout_key_takeaways": {
+                    "key": "layout_vipabout_key_takeaways",
+                    "name": "key_takeaways",
+                    "label": "3. Key takeaways",
+                    "display": "block",
+                    "sub_fields": [
+                        {
+                            "key": "field_vipabout_fc_kt_heading",
+                            "label": "Heading",
+                            "name": "heading",
+                            "type": "text",
+                            "parent": "field_vipabout_sections"
+                        },
+                        {
+                            "key": "field_vipabout_fc_kt_items",
+                            "label": "Takeaway items",
+                            "name": "items",
+                            "type": "repeater",
+                            "layout": "table",
+                            "button_label": "Add item",
+                            "parent": "field_vipabout_sections",
+                            "sub_fields": [
+                                {
+                                    "key": "field_vipabout_fc_kt_item_text",
+                                    "label": "Text",
+                                    "name": "text",
+                                    "type": "text",
+                                    "parent": "field_vipabout_fc_kt_items"
+                                }
+                            ]
+                        },
+                        {
+                            "key": "field_vipabout_fc_kt_summary",
+                            "label": "Summary",
+                            "name": "summary",
+                            "type": "wysiwyg",
+                            "tabs": "visual",
+                            "toolbar": "basic",
+                            "media_upload": 0,
+                            "parent": "field_vipabout_sections"
+                        }
+                    ],
+                    "min": "",
+                    "max": ""
+                },
+                "layout_vipabout_our_story": {
+                    "key": "layout_vipabout_our_story",
+                    "name": "our_story",
+                    "label": "4. Our story",
+                    "display": "block",
+                    "sub_fields": [
+                        {
+                            "key": "field_vipabout_fc_story_heading",
+                            "label": "Heading",
+                            "name": "heading",
+                            "type": "text",
+                            "parent": "field_vipabout_sections"
+                        },
+                        {
+                            "key": "field_vipabout_fc_story_blocks",
+                            "label": "Story blocks",
+                            "name": "blocks",
+                            "type": "repeater",
+                            "layout": "row",
+                            "button_label": "Add block",
+                            "parent": "field_vipabout_sections",
+                            "sub_fields": [
+                                {
+                                    "key": "field_vipabout_fc_story_subheading",
+                                    "label": "Subheading",
+                                    "name": "subheading",
+                                    "type": "text",
+                                    "parent": "field_vipabout_fc_story_blocks"
+                                },
+                                {
+                                    "key": "field_vipabout_fc_story_content",
+                                    "label": "Content",
+                                    "name": "content",
+                                    "type": "wysiwyg",
+                                    "tabs": "visual",
+                                    "toolbar": "basic",
+                                    "media_upload": 0,
+                                    "parent": "field_vipabout_fc_story_blocks"
+                                },
+                                {
+                                    "key": "field_vipabout_fc_story_image",
+                                    "label": "Image",
+                                    "name": "image",
+                                    "type": "image",
+                                    "return_format": "array",
+                                    "preview_size": "medium",
+                                    "parent": "field_vipabout_fc_story_blocks"
+                                }
+                            ]
+                        }
+                    ],
+                    "min": "",
+                    "max": ""
+                },
+                "layout_vipabout_fleet_table": {
+                    "key": "layout_vipabout_fleet_table",
+                    "name": "fleet_table",
+                    "label": "5. Fleet table",
+                    "display": "block",
+                    "sub_fields": [
+                        {
+                            "key": "field_vipabout_fc_ft_heading",
+                            "label": "Heading",
+                            "name": "heading",
+                            "type": "text",
+                            "parent": "field_vipabout_sections"
+                        },
+                        {
+                            "key": "field_vipabout_fc_ft_intro",
+                            "label": "Intro",
+                            "name": "intro",
+                            "type": "textarea",
+                            "rows": 2,
+                            "parent": "field_vipabout_sections"
+                        },
+                        {
+                            "key": "field_vipabout_fc_ft_rows",
+                            "label": "Table rows",
+                            "name": "rows",
+                            "type": "repeater",
+                            "layout": "table",
+                            "button_label": "Add row",
+                            "parent": "field_vipabout_sections",
+                            "sub_fields": [
+                                {
+                                    "key": "field_vipabout_fc_ft_brand",
+                                    "label": "Brand",
+                                    "name": "brand",
+                                    "type": "text",
+                                    "parent": "field_vipabout_fc_ft_rows"
+                                },
+                                {
+                                    "key": "field_vipabout_fc_ft_models",
+                                    "label": "Models",
+                                    "name": "models",
+                                    "type": "text",
+                                    "parent": "field_vipabout_fc_ft_rows"
+                                },
+                                {
+                                    "key": "field_vipabout_fc_ft_price",
+                                    "label": "Price",
+                                    "name": "price",
+                                    "type": "text",
+                                    "parent": "field_vipabout_fc_ft_rows"
+                                }
+                            ]
+                        },
+                        {
+                            "key": "field_vipabout_fc_ft_footnote",
+                            "label": "Footnote",
+                            "name": "footnote",
+                            "type": "textarea",
+                            "rows": 2,
+                            "parent": "field_vipabout_sections"
+                        }
+                    ],
+                    "min": "",
+                    "max": ""
+                },
+                "layout_vipabout_why_choose": {
+                    "key": "layout_vipabout_why_choose",
+                    "name": "why_choose",
+                    "label": "6. Why choose us",
+                    "display": "block",
+                    "sub_fields": [
+                        {
+                            "key": "field_vipabout_fc_wc_heading",
+                            "label": "Heading",
+                            "name": "heading",
+                            "type": "text",
+                            "parent": "field_vipabout_sections"
+                        },
+                        {
+                            "key": "field_vipabout_fc_wc_features",
+                            "label": "Features",
+                            "name": "features",
+                            "type": "repeater",
+                            "layout": "row",
+                            "button_label": "Add feature",
+                            "parent": "field_vipabout_sections",
+                            "sub_fields": [
+                                {
+                                    "key": "field_vipabout_fc_wc_icon",
+                                    "label": "Icon",
+                                    "name": "icon",
+                                    "type": "image",
+                                    "return_format": "array",
+                                    "preview_size": "thumbnail",
+                                    "parent": "field_vipabout_fc_wc_features"
+                                },
+                                {
+                                    "key": "field_vipabout_fc_wc_title",
+                                    "label": "Title",
+                                    "name": "title",
+                                    "type": "text",
+                                    "parent": "field_vipabout_fc_wc_features"
+                                },
+                                {
+                                    "key": "field_vipabout_fc_wc_description",
+                                    "label": "Description",
+                                    "name": "description",
+                                    "type": "textarea",
+                                    "rows": 4,
+                                    "parent": "field_vipabout_fc_wc_features"
+                                }
+                            ]
+                        }
+                    ],
+                    "min": "",
+                    "max": ""
+                },
+                "layout_vipabout_cta": {
+                    "key": "layout_vipabout_cta",
+                    "name": "cta",
+                    "label": "7. Call to action",
+                    "display": "block",
+                    "sub_fields": [
+                        {
+                            "key": "field_vipabout_fc_cta_heading",
+                            "label": "Heading",
+                            "name": "heading",
+                            "type": "text",
+                            "default_value": "Ready to rent?",
+                            "parent": "field_vipabout_sections"
+                        },
+                        {
+                            "key": "field_vipabout_fc_cta_text",
+                            "label": "Text",
+                            "name": "text",
+                            "type": "textarea",
+                            "rows": 3,
+                            "parent": "field_vipabout_sections"
+                        },
+                        {
+                            "key": "field_vipabout_fc_cta_button_label",
+                            "label": "WhatsApp button label",
+                            "name": "button_label",
+                            "type": "text",
+                            "default_value": "WhatsApp Us Now",
+                            "parent": "field_vipabout_sections"
+                        }
+                    ],
+                    "min": "",
+                    "max": ""
+                },
+                "layout_vipabout_faq": {
+                    "key": "layout_vipabout_faq",
+                    "name": "faq",
+                    "label": "8. FAQ",
+                    "display": "block",
+                    "sub_fields": [
+                        {
+                            "key": "field_vipabout_fc_faq_heading",
+                            "label": "Heading",
+                            "name": "heading",
+                            "type": "text",
+                            "parent": "field_vipabout_sections"
+                        },
+                        {
+                            "key": "field_vipabout_fc_faq_intro",
+                            "label": "Intro",
+                            "name": "intro",
+                            "type": "textarea",
+                            "rows": 2,
+                            "parent": "field_vipabout_sections"
+                        },
+                        {
+                            "key": "field_vipabout_fc_faq_items",
+                            "label": "Questions",
+                            "name": "faqs",
+                            "type": "repeater",
+                            "layout": "row",
+                            "button_label": "Add question",
+                            "parent": "field_vipabout_sections",
+                            "sub_fields": [
+                                {
+                                    "key": "field_vipabout_fc_faq_q",
+                                    "label": "Question",
+                                    "name": "question",
+                                    "type": "text",
+                                    "parent": "field_vipabout_fc_faq_items"
+                                },
+                                {
+                                    "key": "field_vipabout_fc_faq_a",
+                                    "label": "Answer",
+                                    "name": "answer",
+                                    "type": "wysiwyg",
+                                    "tabs": "visual",
+                                    "toolbar": "basic",
+                                    "media_upload": 0,
+                                    "parent": "field_vipabout_fc_faq_items"
+                                }
+                            ]
+                        },
+                        {
+                            "key": "field_vipabout_fc_faq_image",
+                            "label": "Side image",
+                            "name": "image",
+                            "type": "image",
+                            "return_format": "array",
+                            "preview_size": "medium",
+                            "parent": "field_vipabout_sections"
+                        }
+                    ],
+                    "min": "",
+                    "max": ""
+                },
+                "layout_vipabout_content": {
+                    "key": "layout_vipabout_content",
                     "name": "content",
-                    "type": "wysiwyg",
-                    "tabs": "visual",
-                    "toolbar": "basic",
-                    "media_upload": 1,
-                    "parent": "field_vipabout_content_blocks"
+                    "label": "Extra text section",
+                    "display": "block",
+                    "sub_fields": [
+                        {
+                            "key": "field_vipabout_fc_content_heading",
+                            "label": "Heading",
+                            "name": "heading",
+                            "type": "text",
+                            "parent": "field_vipabout_sections"
+                        },
+                        {
+                            "key": "field_vipabout_fc_content_body",
+                            "label": "Content",
+                            "name": "content",
+                            "type": "wysiwyg",
+                            "tabs": "visual",
+                            "toolbar": "basic",
+                            "media_upload": 1,
+                            "parent": "field_vipabout_sections"
+                        }
+                    ],
+                    "min": "",
+                    "max": ""
                 }
-            ]
-        },
-        {
-            "key": "field_vipabout_tab_cta",
-            "label": "Call to action",
-            "name": "",
-            "type": "tab",
-            "placement": "top"
-        },
-        {
-            "key": "field_vipabout_show_cta",
-            "label": "Show CTA band",
-            "name": "about_show_cta",
-            "type": "true_false",
-            "ui": 1,
-            "default_value": 1
-        },
-        {
-            "key": "field_vipabout_cta_heading",
-            "label": "CTA heading",
-            "name": "about_cta_heading",
-            "type": "text",
-            "default_value": "Ready to book your luxury car?",
-            "conditional_logic": [
-                [
-                    {
-                        "field": "field_vipabout_show_cta",
-                        "operator": "==",
-                        "value": "1"
-                    }
-                ]
-            ]
-        },
-        {
-            "key": "field_vipabout_cta_text",
-            "label": "CTA text",
-            "name": "about_cta_text",
-            "type": "textarea",
-            "rows": 3,
-            "conditional_logic": [
-                [
-                    {
-                        "field": "field_vipabout_show_cta",
-                        "operator": "==",
-                        "value": "1"
-                    }
-                ]
-            ]
-        },
-        {
-            "key": "field_vipabout_cta_button_label",
-            "label": "WhatsApp button label",
-            "name": "about_cta_button_label",
-            "type": "text",
-            "default_value": "Speak to concierge",
-            "instructions": "Uses the global WhatsApp number from Settings → VIP Transits.",
-            "conditional_logic": [
-                [
-                    {
-                        "field": "field_vipabout_show_cta",
-                        "operator": "==",
-                        "value": "1"
-                    }
-                ]
-            ]
+            }
         }
     ],
     "location": [
@@ -190,7 +476,7 @@
             {
                 "param": "page_template",
                 "operator": "==",
-                "value": "templates\/page-about.html"
+                "value": "templates/page-about.html"
             }
         ],
         [
@@ -204,7 +490,7 @@
             {
                 "param": "block",
                 "operator": "==",
-                "value": "acf\/vip-page-about"
+                "value": "acf/vip-page-about"
             }
         ]
     ],
@@ -214,7 +500,7 @@
     "label_placement": "top",
     "instruction_placement": "label",
     "active": true,
-    "description": "Content for the VIP About Us page template.",
+    "description": "Flexible sections for the VIP About Us page (8-section content brief).",
     "show_in_rest": 1,
-    "modified": 1780385800
+    "modified": 1785700000
 }

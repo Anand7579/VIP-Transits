@@ -16,6 +16,10 @@
 	font-family: var(--vip-page-font);
 }
 
+.single-vip_occasion article.vip-page.vip-occasion-page.vip-occasion-page--has-banner {
+	margin-top: 0;
+}
+
 /* Masthead typography (wrapper: .vip-bg-black-section--masthead) */
 .vip-page__masthead-title {
 	margin: 0 0 0.75rem;
@@ -32,13 +36,48 @@
 	font-size: clamp(1rem, 2vw, 1.125rem);
 	line-height: 1.55;
 	color: rgba(255, 255, 255, 0.88);
+	text-align: center;
+}
+
+.vip-page__masthead-lead :where(p) {
+	margin: 0 0 0.5rem;
+}
+
+.vip-page__masthead-lead :where(p:last-child) {
+	margin-bottom: 0;
+}
+
+.vip-bg-black-section--masthead-no-title .vip-page__masthead-lead {
+	margin-top: 0;
+}
+
+/* Fleet archive: full WYSIWYG from feet_archive_description (headings + paragraphs). */
+.vip-bg-black-section--masthead-fleet-archive .vip-page__masthead-lead :where(h1, h2, h3) {
+	margin: 0 0 0.75rem;
+	font-size: clamp(2.25rem, 5.5vw, 3.75rem);
+	font-weight: 400;
+	line-height: 1.15;
+	letter-spacing: -0.02em;
+	color: #fff;
+}
+
+.vip-bg-black-section--masthead-fleet-archive .vip-page__masthead-lead :where(h4, h5, h6) {
+	margin: 0 0 0.5rem;
+	color: #fff;
+}
+
+.vip-bg-black-section--masthead-fleet-archive .vip-page__masthead-lead :where(p) {
+	font-size: clamp(1rem, 2vw, 1.125rem);
+	line-height: 1.55;
+	color: rgba(255, 255, 255, 0.88);
 }
 
 .vip-page__body {
 	background: var(--vip-page-surface);
 }
 
-/* Contact: footer may render after the ACF block inside main — keep full-width dark band visible */
+/* Contact: footer may render after </main> (fallback hook) or inside main — full width */
+.vip-page-main + .vip-site-footer,
 .vip-page-main .vip-site-footer {
 	width: 100%;
 	max-width: none;
@@ -46,8 +85,9 @@
 }
 
 /* Page masthead: full-width black band, square corners (not card-style radius). */
+.vip-bg-black-section.vip-bg-black-section--masthead,
 .vip-bg-black-section--masthead {
-	border-radius: 0;
+	border-radius: 0 !important;
 	padding: clamp(2.75rem, 6vw, 4rem) 0;
 }
 
@@ -512,29 +552,51 @@ form.wpcf7-form p{
 	background: var(--vip-occasion-bg);
 }
 
+.vip-occasion-page .vip-landing-hero .vip-content-container {
+	width: 100%;
+	max-width: var(--vip-content-max, 1440px);
+	margin-inline: auto;
+	padding-inline: var(--vip-content-pad-x, clamp(1.25rem, 4vw, 3.5rem));
+	box-sizing: border-box;
+}
+
+/* 60 / 40 inside container: copy left, image right. */
 .vip-occasion-page .vip-landing-hero__grid {
 	display: grid;
-	grid-template-columns: 1.2fr 0.8fr;
-	gap: clamp(2rem, 5vw, 4.5rem);
+	grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+	gap: clamp(2rem, 4vw, 3.5rem);
 	align-items: center;
+	width: 100%;
+	min-width: 0;
+	box-sizing: border-box;
 }
 
-.vip-occasion-page .vip-landing-hero__breadcrumb {
-	margin: 0 0 1.25rem;
-	font-size: 0.75rem;
-	font-weight: 600;
-	text-transform: uppercase;
-	letter-spacing: 0.08em;
-	color: var(--vip-page-muted);
+.vip-occasion-page .vip-landing-hero__grid:not(:has(.vip-landing-hero__media)) {
+	grid-template-columns: minmax(0, 1fr);
 }
 
-.vip-occasion-page .vip-landing-hero__breadcrumb a {
-	color: var(--vip-page-muted);
-	text-decoration: none;
+.vip-occasion-page .vip-landing-hero__copy,
+.vip-occasion-page .vip-landing-hero__media {
+	min-width: 0;
+	max-width: 100%;
+	width: 100%;
 }
 
-.vip-occasion-page .vip-landing-hero__breadcrumb a:hover {
-	color: var(--vip-page-text);
+/* Keep hero copy inside the left grid column (long intro was spanning the image). */
+.vip-occasion-page .vip-landing-hero__copy {
+	contain: inline-size;
+	overflow-wrap: break-word;
+}
+
+.vip-occasion-page .vip-landing-hero__lead {
+	min-width: 0;
+	max-width: 100%;
+	overflow-wrap: break-word;
+}
+
+.vip-occasion-page .vip-landing-hero__lead > :where(p, ul, ol, div, blockquote) {
+	max-width: 100%;
+	min-width: 0;
 }
 
 .vip-occasion-page .vip-landing-hero__title {
@@ -555,18 +617,36 @@ form.wpcf7-form p{
 	margin-bottom: 0;
 }
 
+.vip-occasion-page .vip-landing-hero__lead :where(img, figure, .wp-block-image) {
+	max-width: 100%;
+	height: auto;
+}
+
+/* Hero image: 4:3 frame in the right column; overrides WP width/height attributes. */
 .vip-occasion-page .vip-landing-hero__media {
+	position: relative;
+	display: block;
 	margin: 0;
+	width: 100%;
+	max-width: 100%;
 	aspect-ratio: 4 / 3;
 	overflow: hidden;
 	background: var(--vip-page-surface);
 }
 
-.vip-occasion-page .vip-landing-hero__media img {
-	width: 100%;
-	height: 100%;
-	object-fit: cover;
+.vip-occasion-page .vip-landing-hero__media :is(.vip-landing-hero__img, img) {
+	position: absolute;
+	inset: 0;
 	display: block;
+	width: 100% !important;
+	height: 100% !important;
+	max-width: 100% !important;
+	max-height: 100% !important;
+	margin: 0 !important;
+	padding: 0 !important;
+	border: 0;
+	object-fit: cover;
+	object-position: center;
 }
 
 .vip-occasion-page__body {
@@ -582,18 +662,43 @@ form.wpcf7-form p{
 	box-sizing: border-box;
 }
 
-.vip-occasion-page__body .main_content_wrap {
+/* Two-column why-rent + related articles — grid beats global flex in style.css. */
+article.vip-occasion-page .vip-occasion-page__body .main_content_wrap {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) minmax(260px, clamp(280px, 32vw, 380px));
+	align-items: start;
+	justify-content: start;
 	width: 100%;
-	align-items: flex-start;
+	max-width: 100%;
 	gap: clamp(2rem, 4vw, 3.5rem);
+	box-sizing: border-box;
+}
+
+.vip-occasion-page__body .main_content_wrap:not(:has(.right_wrap)),
+.vip-occasion-page__body .main_content_wrap:not(:has(.left_wrap)) {
+	grid-template-columns: minmax(0, 1fr);
 }
 
 .vip-occasion-page__body .left_wrap {
+	flex: none;
+	display: flex;
+	flex-direction: column;
 	gap: 0;
+	min-width: 0;
+	max-width: 100%;
+	width: 100%;
+	contain: inline-size;
+	overflow-wrap: break-word;
 }
 
 .vip-occasion-page__body .right_wrap {
-	align-self: flex-start;
+	flex: none;
+	display: flex;
+	flex-direction: column;
+	align-self: start;
+	min-width: 0;
+	max-width: 100%;
+	width: 100%;
 }
 
 /* Why rent (left column) — editorial block, no title rule */
@@ -613,41 +718,70 @@ form.wpcf7-form p{
 	color: var(--vip-vd-ink);
 }
 
-.vip-occasion-page__body .vip-occasion-why-rent .vip-vdetail__lead {
-	max-width: 42rem;
+.vip-occasion-page__body .vip-occasion-why-rent,
+.vip-occasion-page__body .left_wrap .vip-vdetail__intro,
+.vip-occasion-page__body .vip-occasion-why-rent .vip-vdetail__lead,
+.vip-occasion-page__body .left_wrap .vip-vdetail__lead {
+	width: 100%;
+	max-width: 100%;
+	min-width: 0;
+	box-sizing: border-box;
+}
+
+.vip-occasion-page__body .vip-occasion-why-rent .vip-vdetail__lead,
+.vip-occasion-page__body .left_wrap .vip-vdetail__lead {
 	font-family: var(--vip-vd-font);
 	font-size: 1rem;
 	line-height: 1.65;
 	letter-spacing: -0.01em;
 	color: var(--vip-vd-muted);
+	overflow-wrap: break-word;
+}
+
+.vip-occasion-page__body .vip-occasion-why-rent .vip-vdetail__lead > *,
+.vip-occasion-page__body .left_wrap .vip-vdetail__lead > * {
+	max-width: 100%;
+	min-width: 0;
+}
+
+.vip-occasion-page__body .left_wrap .vip-vdetail__lead :where(p, li, div, blockquote) {
+	overflow-wrap: break-word;
+	word-break: break-word;
 }
 
 .vip-occasion-page__body .vip-occasion-why-rent .vip-vdetail__lead p,
-.vip-occasion-page__body .vip-occasion-why-rent .vip-vdetail__lead li {
+.vip-occasion-page__body .left_wrap .vip-vdetail__lead p,
+.vip-occasion-page__body .vip-occasion-why-rent .vip-vdetail__lead li,
+.vip-occasion-page__body .left_wrap .vip-vdetail__lead li {
 	margin-top: 0;
 	margin-bottom: 1rem;
 }
 
-.vip-occasion-page__body .vip-occasion-why-rent .vip-vdetail__lead ul {
+.vip-occasion-page__body .vip-occasion-why-rent .vip-vdetail__lead ul,
+.vip-occasion-page__body .left_wrap .vip-vdetail__lead ul {
 	margin: 0 0 1rem;
 	padding-left: 0;
 	list-style: none;
 }
 
 .vip-occasion-page__body .vip-occasion-why-rent .vip-vdetail__lead p:last-child,
-.vip-occasion-page__body .vip-occasion-why-rent .vip-vdetail__lead ul:last-child {
+.vip-occasion-page__body .left_wrap .vip-vdetail__lead p:last-child,
+.vip-occasion-page__body .vip-occasion-why-rent .vip-vdetail__lead ul:last-child,
+.vip-occasion-page__body .left_wrap .vip-vdetail__lead ul:last-child {
 	margin-bottom: 0;
 }
 
 /* Why rent list — car-style bullets (declared here too because vehicle-single.css
    loads after style.css and the global rule can be browser-cached). */
-.vip-occasion-page__body .vip-occasion-why-rent .vip-vdetail__lead ul > li {
+.vip-occasion-page__body .vip-occasion-why-rent .vip-vdetail__lead ul > li,
+.vip-occasion-page__body .left_wrap .vip-vdetail__lead ul > li {
 	position: relative;
 	padding-left: 2.1em;
 	padding-top: 3px;
 }
 
-.vip-occasion-page__body .vip-occasion-why-rent .vip-vdetail__lead ul > li::before {
+.vip-occasion-page__body .vip-occasion-why-rent .vip-vdetail__lead ul > li::before,
+.vip-occasion-page__body .left_wrap .vip-vdetail__lead ul > li::before {
 	content: "";
 	position: absolute;
 	left: 0;
@@ -715,119 +849,21 @@ form.wpcf7-form p{
 }
 
 @media (max-width: 1024px) {
-	.vip-occasion-page__body .main_content_wrap {
+	article.vip-occasion-page .vip-occasion-page__body .main_content_wrap {
+		grid-template-columns: minmax(0, 1fr);
 		gap: 2.5rem;
+	}
+
+	.vip-occasion-page__body .left_wrap,
+	.vip-occasion-page__body .right_wrap {
+		width: 100%;
+		max-width: 100%;
 	}
 }
 
 @media (max-width: 900px) {
 	.vip-occasion-page .vip-landing-hero__grid {
-		grid-template-columns: 1fr;
-		gap: 2.5rem;
+		grid-template-columns: minmax(0, 1fr);
+		gap: 2rem;
 	}
-
-	.vip-occasion-page .vip-landing-hero__media {
-		order: -1;
-	}
-}
-
-/* Occasions archive (/occasions/) */
-.vip-occasions-archive {
-	padding: clamp(2.5rem, 5vw, 4rem) 0 clamp(4rem, 8vw, 6rem);
-	background: #fff;
-}
-
-.vip-occasions-archive__title {
-	margin: 0 0 0.75rem;
-	font-family: var(--vip-page-serif, "Newsreader", Georgia, serif);
-	font-size: clamp(2rem, 4vw, 2.5rem);
-	font-weight: 500;
-	line-height: 1.15;
-}
-
-.vip-occasions-archive__lead {
-	margin: 0 0 1.5rem;
-	max-width: 42rem;
-	font-size: 1rem;
-	line-height: 1.5;
-	color: var(--vip-page-muted, #616161);
-}
-
-.vip-occasions-archive__rule {
-	margin: 0 0 clamp(2rem, 4vw, 3rem);
-	border: 0;
-	border-top: 3px solid #000;
-}
-
-.vip-occasions-archive__grid {
-	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
-	gap: clamp(1.25rem, 3vw, 2rem);
-	list-style: none;
-	margin: 0;
-	padding: 0;
-}
-
-.vip-occasions-archive__item {
-	margin: 0;
-}
-
-.vip-occasions-archive__card-link {
-	display: flex;
-	flex-direction: column;
-	height: 100%;
-	text-decoration: none;
-	color: inherit;
-	background: #f9f9f9;
-	border: 1px solid var(--vip-page-line, #e0e0e0);
-	overflow: hidden;
-	transition: box-shadow 0.2s ease;
-}
-
-.vip-occasions-archive__card-link:hover {
-	box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-}
-
-.vip-occasions-archive__media {
-	margin: 0;
-	aspect-ratio: 16 / 10;
-	overflow: hidden;
-}
-
-.vip-occasions-archive__media img {
-	display: block;
-	width: 100%;
-	height: 100%;
-	object-fit: cover;
-}
-
-.vip-occasions-archive__body {
-	padding: 1.25rem 1.25rem 1.5rem;
-}
-
-.vip-occasions-archive__card-title {
-	margin: 0 0 0.5rem;
-	font-family: var(--vip-page-serif, "Newsreader", Georgia, serif);
-	font-size: 1.25rem;
-	font-weight: 500;
-	line-height: 1.25;
-}
-
-.vip-occasions-archive__card-text {
-	margin: 0 0 1rem;
-	font-size: 0.875rem;
-	line-height: 1.45;
-	color: var(--vip-page-muted, #616161);
-}
-
-.vip-occasions-archive__card-cta {
-	font-size: 0.8125rem;
-	font-weight: 500;
-	letter-spacing: 0.04em;
-	text-transform: uppercase;
-}
-
-.vip-occasions-archive__empty {
-	margin: 0;
-	color: var(--vip-page-muted, #616161);
 }

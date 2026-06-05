@@ -20,6 +20,9 @@ define( 'VIP_TRANSITS_SCROLL_ANIMATIONS_OPTION', 'vip_transits_scroll_animations
 /** @var string Instagram profile URL for header/footer social icons. */
 define( 'VIP_TRANSITS_INSTAGRAM_URL_OPTION', 'vip_transits_instagram_url' );
 
+/** @var string Open site links in a new browser tab (1 = on, 0 = off). */
+define( 'VIP_TRANSITS_OPEN_LINKS_NEW_TAB_OPTION', 'vip_transits_open_links_new_tab' );
+
 /**
  * Register settings page under Settings.
  */
@@ -77,6 +80,27 @@ function vip_transits_register_whatsapp_settings() {
 		'vip_transits_display_section',
 		array(
 			'label_for' => 'vip_transits_scroll_animations_enabled',
+		)
+	);
+
+	register_setting(
+		'vip_transits_settings',
+		VIP_TRANSITS_OPEN_LINKS_NEW_TAB_OPTION,
+		array(
+			'type'              => 'string',
+			'sanitize_callback' => 'vip_transits_sanitize_open_links_new_tab',
+			'default'           => '1',
+		)
+	);
+
+	add_settings_field(
+		VIP_TRANSITS_OPEN_LINKS_NEW_TAB_OPTION,
+		__( 'Open links in new tab', 'tenku-child' ),
+		'vip_transits_open_links_new_tab_field_cb',
+		'vip-transits-settings',
+		'vip_transits_display_section',
+		array(
+			'label_for' => 'vip_transits_open_links_new_tab',
 		)
 	);
 
@@ -215,6 +239,149 @@ function vip_transits_scroll_animations_field_cb() {
 function vip_transits_sanitize_scroll_animations_enabled( $value ) {
 	return ! empty( $value ) && '0' !== (string) $value ? '1' : '0';
 }
+
+/**
+ * @param mixed $value Submitted value.
+ * @return string '1' or '0'.
+ */
+function vip_transits_sanitize_open_links_new_tab( $value ) {
+	return ! empty( $value ) && '0' !== (string) $value ? '1' : '0';
+}
+
+/**
+ * Whether front-end links should open in a new tab.
+ *
+ * @return bool
+ */
+function vip_transits_open_links_in_new_tab() {
+	return get_option( VIP_TRANSITS_OPEN_LINKS_NEW_TAB_OPTION, '1' ) === '1';
+}
+
+/**
+ * target + rel attributes for external-style links in templates.
+ *
+ * @return string HTML attribute fragment (leading space) or empty.
+ */
+function vip_transits_link_target_attr() {
+	return vip_transits_open_links_in_new_tab() ? ' target="_blank" rel="noopener noreferrer"' : '';
+}
+
+/**
+ * Open links in new tab checkbox.
+ */
+function vip_transits_open_links_new_tab_field_cb() {
+	$enabled = vip_transits_open_links_in_new_tab();
+	?>
+	<input type="hidden" name="<?php echo esc_attr( VIP_TRANSITS_OPEN_LINKS_NEW_TAB_OPTION ); ?>" value="0" />
+	<label for="vip_transits_open_links_new_tab">
+		<input
+			type="checkbox"
+			name="<?php echo esc_attr( VIP_TRANSITS_OPEN_LINKS_NEW_TAB_OPTION ); ?>"
+			id="vip_transits_open_links_new_tab"
+			value="1"
+			<?php checked( $enabled ); ?>
+		/>
+		<?php esc_html_e( 'Open site links in a new browser tab', 'tenku-child' ); ?>
+	</label>
+	<p class="description">
+		<?php esc_html_e( 'When enabled, navigation, fleet cards, menus, and content links open in a new tab. Turn off to keep visitors on the same tab.', 'tenku-child' ); ?>
+	</p>
+	<?php
+}
+
+/**
+ * Add target="_blank" to anchor tags in HTML when the setting is enabled.
+ *
+ * @param string $html HTML fragment.
+ * @return string
+ */
+function vip_transits_add_link_targets_to_html( $html ) {
+	if ( ! vip_transits_open_links_in_new_tab() || ! is_string( $html ) || $html === '' || ! preg_match( '/<a\s/i', $html ) ) {
+		return $html;
+	}
+
+	return (string) preg_replace_callback(
+		'/<a\s([^>]*?)href=(["\'])([^"\']+)\2([^>]*)>/i',
+		static function ( $matches ) {
+			$href = (string) $matches[3];
+			if ( preg_match( '/^(#|mailto:|tel:|javascript:)/i', $href ) ) {
+				return $matches[0];
+			}
+
+			$tag = $matches[0];
+			if ( preg_match( '/\starget\s*=/i', $tag ) ) {
+				$tag = (string) preg_replace( '/\starget=(["\'])[^"\']*\1/i', ' target="_blank"', $tag, 1 );
+			} else {
+				$tag = preg_replace( '/<a\s/i', '<a target="_blank" ', $tag, 1 );
+			}
+
+			if ( preg_match( '/\srel=(["\'])([^"\']*)\1/i', $tag, $rel_match ) ) {
+				$rels = array_filter( array_map( 'trim', explode( ' ', strtolower( $rel_match[2] ) ) ) );
+				foreach ( array( 'noopener', 'noreferrer' ) as $required ) {
+					if ( ! in_array( $required, $rels, true ) ) {
+						$rels[] = $required;
+					}
+				}
+				$tag = (string) preg_replace(
+					'/\srel=(["\'])[^"\']*\1/i',
+					' rel="' . esc_attr( implode( ' ', $rels ) ) . '"',
+					$tag,
+					1
+				);
+			} else {
+				$tag = preg_replace( '/<a\s/i', '<a rel="noopener noreferrer" ', $tag, 1 );
+			}
+
+			return $tag;
+		},
+		$html
+	);
+}
+
+/**
+ * @param string $content Post content.
+ * @return string
+ */
+function vip_transits_filter_content_link_targets( $content ) {
+	return vip_transits_add_link_targets_to_html( $content );
+}
+add_filter( 'the_content', 'vip_transits_filter_content_link_targets', 99 );
+
+/**
+ * @param string $block_content Rendered block HTML.
+ * @return string
+ */
+function vip_transits_filter_block_link_targets( $block_content ) {
+	return vip_transits_add_link_targets_to_html( $block_content );
+}
+add_filter( 'render_block', 'vip_transits_filter_block_link_targets', 20 );
+
+/**
+ * @param array<string, string> $atts Link attributes.
+ * @return array<string, string>
+ */
+function vip_transits_nav_menu_link_target_attrs( $atts ) {
+	if ( ! vip_transits_open_links_in_new_tab() ) {
+		return $atts;
+	}
+
+	$href = isset( $atts['href'] ) ? (string) $atts['href'] : '';
+	if ( $href === '' || preg_match( '/^(#|mailto:|tel:|javascript:)/i', $href ) ) {
+		return $atts;
+	}
+
+	$atts['target'] = '_blank';
+	$rels           = array_filter( array_map( 'trim', explode( ' ', strtolower( (string) ( $atts['rel'] ?? '' ) ) ) ) );
+	foreach ( array( 'noopener', 'noreferrer' ) as $required ) {
+		if ( ! in_array( $required, $rels, true ) ) {
+			$rels[] = $required;
+		}
+	}
+	$atts['rel'] = implode( ' ', $rels );
+
+	return $atts;
+}
+add_filter( 'nav_menu_link_attributes', 'vip_transits_nav_menu_link_target_attrs', 10, 1 );
 
 /**
  * Social section description.
@@ -658,31 +825,6 @@ function vip_transits_render_instagram_social_link( $block_content, $block ) {
 		}
 	}
 
-	if ( preg_match( '/<a\s/i', $block_content ) ) {
-		if ( ! preg_match( '/\starget\s*=/i', $block_content ) ) {
-			$block_content = preg_replace( '/<a\s/i', '<a target="_blank" ', $block_content, 1 );
-		} else {
-			$block_content = preg_replace( '/\starget=(["\'])[^"\']*\1/i', ' target="_blank"', $block_content, 1 );
-		}
-
-		if ( preg_match( '/\srel=(["\'])([^"\']*)\1/i', $block_content, $rel_match ) ) {
-			$rels = array_filter( array_map( 'trim', explode( ' ', strtolower( $rel_match[2] ) ) ) );
-			foreach ( array( 'noopener', 'noreferrer' ) as $required ) {
-				if ( ! in_array( $required, $rels, true ) ) {
-					$rels[] = $required;
-				}
-			}
-			$block_content = preg_replace(
-				'/\srel=(["\'])[^"\']*\1/i',
-				' rel="' . esc_attr( implode( ' ', $rels ) ) . '"',
-				$block_content,
-				1
-			);
-		} else {
-			$block_content = preg_replace( '/<a\s/i', '<a rel="noopener noreferrer" ', $block_content, 1 );
-		}
-	}
-
-	return $block_content;
+	return vip_transits_add_link_targets_to_html( $block_content );
 }
 add_filter( 'render_block', 'vip_transits_render_instagram_social_link', 10, 2 );

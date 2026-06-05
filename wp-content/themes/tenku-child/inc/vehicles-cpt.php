@@ -77,6 +77,23 @@ function vip_transits_register_vehicle_cpt() {
 	);
 
 	register_taxonomy(
+		'vehicle_occasion',
+		'vip_vehicle',
+		array(
+			'labels'            => array(
+				'name'          => __( 'Occasions', 'tenku-child' ),
+				'singular_name' => __( 'Occasion', 'tenku-child' ),
+				'add_new_item'  => __( 'Add occasion', 'tenku-child' ),
+			),
+			'hierarchical'      => false,
+			'public'            => true,
+			'show_admin_column' => true,
+			'rewrite'           => array( 'slug' => 'vehicle-occasion' ),
+			'show_in_rest'      => true,
+		)
+	);
+
+	register_taxonomy(
 		'vehicle_occasion_role',
 		'vip_vehicle',
 		array(
@@ -277,6 +294,86 @@ function vip_transits_register_default_occasion_role_terms() {
 	}
 }
 add_action( 'init', 'vip_transits_register_default_occasion_role_terms', 12 );
+
+/**
+ * Sync vehicle_occasion taxonomy terms from published occasion pages.
+ */
+function vip_transits_sync_vehicle_occasion_terms() {
+	if ( ! taxonomy_exists( 'vehicle_occasion' ) ) {
+		return;
+	}
+
+	$occasions = get_posts(
+		array(
+			'post_type'              => 'vip_occasion',
+			'post_status'            => 'publish',
+			'posts_per_page'         => -1,
+			'orderby'                => 'menu_order',
+			'order'                  => 'ASC',
+			'no_found_rows'          => true,
+			'update_post_meta_cache' => false,
+			'update_post_term_cache' => false,
+		)
+	);
+
+	foreach ( $occasions as $occasion ) {
+		$slug = (string) $occasion->post_name;
+		$name = (string) $occasion->post_title;
+		if ( $slug === '' || $name === '' ) {
+			continue;
+		}
+
+		$existing = term_exists( $slug, 'vehicle_occasion' );
+		if ( ! $existing ) {
+			wp_insert_term( $name, 'vehicle_occasion', array( 'slug' => $slug ) );
+			continue;
+		}
+
+		$term_id = is_array( $existing ) ? (int) $existing['term_id'] : (int) $existing;
+		wp_update_term(
+			$term_id,
+			'vehicle_occasion',
+			array(
+				'name' => $name,
+				'slug' => $slug,
+			)
+		);
+	}
+}
+add_action( 'init', 'vip_transits_sync_vehicle_occasion_terms', 13 );
+
+/**
+ * Ordered occasion terms for fleet filters (mirrors Occasions CPT order).
+ *
+ * @return WP_Term[]
+ */
+function vip_transits_get_fleet_occasion_terms() {
+	if ( ! taxonomy_exists( 'vehicle_occasion' ) ) {
+		return array();
+	}
+
+	$occasions = get_posts(
+		array(
+			'post_type'              => 'vip_occasion',
+			'post_status'            => 'publish',
+			'posts_per_page'         => -1,
+			'orderby'                => 'menu_order',
+			'order'                  => 'ASC',
+			'no_found_rows'          => true,
+			'update_post_meta_cache' => false,
+		)
+	);
+
+	$terms = array();
+	foreach ( $occasions as $occasion ) {
+		$term = get_term_by( 'slug', $occasion->post_name, 'vehicle_occasion' );
+		if ( $term instanceof WP_Term ) {
+			$terms[] = $term;
+		}
+	}
+
+	return $terms;
+}
 
 /**
  * Ordered occasion role terms for fleet filters.
@@ -516,6 +613,115 @@ function vip_transits_render_fleet_archive_block() {
 }
 
 /**
+ * ACF options storage keys to try (default ACF options page uses "option").
+ *
+ * @return string[]
+ */
+function vip_transits_acf_option_ids() {
+	$ids = array();
+
+	// Named ACF options pages first (e.g. Theme Settings → acf-options-theme-settings).
+	if ( function_exists( 'acf_get_options_pages' ) ) {
+		$pages = acf_get_options_pages();
+		if ( is_array( $pages ) ) {
+			foreach ( $pages as $page ) {
+				if ( ! empty( $page['menu_slug'] ) ) {
+					$ids[] = 'acf-options-' . $page['menu_slug'];
+				}
+			}
+		}
+	}
+
+	// Common slugs; default "option" is tried last so Theme Settings wins over stale data.
+	$ids[] = 'acf-options-theme-settings';
+	$ids[] = 'option';
+
+	$ids = array_values( array_unique( array_filter( $ids ) ) );
+
+	return apply_filters( 'vip_transits_acf_option_ids', $ids );
+}
+
+/**
+ * Read one ACF field from the theme options page (first matching storage key).
+ *
+ * @param string $field_name ACF field name.
+ * @return mixed|null Null when ACF is unavailable or the field is not set.
+ */
+function vip_transits_get_acf_option_field( $field_name ) {
+	if ( ! function_exists( 'get_field' ) ) {
+		return null;
+	}
+
+	foreach ( vip_transits_acf_option_ids() as $option_id ) {
+		$value = get_field( $field_name, $option_id );
+		if ( null !== $value && false !== $value && '' !== $value ) {
+			return $value;
+		}
+	}
+
+	// Last attempt: default "option" even when value is empty string.
+	return get_field( $field_name, 'option' );
+}
+
+/**
+ * Whether the fleet archive black masthead is enabled (ACF options).
+ *
+ * Field: feleet_archive_banner (Select: Yes / No).
+ *
+ * @return bool
+ */
+function vip_transits_fleet_archive_show_banner() {
+	$show = (string) vip_transits_get_acf_option_field( 'feleet_archive_banner' );
+	return in_array( strtolower( $show ), array( 'yes', 'y', '1' ), true );
+}
+
+/**
+ * Fleet archive masthead description from ACF options (WYSIWYG).
+ *
+ * Field: feet_archive_description (on the same options page as the banner toggle).
+ *
+ * @return string
+ */
+function vip_transits_get_fleet_archive_banner_description() {
+	$value = vip_transits_get_acf_option_field( 'feet_archive_description' );
+	return trim( (string) ( null !== $value ? $value : '' ) );
+}
+
+/**
+ * Fleet archive never outputs a masthead title (description-only banner).
+ *
+ * @return string Always empty.
+ */
+function vip_transits_get_fleet_archive_banner_title() {
+	return '';
+}
+
+/**
+ * Output fleet archive black masthead (ACF options, description only).
+ *
+ * Does not use template-parts/page/masthead.php because get_template_part()
+ * third-argument vars are unreliable in this theme (falls back to the first
+ * vehicle title from get_the_title() on the archive query).
+ */
+function vip_transits_render_fleet_archive_banner() {
+	if ( ! vip_transits_fleet_archive_show_banner() ) {
+		return;
+	}
+
+	$lead = vip_transits_get_fleet_archive_banner_description();
+	if ( $lead === '' ) {
+		return;
+	}
+	?>
+	<header class="vip-bg-black-section vip-bg-black-section--masthead vip-bg-black-section--masthead-fleet-archive vip-bg-black-section--masthead-no-title">
+		<div class="vip-bg-black-section__inner vip-content-container">
+			<div class="vip-page__masthead-lead"><?php echo wp_kses_post( $lead ); ?></div>
+		</div>
+	</header>
+	<?php
+}
+
+/**
  * Render fleet grid template (WP core does not pass get_template_part $args into templates).
  *
  * @param array $args Keys: query (WP_Query), per_page, show_load_more, show_filters, filter_mode (fleet|occasion).
@@ -524,7 +730,8 @@ function vip_transits_render_fleet_grid( array $args ) {
 	$args = wp_parse_args(
 		$args,
 		array(
-			'filter_mode' => 'fleet',
+			'filter_mode'   => 'fleet',
+			'occasion_slug' => '',
 		)
 	);
 
@@ -546,9 +753,25 @@ function vip_transits_vehicle_query_args( $args = array() ) {
 		'paged'          => 1,
 		'orderby'        => 'title',
 		'order'          => 'ASC',
+		'occasion_slug'  => '',
 	);
 
-	return wp_parse_args( $args, $defaults );
+	$args = wp_parse_args( $args, $defaults );
+
+	$occasion_slug = sanitize_title( (string) $args['occasion_slug'] );
+	unset( $args['occasion_slug'] );
+
+	if ( $occasion_slug !== '' && taxonomy_exists( 'vehicle_occasion' ) ) {
+		$tax_query = isset( $args['tax_query'] ) && is_array( $args['tax_query'] ) ? $args['tax_query'] : array();
+		$tax_query[] = array(
+			'taxonomy' => 'vehicle_occasion',
+			'field'    => 'slug',
+			'terms'    => array( $occasion_slug ),
+		);
+		$args['tax_query'] = $tax_query;
+	}
+
+	return $args;
 }
 
 /**
@@ -745,6 +968,7 @@ function vip_transits_get_vehicle_card_data( $post_id = 0 ) {
 	$seats      = wp_get_post_terms( $post_id, 'vehicle_seat', array( 'fields' => 'slugs' ) );
 	$categories = wp_get_post_terms( $post_id, 'vehicle_category', array( 'fields' => 'slugs' ) );
 	$roles      = wp_get_post_terms( $post_id, 'vehicle_occasion_role', array( 'fields' => 'slugs' ) );
+	$occasions  = wp_get_post_terms( $post_id, 'vehicle_occasion', array( 'fields' => 'slugs' ) );
 
 	if ( is_wp_error( $brands ) ) {
 		$brands = array();
@@ -757,6 +981,9 @@ function vip_transits_get_vehicle_card_data( $post_id = 0 ) {
 	}
 	if ( is_wp_error( $roles ) ) {
 		$roles = array();
+	}
+	if ( is_wp_error( $occasions ) ) {
+		$occasions = array();
 	}
 
 	$role_terms = wp_get_post_terms( $post_id, 'vehicle_occasion_role' );
@@ -798,6 +1025,7 @@ function vip_transits_get_vehicle_card_data( $post_id = 0 ) {
 		'categories'     => $categories,
 		'occasion_roles' => $roles,
 		'occasion_role'  => $role_name,
+		'occasions'      => $occasions,
 	);
 }
 
@@ -1285,51 +1513,87 @@ function vip_transits_get_vehicle_variants( $post_id, $limit = 5 ) {
 }
 
 /**
- * Related vehicles (same brand).
+ * Related vehicles (admin-picked, max 3).
  *
  * @param int $post_id Post ID.
  * @param int $limit   Max posts.
  * @return WP_Post[]
  */
-function vip_transits_vehicle_related_posts( $post_id, $limit = 2 ) {
-	$brand = vip_transits_vehicle_primary_brand( $post_id );
-	
-	$args = array(
-		'post_type'      => 'vip_vehicle',
-		'post_status'    => 'publish',
-		'posts_per_page' => $limit,
-		'post__not_in'   => array( (int) $post_id ),
+function vip_transits_vehicle_related_posts( $post_id, $limit = 3 ) {
+	$post_id = (int) $post_id;
+	$limit   = max( 1, (int) $limit );
+	$ids     = array();
+
+	if ( function_exists( 'get_field' ) ) {
+		$manual = get_field( 'related_vehicles_pick', $post_id );
+		if ( is_array( $manual ) ) {
+			foreach ( $manual as $item ) {
+				if ( is_object( $item ) && isset( $item->ID ) ) {
+					$ids[] = (int) $item->ID;
+				} elseif ( is_array( $item ) && isset( $item['ID'] ) ) {
+					$ids[] = (int) $item['ID'];
+				} elseif ( is_numeric( $item ) ) {
+					$ids[] = (int) $item;
+				}
+			}
+		}
+	}
+
+	$ids = array_slice(
+		array_values(
+			array_unique(
+				array_filter(
+					array_map( 'intval', $ids ),
+					static function ( $id ) {
+						return $id > 0;
+					}
+				)
+			)
+		),
+		0,
+		$limit
 	);
 
-	if ( $brand ) {
-		$args['tax_query'] = array(
-			array(
-				'taxonomy' => 'vehicle_brand',
-				'field'    => 'term_id',
-				'terms'    => array( (int) $brand->term_id ),
-			),
-		);
+	if ( ! $ids ) {
+		return array();
 	}
-	
-	$query = new WP_Query( $args );
-	
-	if ( $query->post_count < $limit ) {
-		$exclude = array( (int) $post_id );
-		foreach ( $query->posts as $p ) {
-			$exclude[] = $p->ID;
+
+	$posts = array();
+	foreach ( $ids as $related_id ) {
+		$related_post = get_post( $related_id );
+		if (
+			$related_post instanceof WP_Post
+			&& 'vip_vehicle' === $related_post->post_type
+			&& 'publish' === $related_post->post_status
+		) {
+			$posts[] = $related_post;
 		}
-		
-		$fallback_args = array(
-			'post_type'      => 'vip_vehicle',
-			'post_status'    => 'publish',
-			'posts_per_page' => $limit - $query->post_count,
-			'post__not_in'   => $exclude,
-		);
-		$fallback_query = new WP_Query( $fallback_args );
-		return array_merge( $query->posts, $fallback_query->posts );
 	}
-	return $query->posts;
+
+	return $posts;
 }
+
+/**
+ * Exclude the vehicle being edited from the Also Available relationship picker.
+ *
+ * @param array<string, mixed> $args    Query args.
+ * @param array<string, mixed> $field   Field settings.
+ * @param int                  $post_id Current post ID.
+ * @return array<string, mixed>
+ */
+function vip_transits_related_vehicles_relationship_query( $args, $field, $post_id ) {
+	if ( ( $field['name'] ?? '' ) !== 'related_vehicles_pick' || $post_id <= 0 ) {
+		return $args;
+	}
+
+	$args['post__not_in'] = array_merge(
+		isset( $args['post__not_in'] ) && is_array( $args['post__not_in'] ) ? $args['post__not_in'] : array(),
+		array( (int) $post_id )
+	);
+
+	return $args;
+}
+add_filter( 'acf/fields/relationship/query/name=related_vehicles_pick', 'vip_transits_related_vehicles_relationship_query', 10, 3 );
 
 /**
  * What's included repeater rows with optional icon URLs.
@@ -1476,6 +1740,158 @@ function vip_transits_vehicle_pricing_deposit_heading( $d ) {
 }
 
 /**
+ * Related vehicles section heading (ACF or default with brand name).
+ *
+ * @param array<string, mixed> $d Vehicle single data.
+ * @return string
+ */
+function vip_transits_vehicle_related_section_heading( $d ) {
+	$custom = isset( $d['related_vehicles_section_heading'] ) ? trim( (string) $d['related_vehicles_section_heading'] ) : '';
+	if ( $custom !== '' ) {
+		if ( strpos( $custom, '%s' ) !== false ) {
+			$brand = isset( $d['brand_name'] ) ? (string) $d['brand_name'] : '';
+			return sprintf( $custom, $brand );
+		}
+		return $custom;
+	}
+
+	if ( ! empty( $d['brand_name'] ) ) {
+		return sprintf(
+			/* translators: %s: brand name */
+			__( 'Also Available from %s', 'tenku-child' ),
+			(string) $d['brand_name']
+		);
+	}
+
+	return __( 'Also Available', 'tenku-child' );
+}
+
+/**
+ * Included section heading (ACF or default with vehicle short name).
+ *
+ * @param array<string, mixed> $d Vehicle single data.
+ * @return string
+ */
+function vip_transits_vehicle_included_section_heading( $d ) {
+	$custom = isset( $d['included_section_heading'] ) ? trim( (string) $d['included_section_heading'] ) : '';
+	if ( $custom !== '' ) {
+		if ( strpos( $custom, '%s' ) !== false ) {
+			$short = isset( $d['short_name'] ) ? (string) $d['short_name'] : '';
+			return sprintf( $custom, $short );
+		}
+		return $custom;
+	}
+
+	$short = isset( $d['short_name'] ) ? (string) $d['short_name'] : '';
+	return sprintf(
+		/* translators: %s: vehicle short name */
+		__( "What's Included With Your %s Rental", 'tenku-child' ),
+		$short
+	);
+}
+
+/**
+ * Pricing card — security deposit row label.
+ *
+ * @param array<string, mixed> $d Vehicle single data.
+ * @return string
+ */
+function vip_transits_vehicle_pricing_security_deposit_label( $d ) {
+	if ( ! empty( $d['pricing_security_deposit_label'] ) ) {
+		return (string) $d['pricing_security_deposit_label'];
+	}
+
+	return __( 'Security deposit', 'tenku-child' );
+}
+
+/**
+ * Pricing card — insurance row label.
+ *
+ * @param array<string, mixed> $d Vehicle single data.
+ * @return string
+ */
+function vip_transits_vehicle_pricing_insurance_label( $d ) {
+	if ( ! empty( $d['pricing_insurance_label'] ) ) {
+		return (string) $d['pricing_insurance_label'];
+	}
+
+	return __( 'Insurance', 'tenku-child' );
+}
+
+/**
+ * Pricing card — insurance row value.
+ *
+ * @param array<string, mixed> $d Vehicle single data.
+ * @return string
+ */
+function vip_transits_vehicle_pricing_insurance_value( $d ) {
+	if ( ! empty( $d['pricing_insurance_value'] ) ) {
+		return (string) $d['pricing_insurance_value'];
+	}
+
+	return __( 'Included', 'tenku-child' );
+}
+
+/**
+ * Pricing card — delivery row label.
+ *
+ * @param array<string, mixed> $d Vehicle single data.
+ * @return string
+ */
+function vip_transits_vehicle_pricing_delivery_label( $d ) {
+	if ( ! empty( $d['pricing_delivery_label'] ) ) {
+		return (string) $d['pricing_delivery_label'];
+	}
+
+	return __( 'Delivery', 'tenku-child' );
+}
+
+/**
+ * Pricing card — delivery row value.
+ *
+ * @param array<string, mixed> $d Vehicle single data.
+ * @return string
+ */
+function vip_transits_vehicle_pricing_delivery_value( $d ) {
+	if ( ! empty( $d['pricing_delivery_value'] ) ) {
+		return (string) $d['pricing_delivery_value'];
+	}
+
+	if ( ! empty( $d['delivery'] ) ) {
+		return __( 'Free - Anywhere Dubai', 'tenku-child' );
+	}
+
+	return __( 'Ask on WhatsApp', 'tenku-child' );
+}
+
+/**
+ * Daily rate line for the pricing card (optional price suffix / VAT).
+ *
+ * @param array<string, mixed> $d          Vehicle single data.
+ * @param string               $price_fmt Formatted daily price (no currency).
+ * @return string
+ */
+function vip_transits_vehicle_pricing_daily_rate_text( $d, $price_fmt ) {
+	$price_fmt = trim( (string) $price_fmt );
+	if ( $price_fmt === '' ) {
+		return '—';
+	}
+
+	$text = sprintf(
+		/* translators: %s: formatted price */
+		__( 'AED %s', 'tenku-child' ),
+		$price_fmt
+	);
+
+	$suffix = isset( $d['price_suffix'] ) ? trim( (string) $d['price_suffix'] ) : '';
+	if ( $suffix !== '' ) {
+		$text .= ' ' . $suffix;
+	}
+
+	return $text;
+}
+
+/**
  * @deprecated Use vip_transits_vehicle_header_deposit_text().
  * @param array<string, mixed> $d Vehicle single data.
  * @return string
@@ -1508,8 +1924,15 @@ function vip_transits_get_vehicle_single_data( $post_id = 0 ) {
 	if ( $header_deposit_line === '' ) {
 		$header_deposit_line = trim( (string) get_field( 'masthead_deposit_line', $post_id ) );
 	}
-	$pricing_deposit_heading = trim( (string) get_field( 'pricing_deposit_heading', $post_id ) );
-	$pricing_deposit_value   = trim( (string) get_field( 'pricing_deposit_value', $post_id ) );
+	$pricing_deposit_heading       = trim( (string) get_field( 'pricing_deposit_heading', $post_id ) );
+	$pricing_deposit_value         = trim( (string) get_field( 'pricing_deposit_value', $post_id ) );
+	$pricing_security_deposit_label = trim( (string) get_field( 'pricing_security_deposit_label', $post_id ) );
+	$pricing_insurance_label       = trim( (string) get_field( 'pricing_insurance_label', $post_id ) );
+	$pricing_insurance_value       = trim( (string) get_field( 'pricing_insurance_value', $post_id ) );
+	$pricing_delivery_label        = trim( (string) get_field( 'pricing_delivery_label', $post_id ) );
+	$pricing_delivery_value        = trim( (string) get_field( 'pricing_delivery_value', $post_id ) );
+	$included_section_heading       = trim( (string) get_field( 'included_section_heading', $post_id ) );
+	$related_vehicles_section_heading = trim( (string) get_field( 'related_vehicles_section_heading', $post_id ) );
 
 	$intro = (string) get_field( 'intro_lead', $post_id );
 	if ( $intro === '' ) {
@@ -1611,9 +2034,16 @@ function vip_transits_get_vehicle_single_data( $post_id = 0 ) {
 			'price_suffix'          => $price_suffix,
 			'header_deposit_line'   => $header_deposit_line,
 			'masthead_deposit_line' => $header_deposit_line,
-			'pricing_deposit_heading' => $pricing_deposit_heading,
-			'pricing_deposit_value'   => $pricing_deposit_value,
-			'weekly_rate'           => $weekly,
+			'pricing_deposit_heading'        => $pricing_deposit_heading,
+			'pricing_deposit_value'          => $pricing_deposit_value,
+			'pricing_security_deposit_label' => $pricing_security_deposit_label,
+			'pricing_insurance_label'        => $pricing_insurance_label,
+			'pricing_insurance_value'        => $pricing_insurance_value,
+			'pricing_delivery_label'         => $pricing_delivery_label,
+			'pricing_delivery_value'         => $pricing_delivery_value,
+			'included_section_heading'         => $included_section_heading,
+			'related_vehicles_section_heading' => $related_vehicles_section_heading,
+			'weekly_rate'                      => $weekly,
 			'minimum_age'      => (string) get_field( 'minimum_age', $post_id ) ?: '25',
 			'stats'            => $stats,
 			'specs'            => $specs,
@@ -1626,7 +2056,7 @@ function vip_transits_get_vehicle_single_data( $post_id = 0 ) {
 			'wa_href_attr'     => $wa_href_attr,
 			'phone_display'    => $phone,
 			'tel_href'         => $phone ? 'tel:' . preg_replace( '/[^\d+]/', '', $phone ) : '',
-			'related'          => vip_transits_vehicle_related_posts( $post_id, 2 ),
+			'related'          => vip_transits_vehicle_related_posts( $post_id, 3 ),
 			'booking_steps'    => array(
 				array(
 					'title' => __( 'Check availability', 'tenku-child' ),
@@ -1658,16 +2088,18 @@ function vip_transits_ajax_fleet_load_more() {
 	$page           = max( 1, (int) ( $_POST['page'] ?? 1 ) );
 	$per_page       = max( 1, min( 24, (int) ( $_POST['per_page'] ?? 9 ) ) );
 	$delivery_only  = ! empty( $_POST['delivery_only'] );
+	$occasion_slug  = sanitize_title( (string) ( $_POST['occasion_slug'] ?? '' ) );
 	$query_arg_fn   = $delivery_only ? 'vip_transits_vehicle_delivery_query_args' : 'vip_transits_vehicle_query_args';
 
-	$query = new WP_Query(
-		$query_arg_fn(
-			array(
-				'paged'          => $page,
-				'posts_per_page' => $per_page,
-			)
-		)
+	$query_args = array(
+		'paged'          => $page,
+		'posts_per_page' => $per_page,
 	);
+	if ( $occasion_slug !== '' ) {
+		$query_args['occasion_slug'] = $occasion_slug;
+	}
+
+	$query = new WP_Query( $query_arg_fn( $query_args ) );
 
 	$html = '';
 	if ( $query->have_posts() ) {

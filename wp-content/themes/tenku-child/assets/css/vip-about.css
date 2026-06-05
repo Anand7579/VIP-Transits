@@ -1,0 +1,218 @@
+/**
+ * VIP About Us page — flexible section styles.
+ */
+
+.vip-page__intro-grid--image-left .vip-page__intro-copy {
+	order: 2;
+}
+
+.vip-page__intro-grid--image-left .vip-page__intro-media {
+	order: 1;
+}
+
+.vip-page__intro-grid--copy-only {
+	grid-template-columns: minmax(0, 1fr);
+}
+
+.vip-page__block-inner {
+	max-width: 52rem;
+}
+
+.vip-page--about-empty {
+	padding: 2rem;
+	text-align: center;
+	color: var(--vip-page-muted, #666);
+}
+
+.vip-about-hero__actions {
+	margin-top: 1.5rem;
+	justify-content: flex-start;
+}
+
+.vip-about-callout {
+	padding: clamp(1.5rem, 3vw, 2.25rem);
+	background: var(--vip-page-surface, #f3f3f3);
+	border: 1px solid rgba(0, 0, 0, 0.08);
+	border-radius: 2px;
+}
+
+.vip-about-callout__title {
+	margin: 0 0 1rem;
+	font-size: clamp(1.5rem, 3vw, 2rem);
+	font-weight: 400;
+	line-height: 1.2;
+}
+
+.vip-about-callout__body {
+	margin: 0;
+}
+
+.vip-about-takeaways__list {
+	margin: 0 0 1.5rem;
+	padding: 0 0 0 1.25rem;
+	list-style: disc;
+}
+
+.vip-about-takeaways__item {
+	margin-bottom: 0.65rem;
+	font-size: 1.0625rem;
+	line-height: 1.55;
+}
+
+.vip-about-takeaways__item:last-child {
+	margin-bottom: 0;
+}
+
+.vip-about-takeaways__summary {
+	margin: 0;
+}
+
+.vip-about-story__title {
+	margin-bottom: clamp(1.5rem, 3vw, 2.5rem);
+}
+
+.vip-about-story__blocks {
+	display: flex;
+	flex-direction: column;
+	gap: clamp(2rem, 4vw, 3rem);
+}
+
+.vip-about-story__block {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) minmax(0, 0.85fr);
+	gap: clamp(1.5rem, 3vw, 2.5rem);
+	align-items: start;
+}
+
+.vip-about-story__subheading {
+	margin: 0 0 0.75rem;
+	font-size: 1.25rem;
+	font-weight: 500;
+	line-height: 1.3;
+}
+
+.vip-about-story__media {
+	margin: 0;
+}
+
+.vip-about-story__img {
+	display: block;
+	width: 100%;
+	height: auto;
+	object-fit: cover;
+}
+
+.vip-about-fleet-table__intro {
+	margin: 0 0 1.25rem;
+	font-size: 1.0625rem;
+	line-height: 1.55;
+	color: var(--vip-page-muted);
+}
+
+.vip-about-fleet-table__wrap {
+	overflow-x: auto;
+	margin-bottom: 1rem;
+}
+
+.vip-about-fleet-table {
+	width: 100%;
+	border-collapse: collapse;
+	font-size: 0.9375rem;
+	line-height: 1.45;
+}
+
+.vip-about-fleet-table th,
+.vip-about-fleet-table td {
+	padding: 0.85rem 1rem;
+	text-align: left;
+	border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+	vertical-align: top;
+}
+
+.vip-about-fleet-table thead th {
+	font-size: 0.75rem;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+	color: var(--vip-page-muted);
+	background: var(--vip-page-surface, #f3f3f3);
+}
+
+.vip-about-fleet-table__footnote {
+	margin: 0;
+	font-size: 0.875rem;
+	line-height: 1.5;
+	color: var(--vip-page-muted);
+}
+
+.vip-about-why__title {
+	margin-bottom: clamp(1.5rem, 3vw, 2.5rem);
+}
+
+.vip-about-why__grid {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: clamp(1.5rem, 3vw, 2.5rem);
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.vip-about-why__item {
+	margin: 0;
+}
+
+.vip-about-why__icon {
+	display: block;
+	width: 3rem;
+	height: 3rem;
+	margin-bottom: 1rem;
+}
+
+.vip-about-why__icon-img {
+	display: block;
+	width: 100%;
+	height: 100%;
+	object-fit: contain;
+}
+
+.vip-about-why__item-title {
+	margin: 0 0 0.65rem;
+	font-size: 1.125rem;
+	font-weight: 500;
+	line-height: 1.3;
+}
+
+.vip-about-why__item-text {
+	margin: 0;
+	font-size: 0.9375rem;
+	line-height: 1.6;
+	color: var(--vip-page-muted);
+}
+
+.vip-page--about .vip-faq {
+	padding: clamp(2.5rem, 5vw, 4rem) 0;
+	background: var(--vip-occasion-bg, var(--vip-page-bg, #fff));
+}
+
+@media (max-width: 900px) {
+	.vip-about-story__block {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.vip-about-why__grid {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.vip-about-hero__actions {
+		flex-wrap: wrap;
+	}
+}
+
+@media (max-width: 600px) {
+	.vip-about-fleet-table th,
+	.vip-about-fleet-table td {
+		padding: 0.65rem 0.75rem;
+		font-size: 0.875rem;
+	}
+}

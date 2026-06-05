@@ -4,24 +4,39 @@
  *
  * @package Tenku_Child
  *
- * @var array $args {
- *     @type string $title    H1 text (defaults to post title).
- *     @type string $lead     Optional subtitle.
- * }
+ * Page banners pass data via set_query_var( 'vip_masthead_*' ). Fleet archive
+ * uses vip_transits_render_fleet_archive_banner() and does not load this file.
+ *
+ * @var string $title               H1 text (extract fallback).
+ * @var string $lead                Subtitle (extract fallback).
+ * @var bool   $hide_title_fallback Extract fallback.
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-$title = isset( $args['title'] ) && $args['title'] ? (string) $args['title'] : get_the_title();
-$lead  = isset( $args['lead'] ) ? (string) $args['lead'] : '';
+if ( get_query_var( 'vip_masthead_active' ) ) {
+	$title         = trim( (string) get_query_var( 'vip_masthead_title', '' ) );
+	$lead          = trim( (string) get_query_var( 'vip_masthead_lead', '' ) );
+	$hide_fallback = (bool) get_query_var( 'vip_masthead_hide_title_fallback', false );
+} else {
+	$hide_fallback = ! empty( $hide_title_fallback );
+	$title         = isset( $title ) ? trim( (string) $title ) : '';
+	$lead          = isset( $lead ) ? trim( (string) $lead ) : '';
+}
+
+if ( ! $hide_fallback && $title === '' ) {
+	$title = get_the_title();
+}
 ?>
-<header class="vip-bg-black-section vip-bg-black-section--masthead">
+<header class="vip-bg-black-section vip-bg-black-section--masthead<?php echo $title === '' ? ' vip-bg-black-section--masthead-no-title' : ''; ?>">
 	<div class="vip-bg-black-section__inner vip-content-container">
-		<h1 class="vip-page__masthead-title"><?php echo esc_html( $title ); ?></h1>
-		<?php if ( $lead ) : ?>
-			<p class="vip-page__masthead-lead"><?php echo esc_html( $lead ); ?></p>
+		<?php if ( $title !== '' ) : ?>
+			<h1 class="vip-page__masthead-title"><?php echo esc_html( $title ); ?></h1>
+		<?php endif; ?>
+		<?php if ( $lead !== '' ) : ?>
+			<div class="vip-page__masthead-lead"><?php echo wp_kses_post( $lead ); ?></div>
 		<?php endif; ?>
 	</div>
 </header>

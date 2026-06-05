@@ -275,6 +275,21 @@ function vip_transits_enqueue_fleet_block_assets() {
 	if ( $is_fleet_page ) {
 		vip_transits_enqueue_fleet_listing_assets();
 
+		if (
+			is_post_type_archive( 'vip_vehicle' )
+			&& function_exists( 'vip_transits_fleet_archive_show_banner' )
+			&& vip_transits_fleet_archive_show_banner()
+			&& function_exists( 'vip_transits_page_content_assets' )
+		) {
+			$page_assets = vip_transits_page_content_assets();
+			wp_enqueue_style(
+				'vip-pages',
+				$page_assets['style'],
+				array( 'chld_thm_cfg_child', 'vip-fleet' ),
+				$page_assets['version']
+			);
+		}
+
 		if ( is_front_page() ) {
 			$hero_bridge_js  = $theme_dir . '/assets/js/hero-fleet-bridge.js';
 			$hero_bridge_ver = file_exists( $hero_bridge_js ) ? (string) filemtime( $hero_bridge_js ) : $assets['script_version'];

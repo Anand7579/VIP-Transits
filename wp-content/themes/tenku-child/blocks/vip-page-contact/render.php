@@ -14,7 +14,31 @@ if ( ! $post_id ) {
 	return;
 }
 
-$lead            = (string) vip_transits_get_page_field( 'contact_masthead_lead', '' );
+// Deployment marker: if this comment is absent from the live page source, the
+// updated theme files have NOT reached production (sync/deploy issue).
+echo "\n<!-- vip-contact-render build:2026-06-03-J map-iframe-fix -->\n";
+
+if ( function_exists( 'vip_transits_footer_debug_comment' ) ) {
+	vip_transits_footer_debug_comment(
+		'contact-block-start',
+		array(
+			'post_id'         => (int) $post_id,
+			'footer_rendered' => 0,
+			'static_len'      => function_exists( 'vip_transits_footer_static_html' )
+				? strlen( (string) vip_transits_footer_static_html() )
+				: -1,
+		)
+	);
+}
+
+// Render the whole block inside a buffered try/catch so a render-time error
+// can never abort the request before the footer template-part (and wp_footer)
+// run. Any failure discards this block's partial output and lets the page
+// continue, keeping the footer intact.
+try {
+	ob_start();
+
+	$lead            = (string) vip_transits_get_page_field( 'contact_masthead_lead', '' );
 $intro_content   = (string) vip_transits_get_page_field( 'contact_intro_content', '' );
 $form_heading    = (string) vip_transits_get_page_field( 'contact_form_heading', __( 'Get in touch', 'tenku-child' ) );
 $form_shortcode  = (string) vip_transits_get_page_field( 'contact_form_shortcode', '' );
@@ -61,7 +85,13 @@ if ( $show_whatsapp && function_exists( 'vip_transits_whatsapp_href_attr' ) ) {
 					<?php endif; ?>
 					<?php if ( $form_shortcode ) : ?>
 						<div class="vip-page__form-wrap">
-							<?php echo vip_transits_render_form_shortcode_field( $form_shortcode ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+							<?php
+							if ( function_exists( 'vip_transits_render_form_shortcode_field' ) ) {
+								echo vip_transits_render_form_shortcode_field( $form_shortcode ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+							} else {
+								echo do_shortcode( $form_shortcode ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+							}
+							?>
 						</div>
 					<?php else : ?>
 						<p class="vip-page__form-placeholder">
@@ -163,3 +193,28 @@ if ( $show_whatsapp && function_exists( 'vip_transits_whatsapp_href_attr' ) ) {
 		<?php endif; ?>
 	</div>
 </article>
+	<?php
+	$vip_contact_html = (string) ob_get_clean();
+	if ( function_exists( 'vip_transits_footer_debug_comment' ) ) {
+		vip_transits_footer_debug_comment(
+			'contact-block-buffer',
+			array(
+				'html_len'              => strlen( $vip_contact_html ),
+				'has_vip_site_footer'   => str_contains( $vip_contact_html, 'vip-site-footer' ) ? 1 : 0,
+				'footer_rendered'       => ! empty( $GLOBALS['vip_transits_footer_rendered'] ) ? 1 : 0,
+			)
+		);
+	}
+	echo $vip_contact_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+} catch ( \Throwable $vip_contact_error ) {
+	if ( ob_get_level() > 0 ) {
+		ob_end_clean();
+	}
+	if ( function_exists( 'error_log' ) ) {
+		error_log( 'VIP contact block render failed: ' . $vip_contact_error->getMessage() ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+	}
+	if ( current_user_can( 'manage_options' ) ) {
+		echo '<!-- VIP contact block error: ' . esc_html( $vip_contact_error->getMessage() ) . ' -->';
+	}
+
+}

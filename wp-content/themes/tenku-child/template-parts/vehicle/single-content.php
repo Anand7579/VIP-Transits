@@ -73,13 +73,15 @@ $variants_heading = sprintf(
 	$d['short_name']
 );
 
-$related_heading = $d['brand_name']
-	? sprintf(
-		/* translators: %s: brand name */
-		__( 'Also Available from %s', 'tenku-child' ),
-		$d['brand_name']
-	)
-	: __( 'Also Available', 'tenku-child' );
+$related_heading = function_exists( 'vip_transits_vehicle_related_section_heading' )
+	? vip_transits_vehicle_related_section_heading( $d )
+	: ( $d['brand_name']
+		? sprintf(
+			/* translators: %s: brand name */
+			__( 'Also Available from %s', 'tenku-child' ),
+			$d['brand_name']
+		)
+		: __( 'Also Available', 'tenku-child' ) );
 
 $book_heading = sprintf(
 	/* translators: %s: vehicle short name */
@@ -93,11 +95,13 @@ $routes_heading = sprintf(
 	$d['short_name']
 );
 
-$included_heading = sprintf(
-	/* translators: %s: vehicle short name */
-	__( "What's Included With Your %s Rental", 'tenku-child' ),
-	$d['short_name']
-);
+$included_heading = function_exists( 'vip_transits_vehicle_included_section_heading' )
+	? vip_transits_vehicle_included_section_heading( $d )
+	: sprintf(
+		/* translators: %s: vehicle short name */
+		__( "What's Included With Your %s Rental", 'tenku-child' ),
+		$d['short_name']
+	);
 
 $specs_heading = sprintf(
 	/* translators: %s: vehicle short name */

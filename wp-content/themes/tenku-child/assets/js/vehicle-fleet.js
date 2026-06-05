@@ -610,6 +610,11 @@
 					body.append('delivery_only', '1');
 				}
 
+				var occasionSlug = (root.getAttribute('data-occasion-slug') || '').trim();
+				if (occasionSlug) {
+					body.append('occasion_slug', occasionSlug);
+				}
+
 				fetch(vipFleet.ajaxUrl, { method: 'POST', body: body, credentials: 'same-origin' })
 					.then(function (r) {
 						return r.json();

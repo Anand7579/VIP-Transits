@@ -1,6 +1,7 @@
 <?php
 /**
  * Rent by occasion: featured image + 2×2 grid (Figma mosaic layout).
+ * Cards load from Occasion posts chosen on the homepage (or auto from published occasions).
  *
  * @package Tenku_Child
  */
@@ -9,22 +10,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-$heading  = get_sub_field( 'heading' );
-$intro    = get_sub_field( 'intro' );
-$featured = get_sub_field( 'featured_card' );
+$heading = get_sub_field( 'heading' );
+$intro   = get_sub_field( 'intro' );
+
+$featured = null;
 $cards    = array();
 
-if ( have_rows( 'occasion_cards' ) ) {
-	while ( have_rows( 'occasion_cards' ) ) {
-		the_row();
-		$cards[] = array(
-			'image'        => get_sub_field( 'image' ),
-			'title'        => get_sub_field( 'title' ),
-			'description'  => get_sub_field( 'description' ),
-			'button_label' => get_sub_field( 'button_label' ),
-			'link'         => get_sub_field( 'link' ),
-		);
-	}
+if ( function_exists( 'vip_transits_get_homepage_occasions_layout_for_section' ) ) {
+	$layout = vip_transits_get_homepage_occasions_layout_for_section(
+		get_sub_field( 'featured_occasion' ),
+		get_sub_field( 'grid_occasions' )
+	);
+	$featured = ! empty( $layout['featured'] ) ? $layout['featured'] : null;
+	$cards    = ! empty( $layout['cards'] ) ? $layout['cards'] : array();
 }
 
 $has_featured = is_array( $featured ) && ( ! empty( $featured['image'] ) || ! empty( $featured['title'] ) );
@@ -35,12 +33,22 @@ if ( ! $heading && ! $intro && ! $has_featured && ! $has_cards ) {
 }
 
 /**
- * @param array|null $image ACF image.
- * @param string     $title Alt text fallback.
+ * @param array|null $image      ACF image.
+ * @param string     $title      Alt text fallback.
+ * @param string     $permalink  Occasion detail URL (optional).
  */
-$vip_occasions_render_media = static function ( $image, $title = '' ) {
+$vip_occasions_render_media = static function ( $image, $title = '', $permalink = '' ) {
 	if ( ! is_array( $image ) || ( empty( $image['ID'] ) && empty( $image['url'] ) ) ) {
 		return;
+	}
+
+	$permalink = $permalink ? (string) $permalink : '';
+	if ( $permalink ) {
+		printf(
+			'<a class="vip-occasions-card__media-link" href="%1$s" aria-label="%2$s">',
+			esc_url( $permalink ),
+			esc_attr( $title ? $title : __( 'View occasion', 'tenku-child' ) )
+		);
 	}
 
 	echo '<div class="vip-occasions-card__media">';
@@ -64,41 +72,52 @@ $vip_occasions_render_media = static function ( $image, $title = '' ) {
 		);
 	}
 	echo '</div>';
+
+	if ( $permalink ) {
+		echo '</a>';
+	}
 };
 
 /**
  * @param array $card Card or featured row data.
  */
 $vip_occasions_render_body = static function ( array $card ) {
-	$title = isset( $card['title'] ) ? (string) $card['title'] : '';
-	$desc  = isset( $card['description'] ) ? (string) $card['description'] : '';
+	$title     = isset( $card['title'] ) ? (string) $card['title'] : '';
+	$desc      = isset( $card['description'] ) ? (string) $card['description'] : '';
+	$permalink = ! empty( $card['permalink'] ) ? (string) $card['permalink'] : '';
 
-	if ( ! $title && ! $desc ) {
+	if ( ! $title && ! $desc && ! $permalink ) {
 		return;
 	}
 
 	$label = function_exists( 'vip_transits_occasion_button_label' )
-		? vip_transits_occasion_button_label( $card, __( 'WhatsApp us', 'tenku-child' ) )
-		: __( 'WhatsApp us', 'tenku-child' );
-
-	$btn_href_attr = function_exists( 'vip_transits_whatsapp_href_attr' )
-		? vip_transits_whatsapp_href_attr( vip_transits_occasion_whatsapp_message( $title, $desc ) ) // Lines array.
-		: '';
+		? vip_transits_occasion_button_label( $card, __( 'Learn more', 'tenku-child' ) )
+		: __( 'Learn more', 'tenku-child' );
 
 	echo '<div class="vip-occasions-card__body">';
 	if ( $title ) {
-		echo '<h3 class="vip-occasions-card__title">' . esc_html( $title ) . '</h3>';
+		echo '<h3 class="vip-occasions-card__title">';
+		if ( $permalink ) {
+			printf(
+				'<a class="vip-occasions-card__title-link" href="%1$s">%2$s</a>',
+				esc_url( $permalink ),
+				esc_html( $title )
+			);
+		} else {
+			echo esc_html( $title );
+		}
+		echo '</h3>';
 	}
 	if ( $desc ) {
-		echo '<p class="vip-occasions-card__text">' . esc_html( $desc ) . '</p>';
+		echo '<p class="vip-occasions-card__text"><span class="vip-occasions-card__text-inner">' . esc_html( $desc ) . '</span></p>';
 	}
-	if ( $btn_href_attr ) {
+	if ( $permalink && $label ) {
 		$arrow = function_exists( 'vip_transits_theme_icon_arrow_html' )
 			? vip_transits_theme_icon_arrow_html( 'vip-occasions-card__btn-arrow' )
 			: '<span class="vip-occasions-card__btn-arrow" aria-hidden="true">→</span>';
 		printf(
-			'<a class="vip-occasions-card__btn" href="%1$s" target="_blank" rel="noopener noreferrer"><span class="vip-occasions-card__btn-label">%2$s</span>%3$s</a>',
-			$btn_href_attr, // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			'<a class="vip-occasions-card__btn" href="%1$s"><span class="vip-occasions-card__btn-label">%2$s</span>%3$s</a>',
+			esc_url( $permalink ),
 			esc_html( $label ),
 			$arrow // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		);
@@ -107,6 +126,7 @@ $vip_occasions_render_body = static function ( array $card ) {
 };
 
 $feat_title = is_array( $featured ) && ! empty( $featured['title'] ) ? (string) $featured['title'] : '';
+$feat_url   = is_array( $featured ) && ! empty( $featured['permalink'] ) ? (string) $featured['permalink'] : '';
 ?>
 <section id="vip-occasions" class="vip-occasions" data-vip-section>
 	<div class="vip-occasions__container vip-content-container">
@@ -126,7 +146,7 @@ $feat_title = is_array( $featured ) && ! empty( $featured['title'] ) ? (string) 
 					<div class="vip-occasions__feat-media">
 						<?php
 						$feat_image = isset( $featured['image'] ) ? $featured['image'] : null;
-						$vip_occasions_render_media( $feat_image, $feat_title );
+						$vip_occasions_render_media( $feat_image, $feat_title, $feat_url );
 						?>
 					</div>
 					<div class="vip-occasions__feat-body">
@@ -141,9 +161,10 @@ $feat_title = is_array( $featured ) && ! empty( $featured['title'] ) ? (string) 
 						<?php foreach ( $cards as $card ) : ?>
 							<?php
 							$title = isset( $card['title'] ) ? (string) $card['title'] : '';
+							$url   = ! empty( $card['permalink'] ) ? (string) $card['permalink'] : '';
 							?>
 							<article class="vip-occasions__card">
-								<?php $vip_occasions_render_media( isset( $card['image'] ) ? $card['image'] : null, $title ); ?>
+								<?php $vip_occasions_render_media( isset( $card['image'] ) ? $card['image'] : null, $title, $url ); ?>
 								<?php $vip_occasions_render_body( $card ); ?>
 							</article>
 						<?php endforeach; ?>

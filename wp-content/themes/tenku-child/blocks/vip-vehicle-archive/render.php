@@ -11,11 +11,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 $per_page   = 9;
 $query      = new WP_Query( vip_transits_vehicle_query_args( array( 'posts_per_page' => $per_page ) ) );
-$categories = function_exists( 'vip_transits_get_homepage_vehicle_categories' )
+$categories    = function_exists( 'vip_transits_get_homepage_vehicle_categories' )
 	? vip_transits_get_homepage_vehicle_categories()
 	: array();
+$show_banner  = function_exists( 'vip_transits_fleet_archive_show_banner' ) && vip_transits_fleet_archive_show_banner();
+$banner_desc  = function_exists( 'vip_transits_get_fleet_archive_banner_description' )
+	? vip_transits_get_fleet_archive_banner_description()
+	: '';
 ?>
-<section id="vip-fleet" class="vip-fleet vip-fleet--archive" data-vip-section>
+<?php
+if ( $show_banner && function_exists( 'vip_transits_render_fleet_archive_banner' ) ) {
+	vip_transits_render_fleet_archive_banner();
+}
+?>
+<section id="vip-fleet" class="vip-fleet vip-fleet--archive<?php echo $show_banner ? ' vip-fleet--archive-has-banner' : ''; ?>" data-vip-section>
 	<div class="vip-fleet__container vip-content-container">
 		<?php
 		if ( $categories ) {
@@ -30,11 +39,12 @@ $categories = function_exists( 'vip_transits_get_homepage_vehicle_categories' )
 		}
 		?>
 
-		<header class="vip-fleet__header">
-			<h1 class="vip-fleet__title"><?php esc_html_e( 'Our Luxury Car Fleet in Dubai', 'tenku-child' ); ?></h1>
-			<p class="vip-fleet__subtitle"><?php esc_html_e( 'Every brand. Every model. Available on demand.', 'tenku-child' ); ?></p>
+		<?php if ( ! $show_banner && $banner_desc !== '' ) : ?>
+		<header class="vip-fleet__header vip-fleet__header--desc-only">
+			<div class="vip-fleet__subtitle"><?php echo wp_kses_post( $banner_desc ); ?></div>
 			<hr class="vip-fleet__rule" />
 		</header>
+		<?php endif; ?>
 
 		<?php
 		vip_transits_render_fleet_grid(

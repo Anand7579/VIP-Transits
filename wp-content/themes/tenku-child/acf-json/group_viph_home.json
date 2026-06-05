@@ -27,23 +27,38 @@
                             "key": "field_viph_hero_bg_type",
                             "label": "Background type",
                             "name": "bg_type",
+                            "aria-label": "",
                             "type": "select",
+                            "instructions": "",
+                            "required": false,
+                            "conditional_logic": false,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
                             "choices": {
                                 "video": "Video",
                                 "image": "Image"
                             },
                             "default_value": "video",
                             "return_format": "value",
-                            "parent": "field_viph_sections"
+                            "multiple": 0,
+                            "allow_null": 0,
+                            "ui": 0,
+                            "ajax": 0,
+                            "placeholder": "",
+                            "create_options": 0,
+                            "save_options": 0
                         },
                         {
                             "key": "field_viph_hero_bg_video",
                             "label": "Background video (MP4)",
                             "name": "background_video",
+                            "aria-label": "",
                             "type": "file",
-                            "return_format": "array",
-                            "mime_types": "mp4,webm",
-                            "parent": "field_viph_sections",
+                            "instructions": "",
+                            "required": false,
                             "conditional_logic": [
                                 [
                                     {
@@ -52,91 +67,227 @@
                                         "value": "video"
                                     }
                                 ]
-                            ]
+                            ],
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "return_format": "array",
+                            "mime_types": "mp4,webm",
+                            "library": "all",
+                            "min_size": 0,
+                            "max_size": 0
                         },
                         {
                             "key": "field_viph_hero_bg_image",
                             "label": "Background image",
                             "name": "background_image",
+                            "aria-label": "",
                             "type": "image",
+                            "instructions": "Full background when type is Image. When type is Video, used as poster\/fallback.",
+                            "required": false,
+                            "conditional_logic": false,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
                             "return_format": "array",
                             "preview_size": "medium",
-                            "instructions": "Full background when type is Image. When type is Video, used as poster\/fallback.",
-                            "parent": "field_viph_sections"
+                            "library": "all",
+                            "min_width": 0,
+                            "min_height": 0,
+                            "min_size": 0,
+                            "max_width": 0,
+                            "max_height": 0,
+                            "max_size": 0,
+                            "mime_types": ""
                         },
                         {
                             "key": "field_viph_hero_eyebrow_text",
                             "label": "Eyebrow text",
                             "name": "eyebrow_text",
+                            "aria-label": "",
                             "type": "text",
+                            "instructions": "",
+                            "required": false,
+                            "conditional_logic": false,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
                             "default_value": "LUXURY CAR RENTAL,",
-                            "parent": "field_viph_sections"
+                            "maxlength": "",
+                            "placeholder": "",
+                            "prepend": "",
+                            "append": ""
                         },
                         {
                             "key": "field_viph_hero_eyebrow_badge",
                             "label": "Eyebrow badge",
                             "name": "eyebrow_badge",
+                            "aria-label": "",
                             "type": "text",
+                            "instructions": "",
+                            "required": false,
+                            "conditional_logic": false,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
                             "default_value": "DUBAI",
-                            "parent": "field_viph_sections"
+                            "maxlength": "",
+                            "placeholder": "",
+                            "prepend": "",
+                            "append": ""
                         },
                         {
                             "key": "field_viph_hero_heading",
                             "label": "Headline (line 1)",
                             "name": "heading",
+                            "aria-label": "",
                             "type": "text",
+                            "instructions": "",
+                            "required": false,
+                            "conditional_logic": false,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
                             "default_value": "Any Car, Any Occasion,",
-                            "parent": "field_viph_sections"
+                            "maxlength": "",
+                            "placeholder": "",
+                            "prepend": "",
+                            "append": ""
                         },
                         {
                             "key": "field_viph_hero_heading_highlight",
                             "label": "Headline highlight",
                             "name": "heading_highlight",
+                            "aria-label": "",
                             "type": "text",
-                            "default_value": "via WhatsApp",
                             "instructions": "Rendered larger on its own line (e.g. via WhatsApp).",
-                            "parent": "field_viph_sections"
+                            "required": false,
+                            "conditional_logic": false,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "default_value": "via WhatsApp",
+                            "maxlength": "",
+                            "placeholder": "",
+                            "prepend": "",
+                            "append": ""
                         },
                         {
                             "key": "field_viph_hero_search_ph",
                             "label": "Search placeholder",
                             "name": "search_placeholder",
+                            "aria-label": "",
                             "type": "text",
+                            "instructions": "",
+                            "required": false,
+                            "conditional_logic": false,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
                             "default_value": "Search",
-                            "parent": "field_viph_sections"
+                            "maxlength": "",
+                            "placeholder": "",
+                            "prepend": "",
+                            "append": ""
                         },
                         {
                             "key": "field_viph_hero_search_url",
                             "label": "Search form URL (optional)",
                             "name": "search_action_url",
+                            "aria-label": "",
                             "type": "url",
                             "instructions": "Leave empty to use site search.",
-                            "parent": "field_viph_sections"
+                            "required": false,
+                            "conditional_logic": false,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "default_value": "",
+                            "placeholder": ""
                         },
                         {
                             "key": "field_viph_hero_props",
                             "label": "Value propositions",
                             "name": "value_props",
+                            "aria-label": "",
                             "type": "repeater",
+                            "instructions": "",
+                            "required": false,
+                            "conditional_logic": false,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
                             "layout": "table",
                             "button_label": "Add item",
-                            "parent": "field_viph_sections",
+                            "min": 0,
+                            "max": 0,
+                            "rows_per_page": 20,
+                            "collapsed": "",
                             "sub_fields": [
                                 {
                                     "key": "field_viph_hero_prop_icon",
                                     "label": "Icon",
                                     "name": "icon",
+                                    "aria-label": "",
                                     "type": "image",
+                                    "instructions": "",
+                                    "required": false,
+                                    "conditional_logic": false,
+                                    "wrapper": {
+                                        "width": "",
+                                        "class": "",
+                                        "id": ""
+                                    },
                                     "return_format": "array",
                                     "preview_size": "thumbnail",
-                                    "parent": "field_viph_hero_props"
+                                    "library": "all",
+                                    "min_width": 0,
+                                    "min_height": 0,
+                                    "min_size": 0,
+                                    "max_width": 0,
+                                    "max_height": 0,
+                                    "max_size": 0,
+                                    "mime_types": "",
+                                    "parent_repeater": "field_viph_hero_props"
                                 },
                                 {
                                     "key": "field_viph_hero_prop_text",
                                     "label": "Text",
                                     "name": "text",
+                                    "aria-label": "",
                                     "type": "text",
-                                    "parent": "field_viph_hero_props"
+                                    "instructions": "",
+                                    "required": false,
+                                    "conditional_logic": false,
+                                    "wrapper": {
+                                        "width": "",
+                                        "class": "",
+                                        "id": ""
+                                    },
+                                    "default_value": "",
+                                    "maxlength": "",
+                                    "placeholder": "",
+                                    "prepend": "",
+                                    "append": "",
+                                    "parent_repeater": "field_viph_hero_props"
                                 }
                             ]
                         }
@@ -154,16 +305,41 @@
                             "key": "field_viph_book_title",
                             "label": "Title",
                             "name": "title",
+                            "aria-label": "",
                             "type": "text",
-                            "parent": "field_viph_sections"
+                            "instructions": "",
+                            "required": false,
+                            "conditional_logic": false,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "default_value": "",
+                            "maxlength": "",
+                            "placeholder": "",
+                            "prepend": "",
+                            "append": ""
                         },
                         {
                             "key": "field_viph_book_note",
                             "label": "Short note",
                             "name": "note",
+                            "aria-label": "",
                             "type": "textarea",
+                            "instructions": "",
+                            "required": false,
+                            "conditional_logic": false,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
                             "rows": 2,
-                            "parent": "field_viph_sections"
+                            "default_value": "",
+                            "new_lines": "",
+                            "maxlength": "",
+                            "placeholder": ""
                         }
                     ],
                     "min": "",
@@ -179,45 +355,107 @@
                             "key": "field_viph_cat_items",
                             "label": "Categories",
                             "name": "categories",
+                            "aria-label": "",
                             "type": "repeater",
+                            "instructions": "",
+                            "required": false,
+                            "conditional_logic": false,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
                             "layout": "block",
                             "button_label": "Add category",
                             "min": 1,
                             "max": 8,
-                            "parent": "field_viph_sections",
+                            "rows_per_page": 20,
+                            "collapsed": "",
                             "sub_fields": [
                                 {
                                     "key": "field_viph_cat_image",
                                     "label": "Image",
                                     "name": "image",
+                                    "aria-label": "",
                                     "type": "image",
+                                    "instructions": "",
+                                    "required": false,
+                                    "conditional_logic": false,
+                                    "wrapper": {
+                                        "width": "",
+                                        "class": "",
+                                        "id": ""
+                                    },
                                     "return_format": "array",
                                     "preview_size": "medium",
-                                    "parent": "field_viph_cat_items"
+                                    "library": "all",
+                                    "min_width": 0,
+                                    "min_height": 0,
+                                    "min_size": 0,
+                                    "max_width": 0,
+                                    "max_height": 0,
+                                    "max_size": 0,
+                                    "mime_types": "",
+                                    "parent_repeater": "field_viph_cat_items"
                                 },
                                 {
                                     "key": "field_viph_cat_title",
                                     "label": "Title",
                                     "name": "title",
+                                    "aria-label": "",
                                     "type": "text",
                                     "instructions": "e.g. SPORTS, CONVERTIBLE",
-                                    "parent": "field_viph_cat_items"
+                                    "required": false,
+                                    "conditional_logic": false,
+                                    "wrapper": {
+                                        "width": "",
+                                        "class": "",
+                                        "id": ""
+                                    },
+                                    "default_value": "",
+                                    "maxlength": "",
+                                    "placeholder": "",
+                                    "prepend": "",
+                                    "append": "",
+                                    "parent_repeater": "field_viph_cat_items"
                                 },
                                 {
                                     "key": "field_viph_cat_filter_slug",
                                     "label": "Filter slug",
                                     "name": "filter_slug",
+                                    "aria-label": "",
                                     "type": "text",
                                     "instructions": "Optional. Must match a Vehicles → Categories slug (sports, convertible, luxury, suv). Leave empty to derive from title.",
-                                    "parent": "field_viph_cat_items"
+                                    "required": false,
+                                    "conditional_logic": false,
+                                    "wrapper": {
+                                        "width": "",
+                                        "class": "",
+                                        "id": ""
+                                    },
+                                    "default_value": "",
+                                    "maxlength": "",
+                                    "placeholder": "",
+                                    "prepend": "",
+                                    "append": "",
+                                    "parent_repeater": "field_viph_cat_items"
                                 },
                                 {
                                     "key": "field_viph_cat_link",
                                     "label": "Link (optional, unused)",
                                     "name": "link",
+                                    "aria-label": "",
                                     "type": "link",
+                                    "instructions": "",
+                                    "required": false,
+                                    "conditional_logic": false,
+                                    "wrapper": {
+                                        "width": "",
+                                        "class": "",
+                                        "id": ""
+                                    },
                                     "return_format": "array",
-                                    "parent": "field_viph_cat_items"
+                                    "parent_repeater": "field_viph_cat_items"
                                 }
                             ]
                         }
@@ -235,108 +473,112 @@
                             "key": "field_viph_occ_heading",
                             "label": "Heading",
                             "name": "heading",
+                            "aria-label": "",
                             "type": "text",
+                            "instructions": "",
+                            "required": false,
+                            "conditional_logic": false,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
                             "default_value": "Rent by Occasion",
-                            "parent": "field_viph_sections"
+                            "maxlength": "",
+                            "placeholder": "",
+                            "prepend": "",
+                            "append": ""
                         },
                         {
                             "key": "field_viph_occ_intro",
                             "label": "Introduction",
                             "name": "intro",
+                            "aria-label": "",
                             "type": "textarea",
+                            "instructions": "",
+                            "required": false,
+                            "conditional_logic": false,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
                             "rows": 2,
                             "default_value": "Every occasion has its perfect car. We handle the sourcing, delivery, and logistics - you focus on the moment.",
-                            "parent": "field_viph_sections"
+                            "new_lines": "",
+                            "maxlength": "",
+                            "placeholder": ""
                         },
                         {
-                            "key": "field_viph_occ_featured",
-                            "label": "Featured card (left column)",
-                            "name": "featured_card",
-                            "type": "group",
-                            "layout": "block",
-                            "parent": "field_viph_sections",
-                            "sub_fields": [
-                                {
-                                    "key": "field_viph_occ_feat_image",
-                                    "label": "Image",
-                                    "name": "image",
-                                    "type": "image",
-                                    "return_format": "array",
-                                    "preview_size": "medium",
-                                    "parent": "field_viph_occ_featured"
-                                },
-                                {
-                                    "key": "field_viph_occ_feat_title",
-                                    "label": "Title",
-                                    "name": "title",
-                                    "type": "text",
-                                    "default_value": "Wedding Car Rental Dubai",
-                                    "parent": "field_viph_occ_featured"
-                                },
-                                {
-                                    "key": "field_viph_occ_feat_desc",
-                                    "label": "Description",
-                                    "name": "description",
-                                    "type": "textarea",
-                                    "rows": 3,
-                                    "default_value": "Arrive in a white Rolls Royce Phantom or Bentley Continental GT. We handle decoration, timing, and delivery - you focus on the day.",
-                                    "parent": "field_viph_occ_featured"
-                                },
-                                {
-                                    "key": "field_viph_occ_feat_btn_label",
-                                    "label": "Button label",
-                                    "name": "button_label",
-                                    "type": "text",
-                                    "instructions": "Opens WhatsApp with this card's title and description (number is set under Settings → VIP Transits).",
-                                    "default_value": "PLAN YOUR WEDDING CAR",
-                                    "parent": "field_viph_occ_featured"
-                                }
-                            ]
+                            "key": "field_viph_occ_pick_msg",
+                            "label": "",
+                            "name": "",
+                            "aria-label": "",
+                            "type": "message",
+                            "instructions": "",
+                            "required": 0,
+                            "conditional_logic": false,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "message": "Choose which Occasion posts appear below. Card content (title, featured image, excerpt, button label) is loaded from each occasion. If these pickers are empty, all published occasions with Show on homepage enabled are used (menu order; one can be marked Featured on the occasion post).",
+                            "new_lines": "wpautop",
+                            "esc_html": 0
                         },
                         {
-                            "key": "field_viph_occ_cards",
-                            "label": "Grid cards (2×2)",
-                            "name": "occasion_cards",
-                            "type": "repeater",
-                            "layout": "block",
+                            "key": "field_viph_occ_featured_post",
+                            "label": "Featured occasion (large left card)",
+                            "name": "featured_occasion",
+                            "aria-label": "",
+                            "type": "post_object",
+                            "instructions": "Pick one published Occasion for the large card on the left.",
+                            "required": 0,
+                            "conditional_logic": false,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "post_type": [
+                                "vip_occasion"
+                            ],
+                            "return_format": "id",
+                            "allow_null": 1,
+                            "multiple": 0,
+                            "ui": 1,
+                            "taxonomy": [],
+                            "bidirectional_target": []
+                        },
+                        {
+                            "key": "field_viph_occ_grid_posts",
+                            "label": "Grid occasions (up to 4)",
+                            "name": "grid_occasions",
+                            "aria-label": "",
+                            "type": "relationship",
+                            "instructions": "Pick up to four occasions for the 2×2 grid. Order here is the display order. The featured occasion above is excluded automatically if also selected here.",
+                            "required": 0,
+                            "conditional_logic": false,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "post_type": [
+                                "vip_occasion"
+                            ],
+                            "filters": [
+                                "search"
+                            ],
+                            "elements": [
+                                "featured_image"
+                            ],
                             "min": 0,
                             "max": 4,
-                            "button_label": "Add occasion card",
-                            "parent": "field_viph_sections",
-                            "sub_fields": [
-                                {
-                                    "key": "field_viph_occ_card_image",
-                                    "label": "Image",
-                                    "name": "image",
-                                    "type": "image",
-                                    "return_format": "array",
-                                    "preview_size": "medium",
-                                    "parent": "field_viph_occ_cards"
-                                },
-                                {
-                                    "key": "field_viph_occ_card_title",
-                                    "label": "Title",
-                                    "name": "title",
-                                    "type": "text",
-                                    "parent": "field_viph_occ_cards"
-                                },
-                                {
-                                    "key": "field_viph_occ_card_desc",
-                                    "label": "Description",
-                                    "name": "description",
-                                    "type": "textarea",
-                                    "rows": 3,
-                                    "parent": "field_viph_occ_cards"
-                                },
-                                {
-                                    "key": "field_viph_occ_card_btn_label",
-                                    "label": "Button label",
-                                    "name": "button_label",
-                                    "type": "text",
-                                    "instructions": "Opens WhatsApp with this card's title and description.",
-                                    "parent": "field_viph_occ_cards"
-                                }
-                            ]
+                            "return_format": "id",
+                            "taxonomy": [],
+                            "bidirectional_target": []
                         }
                     ],
                     "min": "",
@@ -352,55 +594,129 @@
                             "key": "field_viph_faq_heading",
                             "label": "Heading",
                             "name": "heading",
+                            "aria-label": "",
                             "type": "text",
+                            "instructions": "",
+                            "required": false,
+                            "conditional_logic": false,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
                             "default_value": "Frequently Asked Questions",
-                            "parent": "field_viph_sections"
+                            "maxlength": "",
+                            "placeholder": "",
+                            "prepend": "",
+                            "append": ""
                         },
                         {
                             "key": "field_viph_faq_intro",
                             "label": "Introduction",
                             "name": "intro",
+                            "aria-label": "",
                             "type": "textarea",
+                            "instructions": "",
+                            "required": false,
+                            "conditional_logic": false,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
                             "rows": 2,
                             "default_value": "Everything you need to know about renting a luxury car in Dubai with VIP Transits.",
-                            "parent": "field_viph_sections"
+                            "new_lines": "",
+                            "maxlength": "",
+                            "placeholder": ""
                         },
                         {
                             "key": "field_viph_faq_image",
                             "label": "Side image (car)",
                             "name": "side_image",
+                            "aria-label": "",
                             "type": "image",
+                            "instructions": "Cut-out vehicle image shown on the right (e.g. G-Class).",
+                            "required": false,
+                            "conditional_logic": false,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
                             "return_format": "array",
                             "preview_size": "medium",
-                            "instructions": "Cut-out vehicle image shown on the right (e.g. G-Class).",
-                            "parent": "field_viph_sections"
+                            "library": "all",
+                            "min_width": 0,
+                            "min_height": 0,
+                            "min_size": 0,
+                            "max_width": 0,
+                            "max_height": 0,
+                            "max_size": 0,
+                            "mime_types": ""
                         },
                         {
                             "key": "field_viph_faq_items",
                             "label": "Questions",
                             "name": "faq_items",
+                            "aria-label": "",
                             "type": "repeater",
+                            "instructions": "",
+                            "required": false,
+                            "conditional_logic": false,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
                             "layout": "block",
                             "button_label": "Add question",
                             "min": 1,
-                            "parent": "field_viph_sections",
+                            "max": 0,
+                            "rows_per_page": 20,
+                            "collapsed": "",
                             "sub_fields": [
                                 {
                                     "key": "field_viph_faq_question",
                                     "label": "Question",
                                     "name": "question",
+                                    "aria-label": "",
                                     "type": "text",
-                                    "parent": "field_viph_faq_items"
+                                    "instructions": "",
+                                    "required": false,
+                                    "conditional_logic": false,
+                                    "wrapper": {
+                                        "width": "",
+                                        "class": "",
+                                        "id": ""
+                                    },
+                                    "default_value": "",
+                                    "maxlength": "",
+                                    "placeholder": "",
+                                    "prepend": "",
+                                    "append": "",
+                                    "parent_repeater": "field_viph_faq_items"
                                 },
                                 {
                                     "key": "field_viph_faq_answer",
                                     "label": "Answer",
                                     "name": "answer",
+                                    "aria-label": "",
                                     "type": "wysiwyg",
+                                    "instructions": "",
+                                    "required": false,
+                                    "conditional_logic": false,
+                                    "wrapper": {
+                                        "width": "",
+                                        "class": "",
+                                        "id": ""
+                                    },
                                     "tabs": "visual",
                                     "toolbar": "basic",
                                     "media_upload": 0,
-                                    "parent": "field_viph_faq_items"
+                                    "default_value": "",
+                                    "delay": 0,
+                                    "parent_repeater": "field_viph_faq_items"
                                 }
                             ]
                         }
@@ -418,45 +734,103 @@
                             "key": "field_viph_vg_title",
                             "label": "Section title",
                             "name": "section_title",
+                            "aria-label": "",
                             "type": "text",
+                            "instructions": "",
+                            "required": false,
+                            "conditional_logic": false,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
                             "default_value": "Our Luxury Car Fleet in Dubai",
-                            "parent": "field_viph_sections"
+                            "maxlength": "",
+                            "placeholder": "",
+                            "prepend": "",
+                            "append": ""
                         },
                         {
                             "key": "field_viph_vg_subtitle",
                             "label": "Subtitle",
                             "name": "section_subtitle",
+                            "aria-label": "",
                             "type": "text",
+                            "instructions": "",
+                            "required": false,
+                            "conditional_logic": false,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
                             "default_value": "Every brand. Every model. Available on demand.",
-                            "parent": "field_viph_sections"
+                            "maxlength": "",
+                            "placeholder": "",
+                            "prepend": "",
+                            "append": ""
                         },
                         {
                             "key": "field_viph_vg_per_page",
                             "label": "Vehicles per page",
                             "name": "posts_per_page",
+                            "aria-label": "",
                             "type": "number",
+                            "instructions": "",
+                            "required": false,
+                            "conditional_logic": false,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
                             "default_value": 9,
                             "min": 3,
                             "max": 24,
-                            "parent": "field_viph_sections"
+                            "step": "",
+                            "placeholder": "",
+                            "prepend": "",
+                            "append": ""
                         },
                         {
                             "key": "field_viph_vg_filters",
                             "label": "Show sidebar filters",
                             "name": "show_filters",
+                            "aria-label": "",
                             "type": "true_false",
+                            "instructions": "",
+                            "required": false,
+                            "conditional_logic": false,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
                             "ui": 1,
                             "default_value": 1,
-                            "parent": "field_viph_sections"
+                            "message": "",
+                            "ui_on_text": "",
+                            "ui_off_text": ""
                         },
                         {
                             "key": "field_viph_vg_load_more",
                             "label": "Show load more button",
                             "name": "show_load_more",
+                            "aria-label": "",
                             "type": "true_false",
+                            "instructions": "",
+                            "required": false,
+                            "conditional_logic": false,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
                             "ui": 1,
                             "default_value": 1,
-                            "parent": "field_viph_sections"
+                            "message": "",
+                            "ui_on_text": "",
+                            "ui_off_text": ""
                         }
                     ],
                     "min": "",
@@ -472,40 +846,105 @@
                             "key": "field_viph_feat_title",
                             "label": "Section title",
                             "name": "section_title",
+                            "aria-label": "",
                             "type": "text",
-                            "parent": "field_viph_sections"
+                            "instructions": "",
+                            "required": false,
+                            "conditional_logic": false,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "default_value": "",
+                            "maxlength": "",
+                            "placeholder": "",
+                            "prepend": "",
+                            "append": ""
                         },
                         {
                             "key": "field_viph_feat_cols",
                             "label": "Columns",
                             "name": "columns",
+                            "aria-label": "",
                             "type": "repeater",
+                            "instructions": "",
+                            "required": false,
+                            "conditional_logic": false,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
                             "layout": "table",
                             "max": 4,
                             "button_label": "Add column",
-                            "parent": "field_viph_sections",
+                            "min": 0,
+                            "rows_per_page": 20,
+                            "collapsed": "",
                             "sub_fields": [
                                 {
                                     "key": "field_viph_feat_icon",
                                     "label": "Icon \/ emoji",
                                     "name": "icon",
+                                    "aria-label": "",
                                     "type": "text",
-                                    "parent": "field_viph_feat_cols"
+                                    "instructions": "",
+                                    "required": false,
+                                    "conditional_logic": false,
+                                    "wrapper": {
+                                        "width": "",
+                                        "class": "",
+                                        "id": ""
+                                    },
+                                    "default_value": "",
+                                    "maxlength": "",
+                                    "placeholder": "",
+                                    "prepend": "",
+                                    "append": "",
+                                    "parent_repeater": "field_viph_feat_cols"
                                 },
                                 {
                                     "key": "field_viph_feat_h",
                                     "label": "Title",
                                     "name": "title",
+                                    "aria-label": "",
                                     "type": "text",
-                                    "parent": "field_viph_feat_cols"
+                                    "instructions": "",
+                                    "required": false,
+                                    "conditional_logic": false,
+                                    "wrapper": {
+                                        "width": "",
+                                        "class": "",
+                                        "id": ""
+                                    },
+                                    "default_value": "",
+                                    "maxlength": "",
+                                    "placeholder": "",
+                                    "prepend": "",
+                                    "append": "",
+                                    "parent_repeater": "field_viph_feat_cols"
                                 },
                                 {
                                     "key": "field_viph_feat_body",
                                     "label": "Text",
                                     "name": "text",
+                                    "aria-label": "",
                                     "type": "textarea",
+                                    "instructions": "",
+                                    "required": false,
+                                    "conditional_logic": false,
+                                    "wrapper": {
+                                        "width": "",
+                                        "class": "",
+                                        "id": ""
+                                    },
                                     "rows": 3,
-                                    "parent": "field_viph_feat_cols"
+                                    "default_value": "",
+                                    "new_lines": "",
+                                    "maxlength": "",
+                                    "placeholder": "",
+                                    "parent_repeater": "field_viph_feat_cols"
                                 }
                             ]
                         }
@@ -523,52 +962,131 @@
                             "key": "field_viph_why_heading",
                             "label": "Heading",
                             "name": "heading",
+                            "aria-label": "",
                             "type": "text",
+                            "instructions": "",
+                            "required": false,
+                            "conditional_logic": false,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
                             "default_value": "Why Rent With VIP Transits",
-                            "parent": "field_viph_sections"
+                            "maxlength": "",
+                            "placeholder": "",
+                            "prepend": "",
+                            "append": ""
                         },
                         {
                             "key": "field_viph_why_cards",
                             "label": "Feature cards",
                             "name": "cards",
+                            "aria-label": "",
                             "type": "repeater",
+                            "instructions": "",
+                            "required": false,
+                            "conditional_logic": false,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
                             "layout": "block",
                             "min": 0,
                             "max": 4,
                             "button_label": "Add card",
-                            "parent": "field_viph_sections",
+                            "rows_per_page": 20,
+                            "collapsed": "",
                             "sub_fields": [
                                 {
                                     "key": "field_viph_why_image",
                                     "label": "Image",
                                     "name": "image",
+                                    "aria-label": "",
                                     "type": "image",
+                                    "instructions": "",
+                                    "required": false,
+                                    "conditional_logic": false,
+                                    "wrapper": {
+                                        "width": "",
+                                        "class": "",
+                                        "id": ""
+                                    },
                                     "return_format": "array",
                                     "preview_size": "medium",
-                                    "parent": "field_viph_why_cards"
+                                    "library": "all",
+                                    "min_width": 0,
+                                    "min_height": 0,
+                                    "min_size": 0,
+                                    "max_width": 0,
+                                    "max_height": 0,
+                                    "max_size": 0,
+                                    "mime_types": "",
+                                    "parent_repeater": "field_viph_why_cards"
                                 },
                                 {
                                     "key": "field_viph_why_title",
                                     "label": "Title",
                                     "name": "title",
+                                    "aria-label": "",
                                     "type": "text",
-                                    "parent": "field_viph_why_cards"
+                                    "instructions": "",
+                                    "required": false,
+                                    "conditional_logic": false,
+                                    "wrapper": {
+                                        "width": "",
+                                        "class": "",
+                                        "id": ""
+                                    },
+                                    "default_value": "",
+                                    "maxlength": "",
+                                    "placeholder": "",
+                                    "prepend": "",
+                                    "append": "",
+                                    "parent_repeater": "field_viph_why_cards"
                                 },
                                 {
                                     "key": "field_viph_why_desc",
                                     "label": "Description",
                                     "name": "description",
+                                    "aria-label": "",
                                     "type": "textarea",
+                                    "instructions": "",
+                                    "required": false,
+                                    "conditional_logic": false,
+                                    "wrapper": {
+                                        "width": "",
+                                        "class": "",
+                                        "id": ""
+                                    },
                                     "rows": 4,
-                                    "parent": "field_viph_why_cards"
+                                    "default_value": "",
+                                    "new_lines": "",
+                                    "maxlength": "",
+                                    "placeholder": "",
+                                    "parent_repeater": "field_viph_why_cards"
                                 },
                                 {
                                     "key": "field_viph_why_btn",
                                     "label": "Button label",
                                     "name": "button_label",
+                                    "aria-label": "",
                                     "type": "text",
                                     "instructions": "Opens WhatsApp with this card's title and description (number is set under Settings → VIP Transits).",
-                                    "parent": "field_viph_why_cards"
+                                    "required": false,
+                                    "conditional_logic": false,
+                                    "wrapper": {
+                                        "width": "",
+                                        "class": "",
+                                        "id": ""
+                                    },
+                                    "default_value": "",
+                                    "maxlength": "",
+                                    "placeholder": "",
+                                    "prepend": "",
+                                    "append": "",
+                                    "parent_repeater": "field_viph_why_cards"
                                 }
                             ]
                         }
@@ -586,53 +1104,130 @@
                             "key": "field_viph_del_heading",
                             "label": "Heading",
                             "name": "heading",
+                            "aria-label": "",
                             "type": "text",
+                            "instructions": "",
+                            "required": false,
+                            "conditional_logic": false,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
                             "default_value": "Delivery Locations Across Dubai",
-                            "parent": "field_viph_sections"
+                            "maxlength": "",
+                            "placeholder": "",
+                            "prepend": "",
+                            "append": ""
                         },
                         {
                             "key": "field_viph_del_intro",
                             "label": "Introduction",
                             "name": "intro",
+                            "aria-label": "",
                             "type": "textarea",
+                            "instructions": "",
+                            "required": false,
+                            "conditional_logic": false,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
                             "rows": 2,
                             "default_value": "We deliver to every corner of Dubai - free, on time, and to your exact address.",
-                            "parent": "field_viph_sections"
+                            "new_lines": "",
+                            "maxlength": "",
+                            "placeholder": ""
                         },
                         {
                             "key": "field_viph_del_locations",
                             "label": "Locations",
                             "name": "locations",
+                            "aria-label": "",
                             "type": "repeater",
+                            "instructions": "",
+                            "required": false,
+                            "conditional_logic": false,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
                             "layout": "block",
                             "min": 0,
                             "max": 6,
                             "button_label": "Add location",
-                            "parent": "field_viph_sections",
+                            "rows_per_page": 20,
+                            "collapsed": "",
                             "sub_fields": [
                                 {
                                     "key": "field_viph_del_image",
                                     "label": "Image",
                                     "name": "image",
+                                    "aria-label": "",
                                     "type": "image",
+                                    "instructions": "",
+                                    "required": false,
+                                    "conditional_logic": false,
+                                    "wrapper": {
+                                        "width": "",
+                                        "class": "",
+                                        "id": ""
+                                    },
                                     "return_format": "array",
                                     "preview_size": "medium",
-                                    "parent": "field_viph_del_locations"
+                                    "library": "all",
+                                    "min_width": 0,
+                                    "min_height": 0,
+                                    "min_size": 0,
+                                    "max_width": 0,
+                                    "max_height": 0,
+                                    "max_size": 0,
+                                    "mime_types": "",
+                                    "parent_repeater": "field_viph_del_locations"
                                 },
                                 {
                                     "key": "field_viph_del_title",
                                     "label": "Location name",
                                     "name": "title",
+                                    "aria-label": "",
                                     "type": "text",
-                                    "parent": "field_viph_del_locations"
+                                    "instructions": "",
+                                    "required": false,
+                                    "conditional_logic": false,
+                                    "wrapper": {
+                                        "width": "",
+                                        "class": "",
+                                        "id": ""
+                                    },
+                                    "default_value": "",
+                                    "maxlength": "",
+                                    "placeholder": "",
+                                    "prepend": "",
+                                    "append": "",
+                                    "parent_repeater": "field_viph_del_locations"
                                 },
                                 {
                                     "key": "field_viph_del_desc",
                                     "label": "Description",
                                     "name": "description",
+                                    "aria-label": "",
                                     "type": "textarea",
+                                    "instructions": "",
+                                    "required": false,
+                                    "conditional_logic": false,
+                                    "wrapper": {
+                                        "width": "",
+                                        "class": "",
+                                        "id": ""
+                                    },
                                     "rows": 2,
-                                    "parent": "field_viph_del_locations"
+                                    "default_value": "",
+                                    "new_lines": "",
+                                    "maxlength": "",
+                                    "placeholder": "",
+                                    "parent_repeater": "field_viph_del_locations"
                                 }
                             ]
                         }
@@ -650,27 +1245,61 @@
                             "key": "field_viph_cta_heading",
                             "label": "Heading",
                             "name": "heading",
+                            "aria-label": "",
                             "type": "text",
+                            "instructions": "",
+                            "required": false,
+                            "conditional_logic": false,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
                             "default_value": "Can't see your car?",
-                            "parent": "field_viph_sections"
+                            "maxlength": "",
+                            "placeholder": "",
+                            "prepend": "",
+                            "append": ""
                         },
                         {
                             "key": "field_viph_cta_text",
                             "label": "Text",
                             "name": "text",
+                            "aria-label": "",
                             "type": "textarea",
+                            "instructions": "",
+                            "required": false,
+                            "conditional_logic": false,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
                             "rows": 3,
                             "default_value": "Message us anyway - we source any luxury car in Dubai on demand. If it exists in Dubai, we can get it.",
-                            "parent": "field_viph_sections"
+                            "new_lines": "",
+                            "maxlength": "",
+                            "placeholder": ""
                         },
                         {
                             "key": "field_viph_cta_btn_label",
                             "label": "WhatsApp button label",
                             "name": "button_label",
+                            "aria-label": "",
                             "type": "text",
-                            "default_value": "WhatsApp to book",
                             "instructions": "Opens WhatsApp with the heading and text above (number is set under Settings → VIP Transits).",
-                            "parent": "field_viph_sections"
+                            "required": false,
+                            "conditional_logic": false,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "default_value": "WhatsApp to book",
+                            "maxlength": "",
+                            "placeholder": "",
+                            "prepend": "",
+                            "append": ""
                         }
                     ],
                     "min": "",
@@ -700,5 +1329,8 @@
     "active": true,
     "description": "Homepage flexible sections for VIP Transits (car rental).",
     "show_in_rest": 1,
-    "modified": 1780385800
+    "display_title": "",
+    "allow_ai_access": false,
+    "ai_description": "",
+    "modified": 1780578868
 }

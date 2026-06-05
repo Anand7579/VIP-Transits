@@ -43,11 +43,19 @@ $fleet_heading = ! empty( $fleet_cfg['heading'] )
 	: __( 'Cars for your occasion', 'tenku-child' );
 $fleet_subtitle = ! empty( $fleet_cfg['subtitle'] )
 	? (string) $fleet_cfg['subtitle']
-	: __( 'Filter by role, type, brand, budget, and passengers.', 'tenku-child' );
+	: __( 'Filter by type, brand, budget, and passengers.', 'tenku-child' );
 $per_page       = ! empty( $fleet_cfg['posts_per_page'] ) ? max( 1, min( 24, (int) $fleet_cfg['posts_per_page'] ) ) : 12;
 $show_load_more = isset( $fleet_cfg['show_load_more'] ) ? (bool) $fleet_cfg['show_load_more'] : true;
 
-$query = new WP_Query( vip_transits_vehicle_query_args( array( 'posts_per_page' => $per_page ) ) );
+$occasion_slug = (string) get_post_field( 'post_name', $post_id );
+$query         = new WP_Query(
+	vip_transits_vehicle_query_args(
+		array(
+			'posts_per_page' => $per_page,
+			'occasion_slug'  => $occasion_slug,
+		)
+	)
+);
 
 $editorial_heading = function_exists( 'vip_transits_get_occasion_field' )
 	? (string) vip_transits_get_occasion_field( 'editorial_heading', '' )
@@ -83,39 +91,99 @@ if ( ! empty( $faq['faqs'] ) && is_array( $faq['faqs'] ) ) {
 }
 $has_faq = $faq_items !== [] || $faq_img_url !== '';
 
-$role_filter_label = function_exists( 'vip_transits_get_occasion_role_filter_label' )
-	? vip_transits_get_occasion_role_filter_label( $post_id )
-	: __( 'Car role for occasion', 'tenku-child' );
+$banner_active = function_exists( 'vip_transits_render_occasion_banner' )
+	&& vip_transits_render_occasion_banner( $post_id );
 ?>
-<article class="vip-page vip-occasion-page" data-vip-section>
+<article class="vip-page vip-occasion-page<?php echo $banner_active ? ' vip-occasion-page--has-banner' : ''; ?>" data-vip-section>
 
-	<section class="vip-landing-hero">
-		<div class="vip-landing-hero__grid vip-content-container">
-			<div>
-				<h1 class="vip-landing-hero__title"><?php echo esc_html( $hero_heading ); ?></h1>
+	<section class="vip-landing-hero<?php echo $banner_active ? ' vip-landing-hero--banner-image-full' : ''; ?>">
+		<?php if ( $banner_active && $hero_img_url ) : ?>
+			<div class="vip-content-container">
+				<figure class="vip-landing-hero__media vip-landing-hero__media--full">
+					<?php
+					$hero_attachment_id = 0;
+					if ( ! empty( $text_image['image'] ) && is_array( $text_image['image'] ) && ! empty( $text_image['image']['ID'] ) ) {
+						$hero_attachment_id = (int) $text_image['image']['ID'];
+					} elseif ( ! $text_image_img_url && has_post_thumbnail( $post_id ) ) {
+						$hero_attachment_id = (int) get_post_thumbnail_id( $post_id );
+					}
 
-				<?php if ( ! empty( $text_image['content'] ) ) : ?>
-					<div class="vip-landing-hero__lead">
-						<?php echo apply_filters( 'the_content', $text_image['content'] ); ?>
-					</div>
-				<?php elseif ( has_excerpt( $post_id ) ) : ?>
-					<div class="vip-landing-hero__lead">
-						<p><?php echo esc_html( get_the_excerpt( $post_id ) ); ?></p>
-					</div>
+					$hero_img_attrs = array(
+						'class'    => 'vip-landing-hero__img',
+						'alt'      => $hero_heading,
+						'loading'  => 'lazy',
+						'decoding' => 'async',
+					);
+
+					if ( $hero_attachment_id > 0 ) {
+						echo wp_get_attachment_image( $hero_attachment_id, 'large', false, $hero_img_attrs );
+					} else {
+						?>
+						<img
+							class="vip-landing-hero__img"
+							src="<?php echo esc_url( $hero_img_url ); ?>"
+							alt="<?php echo esc_attr( $hero_heading ); ?>"
+							loading="lazy"
+							decoding="async"
+						/>
+						<?php
+					}
+					?>
+				</figure>
+			</div>
+		<?php else : ?>
+		<div class="vip-content-container">
+			<div class="vip-landing-hero__grid">
+				<div class="vip-landing-hero__copy">
+					<h1 class="vip-landing-hero__title"><?php echo esc_html( $hero_heading ); ?></h1>
+
+					<?php if ( ! empty( $text_image['content'] ) ) : ?>
+						<div class="vip-landing-hero__lead">
+							<?php echo apply_filters( 'the_content', $text_image['content'] ); ?>
+						</div>
+					<?php elseif ( has_excerpt( $post_id ) ) : ?>
+						<div class="vip-landing-hero__lead">
+							<p><?php echo esc_html( get_the_excerpt( $post_id ) ); ?></p>
+						</div>
+					<?php endif; ?>
+				</div>
+
+				<?php if ( $hero_img_url ) : ?>
+					<figure class="vip-landing-hero__media">
+						<?php
+						$hero_attachment_id = 0;
+						if ( ! empty( $text_image['image'] ) && is_array( $text_image['image'] ) && ! empty( $text_image['image']['ID'] ) ) {
+							$hero_attachment_id = (int) $text_image['image']['ID'];
+						} elseif ( ! $text_image_img_url && has_post_thumbnail( $post_id ) ) {
+							$hero_attachment_id = (int) get_post_thumbnail_id( $post_id );
+						}
+
+						$hero_img_attrs = array(
+							'class'    => 'vip-landing-hero__img',
+							'alt'      => $hero_heading,
+							'loading'  => 'lazy',
+							'decoding' => 'async',
+						);
+
+						if ( $hero_attachment_id > 0 ) {
+							echo wp_get_attachment_image( $hero_attachment_id, 'large', false, $hero_img_attrs );
+						} else {
+							?>
+							<img
+								class="vip-landing-hero__img"
+								src="<?php echo esc_url( $hero_img_url ); ?>"
+								alt="<?php echo esc_attr( $hero_heading ); ?>"
+								loading="lazy"
+								decoding="async"
+							/>
+							<?php
+						}
+						?>
+					</figure>
 				<?php endif; ?>
 			</div>
-
-			<?php if ( $hero_img_url ) : ?>
-				<figure class="vip-landing-hero__media">
-					<img
-						src="<?php echo esc_url( $hero_img_url ); ?>"
-						alt="<?php echo esc_attr( $hero_heading ); ?>"
-						loading="lazy"
-						decoding="async"
-					/>
-				</figure>
-			<?php endif; ?>
 		</div>
+		<?php endif; ?>
 	</section>
 
 	<?php if ( $has_why_rent || $related_ids ) : ?>
@@ -174,12 +242,12 @@ $role_filter_label = function_exists( 'vip_transits_get_occasion_role_filter_lab
 			if ( function_exists( 'vip_transits_render_fleet_grid' ) ) {
 				vip_transits_render_fleet_grid(
 					array(
-						'query'             => $query,
-						'per_page'          => $per_page,
-						'show_load_more'    => $show_load_more,
-						'show_filters'      => true,
-						'filter_mode'       => 'occasion',
-						'role_filter_label' => $role_filter_label,
+						'query'                => $query,
+						'per_page'             => $per_page,
+						'show_load_more'       => $show_load_more,
+						'show_filters'         => true,
+						'filter_mode'   => 'occasion',
+						'occasion_slug' => $occasion_slug,
 					)
 				);
 			}

@@ -244,6 +244,13 @@
         ],
         [
             {
+                "param": "page_template",
+                "operator": "==",
+                "value": "page-contact-clean"
+            }
+        ],
+        [
+            {
                 "param": "block",
                 "operator": "==",
                 "value": "acf\/vip-page-contact"
@@ -258,5 +265,5 @@
     "active": true,
     "description": "Content for the VIP Contact Us page template (Contact Form 7 shortcode in WYSIWYG).",
     "show_in_rest": 1,
-    "modified": 1780385800
+    "modified": 1780472200
 }
